@@ -448,7 +448,6 @@ static void reserve_os_pgtable_cache(int mode, int nr_pages)
 		}
 	}
 }
-#if 0
 int main(int argc, char **argv)
 {
 	int c, verbose, mode = PROBE_MODE;
@@ -470,10 +469,8 @@ int main(int argc, char **argv)
 				break;
 		}
 	}
-#if 0
 	if (argc == 2 && (!strcmp(argv[1], "--verbose") || !strcmp(argv[1], "-v")))
 		verbose = 1;
-#endif
 	printf("populating latency matrix...\n");
 	populate_latency_matrix();
 	if (verbose)
@@ -487,24 +484,4 @@ int main(int argc, char **argv)
 	//reserve_os_pgtable_cache(mode, nr_pages);
 	printf("Done...\n");
 }
-#endif
 
-int main(int argc, char **argv)
-{
-	int src, dst, c, latency;
-
-	while ((c = getopt (argc, argv, "s:d:")) != -1) {
-		switch (c) {
-			case 's':
-				src = atoi(optarg);
-				break;
-			case 'd':
-				dst = atoi(optarg);
-				break;
-			default:
-				break;
-		}
-	}
-	latency = measure_latency_pair(src, dst);
-	printf("[%d %d] latency = {%d}\n", src, dst, latency);
-}
