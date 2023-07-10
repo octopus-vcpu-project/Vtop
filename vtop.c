@@ -462,7 +462,7 @@ int main(int argc, char **argv)
 	printf("validating group assignment...");
 	validate_group_assignment();
 	popul_laten_now = now_nsec();
-	printf("This time it took for group assignment to be verified%" PRId64 "\n", tpopul_laten_now-popul_laten_last/(double)1000000);
+	printf("This time it took for group assignment to be verified%" PRId64 "\n", popul_laten_now-popul_laten_last/(double)1000000);
 
 	configure_os_numa_groups(mode);
 	printf("Done...\n");
