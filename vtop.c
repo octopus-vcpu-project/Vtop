@@ -184,44 +184,7 @@ static void populate_latency_matrix(void)
 		even.buddy = 1;
 		
 		for (j = i + 1; j < LAST_CPU_ID; j++) {
-			thread_args_t odd;
-			CPU_ZERO(&odd.cpus);
-			CPU_SET(j, &odd.cpus);
-			odd.me = 1;
-			odd.buddy = 0;
-
-			__sync_lock_test_and_set(&nr_pingpongs.x, 0);
-
-			pthread_t t_odd, t_even;
-			if (pthread_create(&t_odd, NULL, thread_fn, &odd)) {
-				printf("ERROR creating odd thread\n");
-				exit(1);
-			}
-			if (pthread_create(&t_even, NULL, thread_fn, &even)) {
-				printf("ERROR creating even thread\n");
-				exit(1);
-			}
-
-			uint64_t last_stamp = now_nsec();
-			double best_sample = 1./0.;
-			for (size_t sample_no = 0; sample_no < NR_SAMPLES; ++sample_no) {
-				usleep(SAMPLE_US);
-				atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
-				uint64_t time_stamp = now_nsec();
-				double sample = (time_stamp - last_stamp) / (double)s;
-				last_stamp = time_stamp;
-				if (sample < best_sample)
-					best_sample = sample;
-			}
-			//printf("pair: %d %d Latency: %*.1f", i, j, 8, best_sample);
-			comm_latency[i][j] = best_sample;
-			comm_latency[j][i] = best_sample;
-			stop_loops = 1;
-			pthread_join(t_odd, NULL);
-			pthread_join(t_even, NULL);
-			stop_loops = 0;
-			munmap(pingpong_mutex, getpagesize());
-			pingpong_mutex = NULL;
+			measure_latency_pair(i,j)
 		}
 	}
 }
