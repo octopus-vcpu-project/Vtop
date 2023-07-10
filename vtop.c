@@ -422,32 +422,7 @@ static void configure_os_numa_groups(int mode)
 	}
 }
 
-static void reserve_os_pgtable_cache(int mode, int nr_pages)
-{
-	int i, j;
-	cpu_set_t mask;
-	char command[200];
 
-	printf("setting pgtable replication mode\n");
-	system("echo 2 | sudo tee /proc/sys/kernel/pgtable_replication_mode > /dev/null");
-	printf("reserving PGTABLE replicas...\n");
-	for (i = 0; i < nr_numa_groups; i++) {
-		for (j = 0; j < LAST_CPU_ID; j++) {
-			if (CPU_NUMA_GROUP(mode, j) == i) {
-				CPU_ZERO(&mask);
-				CPU_SET(i, &mask);
-				/*
-				 * bind current thread to this cpu (j) so that pgtable allocation in the
-				 * kernel is requested by this particular numa group in the kernel.
-				 */
-				sched_setaffinity(0, sizeof(mask), &mask);
-				snprintf(command, 200, "numactl -C %d echo %d | sudo tee /proc/sys/kernel/pgtable_replication_cache > /dev/null", j, i);
-				system(command);
-				break;
-			}
-		}
-	}
-}
 int main(int argc, char **argv)
 {
 	int c, verbose, mode = PROBE_MODE;
@@ -471,17 +446,25 @@ int main(int argc, char **argv)
 	}
 	if (argc == 2 && (!strcmp(argv[1], "--verbose") || !strcmp(argv[1], "-v")))
 		verbose = 1;
+	uint64_t popul_laten_last = now_nsec();
 	printf("populating latency matrix...\n");
 	populate_latency_matrix();
+	uint64_t popul_laten_now = now_nsec();
+	printf("This time it took for latency matrix to be populated%" PRId64 "\n", popul_laten_now-popul_laten_last/(double)1000000);
 	if (verbose)
 		print_population_matrix();
 	printf("constructing NUMA groups...\n");
+	popul_laten_last = now_nsec();
 	construct_vnuma_groups();
+	popul_laten_now = now_nsec();
+	printf("This time it took for NUma groups to be contstructed%" PRId64 "\n", tpopul_laten_now-popul_laten_last/(double)1000000);
+	popul_laten_last = now_nsec();
 	printf("validating group assignment...");
 	validate_group_assignment();
+	popul_laten_now = now_nsec();
+	printf("This time it took for group assignment to be verified%" PRId64 "\n", tpopul_laten_now-popul_laten_last/(double)1000000);
 
 	configure_os_numa_groups(mode);
-	//reserve_os_pgtable_cache(mode, nr_pages);
 	printf("Done...\n");
 }
 
