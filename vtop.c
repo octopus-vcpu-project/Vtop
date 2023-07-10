@@ -184,7 +184,7 @@ static void populate_latency_matrix(void)
 		even.buddy = 1;
 		
 		for (j = i + 1; j < LAST_CPU_ID; j++) {
-			measure_latency_pair(i,j)
+			measure_latency_pair(i,j);
 		}
 	}
 }
