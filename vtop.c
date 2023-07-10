@@ -457,7 +457,7 @@ int main(int argc, char **argv)
 	popul_laten_last = now_nsec();
 	construct_vnuma_groups();
 	popul_laten_now = now_nsec();
-	printf("This time it took for NUma groups to be contstructed%" PRId64 "\n", tpopul_laten_now-popul_laten_last/(double)1000000);
+	printf("This time it took for NUma groups to be contstructed%" PRId64 "\n", popul_laten_now-popul_laten_last/(double)1000000);
 	popul_laten_last = now_nsec();
 	printf("validating group assignment...");
 	validate_group_assignment();
