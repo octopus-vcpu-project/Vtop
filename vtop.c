@@ -450,19 +450,19 @@ int main(int argc, char **argv)
 	printf("populating latency matrix...\n");
 	populate_latency_matrix();
 	uint64_t popul_laten_now = now_nsec();
-	printf("This time it took for latency matrix to be populated%lf\n", popul_laten_now-popul_laten_last/(double)1000000);
+	printf("This time it took for latency matrix to be populated%lf\n", popul_laten_now-popul_laten_last/(double)1000000000);
 	if (verbose)
 		print_population_matrix();
 	printf("constructing NUMA groups...\n");
 	popul_laten_last = now_nsec();
 	construct_vnuma_groups();
 	popul_laten_now = now_nsec();
-	printf("This time it took for NUma groups to be contstructed%lf\n", popul_laten_now-popul_laten_last/(double)1000000);
+	printf("This time it took for NUma groups to be contstructed%lf\n", popul_laten_now-popul_laten_last/(double)1000000000);
 	popul_laten_last = now_nsec();
 	printf("validating group assignment...");
 	validate_group_assignment();
 	popul_laten_now = now_nsec();
-	printf("This time it took for group assignment to be verified%lf\n", popul_laten_now-popul_laten_last/(double)1000000);
+	printf("This time it took for group assignment to be verified%lf\n", popul_laten_now-popul_laten_last/(double)1000000000);
 
 	configure_os_numa_groups(mode);
 	printf("Done...\n");
