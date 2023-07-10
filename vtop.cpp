@@ -70,7 +70,7 @@ static void common_setup(thread_args_t *args)
 	}
 
 	if (args->me == 0) {
-		pingpong_mutex = mmap(0, getpagesize(), PROT_READ|PROT_WRITE, MAP_ANON|MAP_PRIVATE, -1, 0);
+		pingpong_mutex = (atomic_t*)mmap(0, getpagesize(), PROT_READ|PROT_WRITE, MAP_ANON|MAP_PRIVATE, -1, 0);
 		if (pingpong_mutex == MAP_FAILED) {
 			perror("mmap");
 			exit(1);
