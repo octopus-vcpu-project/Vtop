@@ -117,9 +117,6 @@ static void *thread_fn(void *data)
 	atomic_t *cache_pingpong_mutex = *(args->pingpong_mutex);
 	while (1) {
 		std::cout << "begginning of loop runs...";
-		if (*stop_loops == 1)
-			std::cout << "aha. quitting";
-			pthread_exit(0);
 		std::cout << "okay this works?..";
 		if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
 			++nr;
@@ -133,6 +130,10 @@ static void *thread_fn(void *data)
 		std::cout << "other....";
 		for (size_t i = 0; i < nr_relax; ++i)
 			asm volatile("rep; nop");
+		
+		if (*stop_loops == 1)
+			std::cout << "aha. quitting";
+			pthread_exit(0);
 	}
 	return NULL;
 }
