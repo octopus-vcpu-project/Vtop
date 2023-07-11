@@ -150,29 +150,6 @@ static int measure_latency_pair(int i, int j)
 	odd.nr_pingpongs = &nr_pingpongs;
 	even.stoploops = &stop_loops;
 	odd.stoploops = &stop_loops;
-	
-	__sync_lock_test_and_set(&nr_pingpongs.x, 0);
-
-	pthread_t t_odd, t_even;
-	if (pthread_create(&t_odd, NULL, thread_fn, &odd)) {
-		printf("ERROR creating odd thread\n");
-		exit(1);
-	}
-	if (pthread_create(&t_even, NULL, thread_fn, &even)) {
-		printf("ERROR creating even thread\n");
-		exit(1);
-	}
-
-	uint64_t last_stamp = now_nsec();
-	double best_sample = 1./0.;
-	printf("we succeeded up until  here\n");
-	comm_latency[i][j] = 0;
-	comm_latency[j][i] = 0;
-	stop_loops = 1;
-	pthread_join(t_odd, NULL);
-	pthread_join(t_even, NULL);
-	stop_loops = 0;
-	odd.buddy = 0;
 	return (int)best_sample;
 }
 
