@@ -134,7 +134,7 @@ static void *thread_fn(void *data)
 	return NULL;
 }
 
-static int measure_latency_pair(int i, int j)
+int measure_latency_pair(int i, int j)
 {
 	thread_args_t even, odd;
 	CPU_ZERO(&even.cpus);
