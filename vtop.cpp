@@ -129,6 +129,7 @@ static void *thread_fn(void *data)
 				nr = 0;
 			}
 		}
+		std::cout << "other....";
 		for (size_t i = 0; i < nr_relax; ++i)
 			asm volatile("rep; nop");
 	}
