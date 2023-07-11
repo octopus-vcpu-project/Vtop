@@ -15,6 +15,7 @@
 #include <limits.h>
 #include <assert.h>
 #include <string.h>
+#include <random>
 #include <vector>
 #define PROBE_MODE	(0)
 #define DIRECT_MODE	(1)
