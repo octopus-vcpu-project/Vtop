@@ -196,7 +196,7 @@ static void *thread_fn1(void *data)
 		if(active_cpu_bitmap[random_value%LAST_CPU_ID] == 0 && active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] == 0 ){
 			break;
 		}
-		std::cout << "whaaaaaat's happening111  \n";
+		std::cout << "ok, random value is:" << random_value<<"planning on using cores"<<random_value%LAST_CPU_ID<<"and"<<(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID;
 	    }
 		std::cout << "whaaaaaat's happening  \n";
 		active_cpu_bitmap[random_value%LAST_CPU_ID] = 1;
