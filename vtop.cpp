@@ -191,7 +191,7 @@ static void *thread_fn1(void *data)
         std::uniform_int_distribution<int> uniform_dist(0, task_stack.size() - 1);
         random_index = uniform_dist(e1);
         random_value = task_stack[random_index];
-	    } while (active_cpu_bitmap[random_value%LAST_CPU_ID] == 0 && active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] == 0 );
+	    } while (active_cpu_bitmap[random_value%LAST_CPU_ID] == 1 && active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] == 1 );
 
 		active_cpu_bitmap[random_value%LAST_CPU_ID] = 1;
 		active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] = 1;
