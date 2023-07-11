@@ -116,12 +116,10 @@ static void *thread_fn(void *data)
 	int *stop_loops = args->stoploops;
 	atomic_t *cache_pingpong_mutex = *(args->pingpong_mutex);
 	while (1) {
-		std::cout << "????????????????..";
-		std::cout << *stop_loops;
 		if (*stop_loops == 1)
 		
 			std::cout << "aha. quitting";
-			pthread_exit(0);
+			std::cout << "aha. quitting";
 		std::cout << "okay this works?..";
 		if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
 			++nr;
