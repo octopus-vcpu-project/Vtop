@@ -193,6 +193,8 @@ static void *thread_fn1(void *data)
 	    std::default_random_engine e1(rd());
         random_index = uniform_dist(e1);
         random_value = task_stack[random_index];
+		
+		std::cout << "whaaaaaat's happening111  \n";
 	    } while (active_cpu_bitmap[random_value%LAST_CPU_ID] == 1 || active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] == 1 );
 		std::cout << "whaaaaaat's happening  \n";
 		active_cpu_bitmap[random_value%LAST_CPU_ID] = 1;
