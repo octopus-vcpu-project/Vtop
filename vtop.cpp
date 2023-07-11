@@ -31,7 +31,7 @@
 
 #define min(a,b)	(a < b ? a : b)
 #define LAST_CPU_ID	(min(nr_cpus, MAX_CPUS))
-#define PTHREAD_TASK_AMOUNT (5)
+#define PTHREAD_TASK_AMOUNT (8)
 
 
 int nr_numa_groups;
@@ -215,10 +215,11 @@ static void *thread_fn1(void *data)
 		
         random_index = uniform_dist(e1);
         random_value = task_stack[random_index];
-		if(active_cpu_bitmap[random_value%LAST_CPU_ID] == 0 && active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] == 0 ){
-			break;
-		}
+			if(active_cpu_bitmap[random_value%LAST_CPU_ID] == 0 && active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] == 0 ) {
+				break;
+			}
 	    }
+
 		active_cpu_bitmap[random_value%LAST_CPU_ID] = 1;
 		active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] = 1;
 		std::swap(task_stack[random_index], task_stack.back());
