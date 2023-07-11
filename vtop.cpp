@@ -62,6 +62,7 @@ typedef struct {
 	atomic_t buddy;
 	big_atomic_t *nr_pingpongs;
 	atomic_t  *pingpong_mutex;
+	int *stoploops;
 } thread_args_t;
 
 static inline uint64_t now_nsec(void)
@@ -112,9 +113,10 @@ static void *thread_fn(void *data)
 	atomic_t nr = 0;
 	atomic_t me = args->me;
 	atomic_t buddy = args->buddy;
+	int *stop_loops = args->stoploops;
 	atomic_t *cache_pingpong_mutex = args->pingpong_mutex;
 	while (1) {
-		if (stop_loops)
+		if (*stop_loops)
 			pthread_exit(0);
 
 		if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
@@ -142,10 +144,13 @@ static int measure_latency_pair(int i, int j)
 	odd.me = 1;
 	odd.buddy = 0;
     
+    int stop_loops = 0;
     atomic_t pingpong_mutex;
 	big_atomic_t nr_pingpongs;
 	even.nr_pingpongs = &nr_pingpongs;
 	odd.nr_pingpongs = &nr_pingpongs;
+	even.stoploops = &stop_loops;
+	odd.stoploops = &stop_loops;
 	
 	__sync_lock_test_and_set(&nr_pingpongs.x, 0);
 
