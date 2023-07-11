@@ -152,7 +152,7 @@ static int measure_latency_pair(int i, int j)
 	odd.stoploops = &stop_loops;
 	even.pingpong_mutex = &pingpong_mutex;
 	odd.pingpong_mutex = &pingpong_mutex;
-	
+
 	__sync_lock_test_and_set(&nr_pingpongs.x, 0);
 
 	pthread_t t_odd, t_even;
@@ -167,11 +167,8 @@ static int measure_latency_pair(int i, int j)
 
 	uint64_t last_stamp = now_nsec();
 	double best_sample = 1./0.;
-	printf("we succeeded up until  here\n");
 	for (size_t sample_no = 0; sample_no < NR_SAMPLES; ++sample_no) {
-		printf("here too\n");
 		usleep(SAMPLE_US);
-		printf("\n");
 		atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
 		uint64_t time_stamp = now_nsec();
 		double sample = (time_stamp - last_stamp) / (double)s;
@@ -208,7 +205,6 @@ static void *thread_fn1(void *data)
 		if(active_cpu_bitmap[random_value%LAST_CPU_ID] == 0 && active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] == 0 ){
 			break;
 		}
-		std::cout << "ok, random value is:" << random_value<<"planning on using cores"<<random_value%LAST_CPU_ID<<"and"<<(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID;
 	    }
 		active_cpu_bitmap[random_value%LAST_CPU_ID] = 1;
 		active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] = 1;
@@ -217,7 +213,6 @@ static void *thread_fn1(void *data)
 
 		pthread_mutex_unlock(&ready_check);
 		
-		std::cout << "test.\n";
 		measure_latency_pair(random_value%LAST_CPU_ID,(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID);
 		active_cpu_bitmap[random_value%LAST_CPU_ID] = 0;
 		active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] = 0;
