@@ -146,7 +146,7 @@ static int measure_latency_pair(int i, int j)
 	odd.me = 1;
 	odd.buddy = 0;
     int stop_loops = 0;
-    static atomic_t* pingpong_mutex = NULL;
+    static atomic_t* pingpong_mutex = (atomic_t*) malloc(sizeof(atomic_t));;
 	static big_atomic_t nr_pingpongs;
 	even.nr_pingpongs = &nr_pingpongs;
 	odd.nr_pingpongs = &nr_pingpongs;
