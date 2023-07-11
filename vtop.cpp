@@ -116,6 +116,7 @@ static void *thread_fn(void *data)
 	int *stop_loops = args->stoploops;
 	atomic_t *cache_pingpong_mutex = *(args->pingpong_mutex);
 	while (1) {
+		std::cout << "????????????????..";
 		if (*stop_loops)
 		
 			std::cout << "aha. quitting";
