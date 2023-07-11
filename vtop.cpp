@@ -145,7 +145,6 @@ static int measure_latency_pair(int i, int j)
 	CPU_SET(j, &odd.cpus);
 	odd.me = 1;
 	odd.buddy = 0;
-    std::cout << "we're doing tests on " << i << " and"<<j<< "/n";
     int stop_loops = 0;
     static atomic_t pingpong_mutex;
 	static big_atomic_t nr_pingpongs;
@@ -175,7 +174,6 @@ static int measure_latency_pair(int i, int j)
 		atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
 		uint64_t time_stamp = now_nsec();
 		double sample = (time_stamp - last_stamp) / (double)s;
-		std::cout << "ok so we've had" << nr_pingpongs.x;
 		last_stamp = time_stamp;
 		if (sample < best_sample)
 			best_sample = sample;
