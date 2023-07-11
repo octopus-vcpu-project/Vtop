@@ -31,7 +31,7 @@
 
 #define min(a,b)	(a < b ? a : b)
 #define LAST_CPU_ID	(min(nr_cpus, MAX_CPUS))
-#define PTHREAD_TASK_AMOUNT ((LAST_CPU_ID - (LAST_CPU_ID % 2))/2)
+#define PTHREAD_TASK_AMOUNT (1)
 
 
 int nr_numa_groups;
