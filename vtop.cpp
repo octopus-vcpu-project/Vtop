@@ -108,7 +108,7 @@ static void *thread_fn(void *data)
 {
 	thread_args_t *args = (thread_args_t *)data;
 	common_setup(args);
-	big_atomic_t *nr_pingpongs = args.nr_pingpongs;
+	big_atomic_t *nr_pingpongs = args->nr_pingpongs;
 	atomic_t nr = 0;
 	atomic_t me = args->me;
 	atomic_t buddy = args->buddy;
