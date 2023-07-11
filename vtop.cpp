@@ -102,6 +102,8 @@ static void common_setup(thread_args_t *args)
 		pthread_cond_broadcast(&wait_cond);
 	}
 	pthread_mutex_unlock(&wait_mutex);
+	
+	std::cout << "we've reached the end";
 }
 
 static void *thread_fn(void *data)
