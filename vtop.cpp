@@ -200,7 +200,7 @@ static void *thread_fn1(void *data)
 
 		pthread_mutex_unlock(&ready_check);
 		
-		populate_latency_matrix(random_value%LAST_CPU_ID,(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID);
+		measure_latency_pair(random_value%LAST_CPU_ID,(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID);
 		active_cpu_bitmap[random_value%LAST_CPU_ID] = 0;
 		active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] = 0;
 	}
