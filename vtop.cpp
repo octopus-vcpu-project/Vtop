@@ -168,13 +168,14 @@ static int measure_latency_pair(int i, int j)
 	printf("we succeeded up until  here\n");
 	for (size_t sample_no = 0; sample_no < NR_SAMPLES; ++sample_no) {
 		usleep(SAMPLE_US);
+		
+		printf("we ducceeded up until  here\n");
 		atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
 		uint64_t time_stamp = now_nsec();
 		double sample = (time_stamp - last_stamp) / (double)s;
 		last_stamp = time_stamp;
 		if (sample < best_sample)
 			best_sample = sample;
-		printf("we ducceeded up until  here\n");
 	}
 	comm_latency[i][j] = best_sample;
 	comm_latency[j][i] = best_sample;
