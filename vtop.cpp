@@ -227,7 +227,7 @@ static void populate_latency_matrix(void)
 	for (i = 0; i < LAST_CPU_ID; i++) {
 		active_cpu_bitmap[i] = 0;
 		for (j = i + 1; j < LAST_CPU_ID; j++) {
-			task_stack.push_back(LAST_CPU_ID * i + LAST_CPU_ID);
+			task_stack.push_back(LAST_CPU_ID * i + j);
 		}
 	}
 	for (i = 0; i < PTHREAD_TASK_AMOUNT; i++) {
