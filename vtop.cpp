@@ -180,7 +180,6 @@ static int measure_latency_pair(int i, int j)
 	pthread_join(t_odd, NULL);
 	pthread_join(t_even, NULL);
 	stop_loops = 0;
-	munmap(&pingpong_mutex, getpagesize());
 	odd.buddy = 0;
 	return (int)best_sample;
 }
