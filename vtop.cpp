@@ -226,6 +226,7 @@ static void populate_latency_matrix(void)
 		}
 	}
 	for (i = 0; i < PTHREAD_TASK_AMOUNT; i++) {
+		std::cout << "pthread task amount  " << PTHREAD_TASK_AMOUNT << " numbers.\n";
 		thread_args_t newtest;
 		pthread_create(&worker_tasks[i], NULL, thread_fn1, &newtest);
 	}
