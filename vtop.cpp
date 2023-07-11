@@ -223,7 +223,7 @@ static void populate_latency_matrix(void)
 		sleep(0.1)
 	}
 	for (int i = 0; i < PTHREAD_TASK_AMOUNT; i++) {
-    	pthread_join(&worker_tasks[i], NULL);
+    	pthread_join(worker_tasks[i], NULL);
   	}
 
 }
