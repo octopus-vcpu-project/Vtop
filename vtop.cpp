@@ -172,6 +172,7 @@ static int measure_latency_pair(int i, int j)
 		atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
 		uint64_t time_stamp = now_nsec();
 		double sample = (time_stamp - last_stamp) / (double)s;
+		std::cout << "ok so we've had" << nr_pingpongs.x;
 		last_stamp = time_stamp;
 		if (sample < best_sample)
 			best_sample = sample;
