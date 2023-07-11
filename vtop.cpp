@@ -61,7 +61,7 @@ typedef union {
 	atomic_t x;
 	char pad[1024];
 } big_atomic_t __attribute__((aligned(1024)));
-static big_atomic_t nr_pingpongs;
+
 
 static inline uint64_t now_nsec(void)
 {
@@ -132,7 +132,7 @@ static void *thread_fn(void *data)
 static int measure_latency_pair(int i, int j)
 {
 	thread_args_t even, odd;
-
+	static big_atomic_t nr_pingpongs;
 	CPU_ZERO(&even.cpus);
 	CPU_SET(i, &even.cpus);
 	even.me = 0;
