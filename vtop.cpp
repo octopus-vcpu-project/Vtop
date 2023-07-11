@@ -41,7 +41,6 @@ double comm_latency[MAX_CPUS][MAX_CPUS];
 int active_cpu_bitmap[MAX_CPUS];
 std::vector<int> task_stack;
 pthread_t worker_tasks[MAX_CPUS];
-int stop_loops = 0;
 static size_t nr_relax = 0;
 pthread_mutex_t ready_check = PTHREAD_MUTEX_INITIALIZER;
 //static size_t nr_tested_cores = 0;
