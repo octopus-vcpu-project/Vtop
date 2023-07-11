@@ -27,7 +27,7 @@
 #define GROUP_GLOBAL	(2)
 
 #define NR_SAMPLES      (50)
-#define SAMPLE_US       (100000)
+#define SAMPLE_US       (10000)
 
 #define min(a,b)	(a < b ? a : b)
 #define LAST_CPU_ID	(min(nr_cpus, MAX_CPUS))
@@ -117,6 +117,7 @@ static void *thread_fn(void *data)
 	atomic_t *cache_pingpong_mutex = *(args->pingpong_mutex);
 	while (1) {
 		std::cout << "????????????????..";
+		std::cout << *stop_loops;
 		if (*stop_loops)
 		
 			std::cout << "aha. quitting";
