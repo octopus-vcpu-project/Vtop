@@ -142,7 +142,7 @@ static int measure_latency_pair(int i, int j)
 	CPU_SET(j, &odd.cpus);
 	odd.me = 1;
 	odd.buddy = 0;
-    
+    std::cout << "we're doing tests on " << i << " and"<<j<< "/n";
     int stop_loops = 0;
     static atomic_t pingpong_mutex;
 	static big_atomic_t nr_pingpongs;
