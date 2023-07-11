@@ -194,13 +194,15 @@ static void *thread_fn1(void *data)
         random_index = uniform_dist(e1);
         random_value = task_stack[random_index];
 	    } while (active_cpu_bitmap[random_value%LAST_CPU_ID] == 1 || active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] == 1 );
-
+		std::cout << "whaaaaaat's happening  \n";
 		active_cpu_bitmap[random_value%LAST_CPU_ID] = 1;
 		active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] = 1;
 		std::swap(task_stack[random_index], task_stack.back());
 		task_stack.pop_back();
+
 		pthread_mutex_unlock(&ready_check);
 		
+		measure_latency_pair(random_value%LAST_CPU_ID,(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID);
 		active_cpu_bitmap[random_value%LAST_CPU_ID] = 0;
 		active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] = 0;
 		
