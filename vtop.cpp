@@ -26,7 +26,7 @@
 #define GROUP_NONLOCAL	(1)
 #define GROUP_GLOBAL	(2)
 
-#define NR_SAMPLES      (10)
+#define NR_SAMPLES      (50)
 #define SAMPLE_US       (10000)
 
 #define min(a,b)	(a < b ? a : b)
