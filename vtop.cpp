@@ -219,6 +219,12 @@ static void populate_latency_matrix(void)
 		thread_args_t newtest;
 		pthread_create(&worker_tasks[i], NULL, thread_fn1, &newtest);
 	}
+	while(task_stack.size() > 0 ){
+		sleep(0.1)
+	}
+	for (int i = 0; i < PTHREAD_TASK_AMOUNT; i++) {
+    	pthread_join(&worker_tasks[i], NULL);
+  	}
 
 }
 
