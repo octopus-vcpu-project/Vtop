@@ -220,6 +220,7 @@ static void populate_latency_matrix(void)
 		thread_args_t newtest;
 		pthread_create(&worker_tasks[i], NULL, thread_fn1, &newtest);
 	}
+	std::cout << "myvector stores " << int(task_stack.size()) << " numbers.\n";
 	while(task_stack.size() > 0 ){
 		printf("uhhhhhhh");
 		sleep(1);
