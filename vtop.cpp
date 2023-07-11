@@ -212,6 +212,7 @@ static void *thread_fn1(void *data)
 static void populate_latency_matrix(void)
 {
 	int i, j;
+	nr_cpus = get_nprocs();
 	for (i = 0; i < LAST_CPU_ID; i++) {
 		for (j = i + 1; j < LAST_CPU_ID; j++) {
 			task_stack.push_back(LAST_CPU_ID * i + LAST_CPU_ID);
