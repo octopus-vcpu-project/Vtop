@@ -174,6 +174,7 @@ static int measure_latency_pair(int i, int j)
 		last_stamp = time_stamp;
 		if (sample < best_sample)
 			best_sample = sample;
+		printf("we ducceeded up until  here\n");
 	}
 	comm_latency[i][j] = best_sample;
 	comm_latency[j][i] = best_sample;
