@@ -175,6 +175,7 @@ static int measure_latency_pair(int i, int j)
 
 static void *thread_fn1(void *data)
 {	
+	std::random_device rd;
 	std::default_random_engine e1(rd());
 	int random_value;
 	int random_index;
