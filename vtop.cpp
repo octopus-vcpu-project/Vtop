@@ -168,8 +168,6 @@ static int measure_latency_pair(int i, int j)
 	printf("we succeeded up until  here\n");
 	for (size_t sample_no = 0; sample_no < NR_SAMPLES; ++sample_no) {
 		usleep(SAMPLE_US);
-		
-		printf("we ducceeded up until  here\n");
 		atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
 		uint64_t time_stamp = now_nsec();
 		double sample = (time_stamp - last_stamp) / (double)s;
@@ -216,6 +214,7 @@ static void *thread_fn1(void *data)
 		pthread_mutex_unlock(&ready_check);
 		
 		std::cout << "test.\n";
+		measure_latency_pair(random_value%LAST_CPU_ID,(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID);
 		active_cpu_bitmap[random_value%LAST_CPU_ID] = 0;
 		active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] = 0;
 		
