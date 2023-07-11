@@ -147,7 +147,7 @@ static int measure_latency_pair(int i, int j)
 	odd.buddy = 0;
     int stop_loops = 0;
     static atomic_t* pingpong_mutex = (atomic_t*) malloc(sizeof(atomic_t));;
-	static big_atomic_t nr_pingpongs = (big_atomic_t)malloc(sizeof(big_atomic_t));;;
+	static big_atomic_t nr_pingpongs = (big_atomic_t) malloc(sizeof(big_atomic_t));
 	even.nr_pingpongs = &nr_pingpongs;
 	odd.nr_pingpongs = &nr_pingpongs;
 	even.stoploops = &stop_loops;
@@ -185,6 +185,7 @@ static int measure_latency_pair(int i, int j)
 	pthread_join(t_even, NULL);
 	stop_loops = 0;
 	odd.buddy = 0;
+	free(pingpong_mutex);
 	return (int)best_sample;
 }
 
