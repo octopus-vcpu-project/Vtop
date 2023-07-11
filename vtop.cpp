@@ -208,7 +208,7 @@ static void *thread_fn1(void *data)
 		
 		std::cout << "myvector stores " << int(task_stack.size()) << " numbers.\n";
 		
-		for (i = 0; i < LAST_CPU_ID; i++) {
+		for (int i = 0; i < LAST_CPU_ID; i++) {
 			std::cout  << " " << active_cpu_bitmap[i] << " ";
 		}
 		std::cout << "\n";
