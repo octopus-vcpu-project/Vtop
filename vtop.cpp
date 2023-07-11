@@ -37,6 +37,7 @@ int nr_numa_groups;
 int nr_cpus;
 int cpu_group_id[MAX_CPUS];
 double comm_latency[MAX_CPUS][MAX_CPUS];
+int active_cpu_bitmap[MAX_CPUS];
 std::vector<int> task_stack;
 pthread_t worker_tasks[MAX_CPUS];
 int stop_loops = 0;
@@ -182,15 +183,26 @@ static void *thread_fn1(void *data)
 	while (1) {
 		pthread_mutex_lock(&ready_check);
 		if(task_stack.size() < 1 ){
+			pthread_mutex_unlock(&ready_check);
 			break;
 		}
-    	std::uniform_int_distribution<int> uniform_dist(0, task_stack.size() - 1);
-    	random_index = uniform_dist(e1);
-		random_value = task_stack[random_index];
+
+		do {
+        std::uniform_int_distribution<int> uniform_dist(0, task_stack.size() - 1);
+        random_index = uniform_dist(e1);
+        random_value = task_stack[random_index];
+	    } while (active_cpu_bitmap[random_value%LAST_CPU_ID] == 0 && active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] == 0 );
+
+		active_cpu_bitmap[random_value%LAST_CPU_ID] = 1;
+		active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] = 1;
 		std::swap(task_stack[random_index], task_stack.back());
 		task_stack.pop_back();
+
 		pthread_mutex_unlock(&ready_check);
-		populate_latency_matrix(random_value%LAST_CPU_ID,(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID)
+		
+		populate_latency_matrix(random_value%LAST_CPU_ID,(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID);
+		active_cpu_bitmap[random_value%LAST_CPU_ID] = 0;
+		active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] = 0;
 	}
 	return NULL;
 }
