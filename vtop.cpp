@@ -27,7 +27,7 @@
 #define GROUP_GLOBAL	(2)
 
 #define NR_SAMPLES      (50)
-#define SAMPLE_US       (10000)
+#define SAMPLE_US       (100000)
 
 #define min(a,b)	(a < b ? a : b)
 #define LAST_CPU_ID	(min(nr_cpus, MAX_CPUS))
