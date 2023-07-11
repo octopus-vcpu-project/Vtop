@@ -27,11 +27,11 @@
 #define GROUP_GLOBAL	(2)
 
 #define NR_SAMPLES      (60)
-#define SAMPLE_US       (10000)
+#define SAMPLE_US       (30000)
 
 #define min(a,b)	(a < b ? a : b)
 #define LAST_CPU_ID	(min(nr_cpus, MAX_CPUS))
-#define PTHREAD_TASK_AMOUNT (19)
+#define PTHREAD_TASK_AMOUNT (10)
 
 
 int nr_numa_groups;
