@@ -118,7 +118,7 @@ static void *thread_fn(void *data)
 	while (1) {
 		std::cout << "????????????????..";
 		std::cout << *stop_loops;
-		if (*stop_loops)
+		if (*stop_loops == 1)
 		
 			std::cout << "aha. quitting";
 			pthread_exit(0);
