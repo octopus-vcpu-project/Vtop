@@ -46,6 +46,8 @@ static size_t nr_relax = 0;
 pthread_mutex_t ready_check = PTHREAD_MUTEX_INITIALIZER;
 //static size_t nr_tested_cores = 0;
 
+std::random_device rd;
+std::default_random_engine e1(rd());
 typedef unsigned atomic_t;
 static atomic_t *pingpong_mutex;
 
@@ -177,7 +179,6 @@ static int measure_latency_pair(int i, int j)
 
 static void *thread_fn1(void *data)
 {	
-	std::random_device rd;
 	int random_value;
 	int random_index;
 	while (1) {
@@ -190,7 +191,6 @@ static void *thread_fn1(void *data)
 		while(1){
         std::uniform_int_distribution<int> uniform_dist(0, task_stack.size() - 1);
 		
-	    std::default_random_engine e1(rd());
         random_index = uniform_dist(e1);
         random_value = task_stack[random_index];
 		if(active_cpu_bitmap[random_value%LAST_CPU_ID] == 0 && active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] == 0 ){
