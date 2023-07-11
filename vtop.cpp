@@ -166,19 +166,8 @@ static int measure_latency_pair(int i, int j)
 	uint64_t last_stamp = now_nsec();
 	double best_sample = 1./0.;
 	printf("we succeeded up until  here\n");
-	for (size_t sample_no = 0; sample_no < NR_SAMPLES; ++sample_no) {
-		printf("here too\n");
-		usleep(SAMPLE_US);
-		printf("huh?\n");
-		atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
-		uint64_t time_stamp = now_nsec();
-		double sample = (time_stamp - last_stamp) / (double)s;
-		last_stamp = time_stamp;
-		if (sample < best_sample)
-			best_sample = sample;
-	}
-	comm_latency[i][j] = best_sample;
-	comm_latency[j][i] = best_sample;
+	comm_latency[i][j] = 0;
+	comm_latency[j][i] = 0;
 	stop_loops = 1;
 	pthread_join(t_odd, NULL);
 	pthread_join(t_even, NULL);
