@@ -3,6 +3,9 @@
         "random": "cpp",
         "cmath": "cpp",
         "vector": "cpp",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "initializer_list": "cpp",
+        "type_traits": "cpp",
+        "xutility": "cpp"
     }
 }

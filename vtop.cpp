@@ -178,7 +178,6 @@ static int measure_latency_pair(int i, int j)
 static void *thread_fn1(void *data)
 {	
 	std::random_device rd;
-	std::default_random_engine e1(rd());
 	int random_value;
 	int random_index;
 	while (1) {
@@ -190,6 +189,8 @@ static void *thread_fn1(void *data)
 
 		do {
         std::uniform_int_distribution<int> uniform_dist(0, task_stack.size() - 1);
+		
+	    std::default_random_engine e1(rd());
         random_index = uniform_dist(e1);
         random_value = task_stack[random_index];
 	    } while (active_cpu_bitmap[random_value%LAST_CPU_ID] == 1 || active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] == 1 );
@@ -202,7 +203,6 @@ static void *thread_fn1(void *data)
 		pthread_mutex_unlock(&ready_check);
 		
 		measure_latency_pair(random_value%LAST_CPU_ID,(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID);
-		printf("we got to here...");
 		active_cpu_bitmap[random_value%LAST_CPU_ID] = 0;
 		active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] = 0;
 	}
@@ -224,7 +224,6 @@ static void populate_latency_matrix(void)
 	}
 	std::cout << "myvector stores " << int(task_stack.size()) << " numbers.\n";
 	while(task_stack.size() > 0 ){
-		printf("uhhhhhhh");
 		sleep(1);
 	}
 	for (int i = 0; i < PTHREAD_TASK_AMOUNT; i++) {
