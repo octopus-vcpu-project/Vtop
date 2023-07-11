@@ -62,6 +62,9 @@ typedef struct {
 	big_atomic_t *nr_pingpongs;
 	atomic_t  **pingpong_mutex;
 	int *stoploops;
+	pthread_mutex_t* mutex;
+    pthread_cond_t* cond;
+    int* flag;
 } thread_args_t;
 
 static inline uint64_t now_nsec(void)
@@ -89,19 +92,15 @@ static void common_setup(thread_args_t *args)
 
 	// ensure both threads are ready before we leave -- so that
 	// both threads have a copy of pingpong_mutex.
-	static pthread_mutex_t wait_mutex = PTHREAD_MUTEX_INITIALIZER;
-	static pthread_cond_t wait_cond = PTHREAD_COND_INITIALIZER;
-	static int wait_for_buddy = 1;
-	pthread_mutex_lock(&wait_mutex);
-	if (wait_for_buddy) {
-		wait_for_buddy = 0;
-		pthread_cond_wait(&wait_cond, &wait_mutex);
-	}
-	else {
-		wait_for_buddy = 1; // for next invocation
-		pthread_cond_broadcast(&wait_cond);
-	}
-	pthread_mutex_unlock(&wait_mutex);
+	pthread_mutex_lock(args->mutex);
+    if (*(args->flag)) {
+        *(args->flag) = 0;
+        pthread_cond_wait(args->cond, args->mutex);
+    } else {
+        *(args->flag) = 1;
+        pthread_cond_broadcast(args->cond);
+    }
+    pthread_mutex_unlock(args->mutex);
 	
 }
 
@@ -154,6 +153,17 @@ int measure_latency_pair(int i, int j)
 	odd.stoploops = &stop_loops;
 	even.pingpong_mutex = &pingpong_mutex;
 	odd.pingpong_mutex = &pingpong_mutex;
+
+	pthread_mutex_t wait_mutex = PTHREAD_MUTEX_INITIALIZER;
+    pthread_cond_t wait_cond = PTHREAD_COND_INITIALIZER;
+    int wait_for_buddy = 1;
+
+    even.mutex = &wait_mutex;
+    odd.mutex = &wait_mutex;
+    even.cond = &wait_cond;
+    odd.cond = &wait_cond;
+    even.flag = &wait_for_buddy;
+    odd.flag = &wait_for_buddy;
 
 	__sync_lock_test_and_set(&nr_pingpongs.x, 0);
 
