@@ -29,14 +29,18 @@
 
 #define min(a,b)	(a < b ? a : b)
 #define LAST_CPU_ID	(min(nr_cpus, MAX_CPUS))
+#define PTHREAD_TASK_AMOUNT ((LAST_CPU_ID - (LAST_CPU_ID % 2))/2)
+
 
 int nr_numa_groups;
 int nr_cpus;
 int cpu_group_id[MAX_CPUS];
 double comm_latency[MAX_CPUS][MAX_CPUS];
-
+std::vector<int> task_stack;
+pthread_t worker_tasks[PTHREAD_TASK_AMOUNT];
 int stop_loops = 0;
 static size_t nr_relax = 0;
+pthread_mutex_t ready_check = PTHREAD_MUTEX_INITIALIZER;
 //static size_t nr_tested_cores = 0;
 
 typedef unsigned atomic_t;
@@ -168,24 +172,40 @@ static int measure_latency_pair(int i, int j)
 	return (int)best_sample;
 }
 
+static void *thread_fn1(void *data)
+{	
+	std::default_random_engine e1(rd());
+	int random_value;
+	int random_index;
+	while (1) {
+		pthread_mutex_lock(&ready_check);
+		if(task_stack.size() < 1 ){
+			break;
+		}
+    	std::uniform_int_distribution<int> uniform_dist(0, task_stack.size() - 1);
+    	random_index = uniform_dist(e1);
+		random_value = task_stack[random_index];
+		std::swap(task_stack[random_index], task_stack.back());
+		task_stack.pop_back();
+		pthread_mutex_unlock(&ready_check);
+		populate_latency_matrix(random_value%LAST_CPU_ID,(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID)
+	}
+	return NULL;
+}
+
 static void populate_latency_matrix(void)
 {
 	int i, j;
-
-	nr_cpus = get_nprocs();
-
 	for (i = 0; i < LAST_CPU_ID; i++) {
-		thread_args_t even;
-
-		CPU_ZERO(&even.cpus);
-		CPU_SET(i, &even.cpus);
-		even.me = 0;
-		even.buddy = 1;
-		
 		for (j = i + 1; j < LAST_CPU_ID; j++) {
-			measure_latency_pair(i,j);
+			task_stack.push_back(LAST_CPU_ID * i + LAST_CPU_ID);
 		}
 	}
+	for (i = 0; i < PTHREAD_TASK_AMOUNT; i++) {
+		thread_args_t newtest;
+		pthread_create(&worker_tasks[i], NULL, thread_fn1, &newtest);
+	}
+
 }
 
 static void print_population_matrix(void)
