@@ -49,19 +49,20 @@ pthread_mutex_t ready_check = PTHREAD_MUTEX_INITIALIZER;
 std::random_device rd;
 std::default_random_engine e1(rd());
 typedef unsigned atomic_t;
-static atomic_t *pingpong_mutex;
 
-typedef struct {
-	cpu_set_t cpus;
-	atomic_t me;
-	atomic_t buddy;
-} thread_args_t;
 
 typedef union {
 	atomic_t x;
 	char pad[1024];
 } big_atomic_t __attribute__((aligned(1024)));
 
+typedef struct {
+	cpu_set_t cpus;
+	atomic_t me;
+	atomic_t buddy;
+	big_atomic_t *nr_pingpongs;
+	atomic  *pingpong_mutex;
+} thread_args_t;
 
 static inline uint64_t now_nsec(void)
 {
@@ -78,12 +79,12 @@ static void common_setup(thread_args_t *args)
 	}
 
 	if (args->me == 0) {
-		pingpong_mutex = (atomic_t*)mmap(0, getpagesize(), PROT_READ|PROT_WRITE, MAP_ANON|MAP_PRIVATE, -1, 0);
-		if (pingpong_mutex == MAP_FAILED) {
+		args->pingpong_mutex = (atomic_t*)mmap(0, getpagesize(), PROT_READ|PROT_WRITE, MAP_ANON|MAP_PRIVATE, -1, 0);
+		if (args->pingpong_mutex == MAP_FAILED) {
 			perror("mmap");
 			exit(1);
 		}
-		*pingpong_mutex = args->me;
+		*(args->pingpong_mutex) = args->me;
 	}
 
 	// ensure both threads are ready before we leave -- so that
@@ -107,11 +108,11 @@ static void *thread_fn(void *data)
 {
 	thread_args_t *args = (thread_args_t *)data;
 	common_setup(args);
-
+	big_atomic_t *nr_pingpongs = args.nr_pingpongs;
 	atomic_t nr = 0;
 	atomic_t me = args->me;
 	atomic_t buddy = args->buddy;
-	atomic_t *cache_pingpong_mutex = pingpong_mutex;
+	atomic_t *cache_pingpong_mutex = args->pingpong_mutex;
 	while (1) {
 		if (stop_loops)
 			pthread_exit(0);
@@ -119,7 +120,7 @@ static void *thread_fn(void *data)
 		if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
 			++nr;
 			if (nr == 10000 && me == 0) {
-				__sync_fetch_and_add(&nr_pingpongs.x, 2 * nr);
+				__sync_fetch_and_add(&(nr_pingpongs->x), 2 * nr);
 				nr = 0;
 			}
 		}
@@ -132,7 +133,6 @@ static void *thread_fn(void *data)
 static int measure_latency_pair(int i, int j)
 {
 	thread_args_t even, odd;
-	static big_atomic_t nr_pingpongs;
 	CPU_ZERO(&even.cpus);
 	CPU_SET(i, &even.cpus);
 	even.me = 0;
@@ -141,7 +141,12 @@ static int measure_latency_pair(int i, int j)
 	CPU_SET(j, &odd.cpus);
 	odd.me = 1;
 	odd.buddy = 0;
-
+    
+    atomic_t pingpong_mutex;
+	big_atomic_t nr_pingpongs;
+	even.nr_pingpongs = &nr_pingpongs;
+	odd.nr_pingpongs = &nr_pingpongs;
+	
 	__sync_lock_test_and_set(&nr_pingpongs.x, 0);
 
 	pthread_t t_odd, t_even;
@@ -171,8 +176,8 @@ static int measure_latency_pair(int i, int j)
 	pthread_join(t_odd, NULL);
 	pthread_join(t_even, NULL);
 	stop_loops = 0;
-	munmap(pingpong_mutex, getpagesize());
-	pingpong_mutex = NULL;
+	munmap(&pingpong_mutex, getpagesize());
+	&pingpong_mutex = NULL;
 	odd.buddy = 0;
 	return (int)best_sample;
 }
