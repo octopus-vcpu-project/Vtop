@@ -60,7 +60,7 @@ typedef struct {
 	atomic_t me;
 	atomic_t buddy;
 	big_atomic_t *nr_pingpongs;
-	atomic_t  *pingpong_mutex;
+	atomic_t  **pingpong_mutex;
 	int *stoploops;
 } thread_args_t;
 
@@ -79,12 +79,12 @@ static void common_setup(thread_args_t *args)
 	}
 
 	if (args->me == 0) {
-		args->pingpong_mutex = (atomic_t*)mmap(0, getpagesize(), PROT_READ|PROT_WRITE, MAP_ANON|MAP_PRIVATE, -1, 0);
-		if (args->pingpong_mutex == MAP_FAILED) {
+		*(args->pingpong_mutex) = (atomic_t*)mmap(0, getpagesize(), PROT_READ|PROT_WRITE, MAP_ANON|MAP_PRIVATE, -1, 0);
+		if (*(args->pingpong_mutex) == MAP_FAILED) {
 			perror("mmap");
 			exit(1);
 		}
-		*(args->pingpong_mutex) = args->me;
+		*(*(args->pingpong_mutex)) = args->me;
 	}
 
 	// ensure both threads are ready before we leave -- so that
@@ -103,7 +103,6 @@ static void common_setup(thread_args_t *args)
 	}
 	pthread_mutex_unlock(&wait_mutex);
 	
-	std::cout << "we've reached the end";
 }
 
 static void *thread_fn(void *data)
@@ -115,7 +114,7 @@ static void *thread_fn(void *data)
 	atomic_t me = args->me;
 	atomic_t buddy = args->buddy;
 	int *stop_loops = args->stoploops;
-	atomic_t *cache_pingpong_mutex = args->pingpong_mutex;
+	atomic_t *cache_pingpong_mutex = *(args->pingpong_mutex);
 	while (1) {
 		if (*stop_loops)
 		
@@ -148,7 +147,7 @@ static int measure_latency_pair(int i, int j)
 	odd.me = 1;
 	odd.buddy = 0;
     int stop_loops = 0;
-    static atomic_t pingpong_mutex;
+    static atomic_t* pingpong_mutex;
 	static big_atomic_t nr_pingpongs;
 	even.nr_pingpongs = &nr_pingpongs;
 	odd.nr_pingpongs = &nr_pingpongs;
