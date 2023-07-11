@@ -14,6 +14,7 @@
 #include <sys/sysinfo.h>
 #include <limits.h>
 #include <assert.h>
+#include <iostream>
 #include <string.h>
 #include <random>
 #include <vector>
