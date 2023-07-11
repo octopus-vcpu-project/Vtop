@@ -167,6 +167,7 @@ static int measure_latency_pair(int i, int j)
 	double best_sample = 1./0.;
 	printf("we succeeded up until  here\n");
 	for (size_t sample_no = 0; sample_no < NR_SAMPLES; ++sample_no) {
+		printf("here too\n");
 		usleep(SAMPLE_US);
 		atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
 		uint64_t time_stamp = now_nsec();
