@@ -26,8 +26,8 @@
 #define GROUP_NONLOCAL	(1)
 #define GROUP_GLOBAL	(2)
 
-#define NR_SAMPLES      (50)
-#define SAMPLE_US       (20000)
+#define NR_SAMPLES      (60)
+#define SAMPLE_US       (10000)
 
 #define min(a,b)	(a < b ? a : b)
 #define LAST_CPU_ID	(min(nr_cpus, MAX_CPUS))
@@ -185,7 +185,7 @@ int measure_latency_pair(int i, int j)
 	pthread_join(t_even, NULL);
 	stop_loops = 0;
 	odd.buddy = 0;
-	pingpong_mutex= NULL;
+	pingpong_mutex = NULL;
 	return (int)best_sample;
 }
 
