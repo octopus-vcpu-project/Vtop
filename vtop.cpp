@@ -205,6 +205,8 @@ static void *thread_fn1(void *data)
 		measure_latency_pair(random_value%LAST_CPU_ID,(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID);
 		active_cpu_bitmap[random_value%LAST_CPU_ID] = 0;
 		active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] = 0;
+		
+		std::cout << "myvector stores " << int(task_stack.size()) << " numbers.\n";
 	}
 	return NULL;
 }
