@@ -187,15 +187,17 @@ static void *thread_fn1(void *data)
 			break;
 		}
 
-		do {
+		while(1){
         std::uniform_int_distribution<int> uniform_dist(0, task_stack.size() - 1);
 		
 	    std::default_random_engine e1(rd());
         random_index = uniform_dist(e1);
         random_value = task_stack[random_index];
-		
+		if(active_cpu_bitmap[random_value%LAST_CPU_ID] == 0 && active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] == 0 ){
+			break;
+		}
 		std::cout << "whaaaaaat's happening111  \n";
-	    } while (active_cpu_bitmap[random_value%LAST_CPU_ID] == 1 || active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] == 1 );
+	    }
 		std::cout << "whaaaaaat's happening  \n";
 		active_cpu_bitmap[random_value%LAST_CPU_ID] = 1;
 		active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] = 1;
@@ -223,6 +225,7 @@ static void populate_latency_matrix(void)
 	int i, j;
 	nr_cpus = get_nprocs();
 	for (i = 0; i < LAST_CPU_ID; i++) {
+		active_cpu_bitmap[i] = 0;
 		for (j = i + 1; j < LAST_CPU_ID; j++) {
 			task_stack.push_back(LAST_CPU_ID * i + LAST_CPU_ID);
 		}
