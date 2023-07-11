@@ -61,7 +61,7 @@ typedef struct {
 	atomic_t me;
 	atomic_t buddy;
 	big_atomic_t *nr_pingpongs;
-	atomic  *pingpong_mutex;
+	atomic_t  *pingpong_mutex;
 } thread_args_t;
 
 static inline uint64_t now_nsec(void)
