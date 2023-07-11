@@ -118,7 +118,6 @@ static void *thread_fn(void *data)
 	while (1) {
 		
 		if (*stop_loops == 1){
-			std::cout << "aha. quitting";
 			pthread_exit(0);
 		}
 		if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
