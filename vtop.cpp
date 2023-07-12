@@ -94,7 +94,6 @@ void setArguments(const std::vector<std::string_view>& arguments) {
     set_option_value("-p", PTHREAD_TASK_AMOUNT);
     set_option_value("-s", NR_SAMPLES);
     set_option_value("-u", SAMPLE_US);
-    num_threads = sysconf( _SC_NPROCESSORS_ONLN );
 }
 
 
