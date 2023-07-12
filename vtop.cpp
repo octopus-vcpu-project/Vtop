@@ -20,7 +20,7 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
-
+#include <sys/syscall.h>
 #define PROBE_MODE	(0)
 #define DIRECT_MODE	(1)
 
