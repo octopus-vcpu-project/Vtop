@@ -232,10 +232,11 @@ int measure_latency_pair(int i, int j)
 		double sample = (time_stamp - last_stamp) / (double)s;
 		last_stamp = time_stamp;
 		if (sample < best_sample)
-			if(sample < 50){
-				return (int)sample;
-			}
 			best_sample = sample;
+			
+			if(sample < 50){
+				break;
+			}
 	}
 	comm_latency[i][j] = best_sample;
 	comm_latency[j][i] = best_sample;
