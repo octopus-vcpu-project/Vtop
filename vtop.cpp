@@ -50,6 +50,33 @@ std::random_device rd;
 std::default_random_engine e1(rd());
 typedef unsigned atomic_t;
 
+void moveThreadtoHighPrio(pid_t tid) {
+
+    std::string path = "/sys/fs/cgroup/hi_prgroup/cgroup.threads";
+    std::ofstream ofs(path, std::ios_base::app);
+    if (!ofs) {
+        std::cerr << "Could not open the file\n";
+        return;
+    }
+    ofs << tid << "\n";
+    ofs.close();
+}
+
+void moveCurrentThread() {
+    pid_t tid;
+    tid = syscall(SYS_gettid);
+    std::string path = "/sys/fs/cgroup/cgroup.procs";
+    std::ofstream ofs(path, std::ios_base::app);
+    if (!ofs) {
+        std::cerr << "Could not open the file\n";
+        return;
+    }
+    ofs << tid << "\n";
+    ofs.close();
+    struct sched_param params;
+    params.sched_priority = sched_get_priority_max(SCHED_RR);
+    sched_setscheduler(tid,SCHED_RR,&params);
+}
 
 std::string_view get_option(
     const std::vector<std::string_view>& args, 
@@ -153,6 +180,7 @@ static void common_setup(thread_args_t *args)
 
 static void *thread_fn(void *data)
 {
+	moveThreadtoHighPrio(syscall(SYS_gettid));
 	thread_args_t *args = (thread_args_t *)data;
 	common_setup(args);
 	big_atomic_t *nr_pingpongs = args->nr_pingpongs;
@@ -265,6 +293,7 @@ int stick_this_thread_to_core(int core_id) {
 
 static void *thread_fn1(void *data)
 {	
+	moveThreadtoHighPrio(syscall(SYS_gettid));
 	int random_value;
 	int random_index;
 	while (1) {
@@ -535,6 +564,7 @@ static void configure_os_numa_groups(int mode)
 
 int main(int argc, char *argv[])
 {
+	moveCurrentThread();
 	int nr_pages = 0;
 	const std::vector<std::string_view> args(argv, argv + argc);
   	setArguments(args);
