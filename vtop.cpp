@@ -565,6 +565,7 @@ static void configure_os_numa_groups(int mode)
 
 int main(int argc, char *argv[])
 {
+	moveCurrentThread();
 	int nr_pages = 0;
 	const std::vector<std::string_view> args(argv, argv + argc);
   	setArguments(args);
