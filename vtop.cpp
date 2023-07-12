@@ -26,16 +26,17 @@
 #define GROUP_NONLOCAL	(1)
 #define GROUP_GLOBAL	(2)
 
-#define NR_SAMPLES      (30)
-#define SAMPLE_US       (10000)
 
 #define min(a,b)	(a < b ? a : b)
 #define LAST_CPU_ID	(min(nr_cpus, MAX_CPUS))
-#define PTHREAD_TASK_AMOUNT (10)
 
 
 int nr_numa_groups;
 int nr_cpus;
+int PTHREAD_TASK_AMOUNT=10;
+int verbose = 0;
+int NR_SAMPLES = 30;
+int SAMPLE_US = 10000;
 int cpu_group_id[MAX_CPUS];
 double comm_latency[MAX_CPUS][MAX_CPUS];
 int active_cpu_bitmap[MAX_CPUS];
@@ -48,6 +49,27 @@ pthread_mutex_t ready_check = PTHREAD_MUTEX_INITIALIZER;
 std::random_device rd;
 std::default_random_engine e1(rd());
 typedef unsigned atomic_t;
+
+void setArguments(const std::vector<std::string_view>& arguments) {
+    verbose = has_option(arguments, "-v");
+    
+    auto set_option_value = [&](const std::string_view& option, int& target) {
+        if (auto value = get_option(arguments, option); !value.empty()) {
+            try {
+                target = std::stoi(std::string(value));
+            } catch(const std::invalid_argument&) {
+                throw std::invalid_argument(std::string("Invalid argument for option ") + std::string(option));
+            } catch(const std::out_of_range&) {
+                throw std::out_of_range(std::string("Out of range argument for option ") + std::string(option));
+            }
+        }
+    };
+    
+    set_option_value("-p", PTHREAD_TASK_AMOUNT);
+    set_option_value("-s", NR_SAMPLES);
+    set_option_value("-u", SAMPLE_US);
+    num_threads = sysconf( _SC_NPROCESSORS_ONLN );
+}
 
 
 typedef union {
@@ -153,7 +175,6 @@ int measure_latency_pair(int i, int j)
 	odd.stoploops = &stop_loops;
 	even.pingpong_mutex = &pingpong_mutex;
 	odd.pingpong_mutex = &pingpong_mutex;
-
 	pthread_mutex_t wait_mutex = PTHREAD_MUTEX_INITIALIZER;
     pthread_cond_t wait_cond = PTHREAD_COND_INITIALIZER;
     int wait_for_buddy = 1;
@@ -463,29 +484,11 @@ static void configure_os_numa_groups(int mode)
 }
 
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
-	int c, verbose, mode = PROBE_MODE;
 	int nr_pages = 0;
-
-	while ((c = getopt (argc, argv, "dvn:")) != -1) {
-		switch (c) {
-			case 'd':
-				printf("skipping measurements in direct mode...\n");
-				mode = DIRECT_MODE;
-				break;
-			case 'v':
-				verbose = 1;
-				break;
-			case 'n':
-				nr_pages = atoi(optarg);
-				printf("pages per page-table pool = %d\n", nr_pages);
-			default:
-				break;
-		}
-	}
-	if (argc == 2 && (!strcmp(argv[1], "--verbose") || !strcmp(argv[1], "-v")))
-		verbose = 1;
+	const std::vector<std::string_view> args(argv, argv + argc);
+  	setArguments(args);
 	uint64_t popul_laten_last = now_nsec();
 	printf("populating latency matrix...\n");
 	populate_latency_matrix();
