@@ -50,6 +50,32 @@ std::random_device rd;
 std::default_random_engine e1(rd());
 typedef unsigned atomic_t;
 
+
+std::string_view get_option(
+    const std::vector<std::string_view>& args, 
+    const std::string_view& option_name) {
+    for (auto it = args.begin(), end = args.end(); it != end; ++it) {
+        if (*it == option_name)
+            if (it + 1 != end)
+                return *(it + 1);
+    }
+    
+    return "";
+};
+
+
+bool has_option(
+    const std::vector<std::string_view>& args, 
+    const std::string_view& option_name) {
+    for (auto it = args.begin(), end = args.end(); it != end; ++it) {
+        if (*it == option_name)
+            return true;
+    }
+    
+    return false;
+};
+
+
 void setArguments(const std::vector<std::string_view>& arguments) {
     verbose = has_option(arguments, "-v");
     
