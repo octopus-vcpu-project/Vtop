@@ -245,6 +245,19 @@ int measure_latency_pair(int i, int j)
 	return (int)best_sample;
 }
 
+int stick_this_thread_to_core(int core_id) {
+   int num_cores = sysconf(_SC_NPROCESSORS_ONLN);
+   if (core_id < 0 || core_id >= num_cores)
+      return EINVAL;
+
+   cpu_set_t cpuset;
+   CPU_ZERO(&cpuset);
+   CPU_SET(core_id, &cpuset);
+
+   pthread_t current_thread = pthread_self();    
+   return pthread_setaffinity_np(current_thread, sizeof(cpu_set_t), &cpuset);
+}
+
 static void *thread_fn1(void *data)
 {	
 	int random_value;
@@ -254,6 +267,13 @@ static void *thread_fn1(void *data)
 		if(task_stack.size() < 1 ){
 			pthread_mutex_unlock(&ready_check);
 			break;
+		}
+		for (int i = 0; i < LAST_CPU_ID; i++) {
+			if(active_cpu_bitmap[i] == 0){
+				stick_this_thread_to_core(i);
+				active_cpu_bitmap[i] == 1;
+				break;
+			}
 		}
 
 		while(1){
@@ -265,7 +285,6 @@ static void *thread_fn1(void *data)
 				break;
 			}
 	    }
-
 		active_cpu_bitmap[random_value%LAST_CPU_ID] = 1;
 		active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] = 1;
 		std::swap(task_stack[random_index], task_stack.back());
