@@ -68,7 +68,7 @@ void moveThreadtoHighPrio(pid_t tid) {
 void moveCurrentThread() {
     pid_t tid;
     tid = syscall(SYS_gettid);
-    std::string path = "/sys/fs/cgroup/cgroup.procs";
+    std::string path = "/sys/fs/cgroup//hi_prgroup/cgroup.procs";
     std::ofstream ofs(path, std::ios_base::app);
     if (!ofs) {
         std::cerr << "Could not open the file\n";
