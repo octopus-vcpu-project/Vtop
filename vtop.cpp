@@ -234,9 +234,9 @@ int measure_latency_pair(int i, int j)
 		if (sample < best_sample)
 			best_sample = sample;
 			
-			if(sample < 50){
+		if(best_sample < 50){
 				break;
-			}
+		}
 	}
 	comm_latency[i][j] = best_sample;
 	comm_latency[j][i] = best_sample;
