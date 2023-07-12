@@ -18,6 +18,9 @@
 #include <string.h>
 #include <random>
 #include <vector>
+#include <fstream>
+#include <sstream>
+
 #define PROBE_MODE	(0)
 #define DIRECT_MODE	(1)
 
