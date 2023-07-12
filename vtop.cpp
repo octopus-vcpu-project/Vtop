@@ -532,7 +532,7 @@ int main(int argc, char *argv[])
 	popul_laten_now = now_nsec();
 	printf("This time it took for group assignment to be verified%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 
-	configure_os_numa_groups(mode);
+	configure_os_numa_groups(1);
 	printf("Done...\n");
 }
 
