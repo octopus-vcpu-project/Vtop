@@ -295,7 +295,6 @@ int stick_this_thread_to_core(int core_id) {
 
 static void *thread_fn1(void *data)
 {	
-	moveThreadtoHighPrio(syscall(SYS_gettid));
 	int random_value;
 	int random_index;
 	while (1) {
@@ -359,7 +358,7 @@ static void populate_latency_matrix(void)
 	}
 	std::cout << "myvector stores " << int(task_stack.size()) << " numbers.\n";
 	while(task_stack.size() > 0 ){
-		sleep(1);
+		sleep(4);
 	}
 	for (int i = 0; i < PTHREAD_TASK_AMOUNT; i++) {
     	pthread_join(worker_tasks[i], NULL);
@@ -566,7 +565,6 @@ static void configure_os_numa_groups(int mode)
 
 int main(int argc, char *argv[])
 {
-	moveCurrentThread();
 	int nr_pages = 0;
 	const std::vector<std::string_view> args(argv, argv + argc);
   	setArguments(args);
