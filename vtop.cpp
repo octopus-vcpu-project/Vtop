@@ -237,6 +237,7 @@ int measure_latency_pair(int i, int j)
 		if(best_sample < 50){
 				break;
 		}
+
 	}
 	comm_latency[i][j] = best_sample;
 	comm_latency[j][i] = best_sample;
@@ -246,7 +247,7 @@ int measure_latency_pair(int i, int j)
 	stop_loops = 0;
 	odd.buddy = 0;
 	pingpong_mutex = NULL;
-	return (int)best_sample;
+	return (int)(best_sample*100);
 }
 
 int stick_this_thread_to_core(int core_id) {
