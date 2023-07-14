@@ -44,6 +44,7 @@ int cpu_group_id[MAX_CPUS];
 double comm_latency[MAX_CPUS][MAX_CPUS];
 int active_cpu_bitmap[MAX_CPUS];
 std::vector<int> task_stack;
+std::vector<std::vector<int>> top_stack;
 pthread_t worker_tasks[MAX_CPUS];
 static size_t nr_relax = 0;
 pthread_mutex_t ready_check = PTHREAD_MUTEX_INITIALIZER;
@@ -293,9 +294,61 @@ int stick_this_thread_to_core(int core_id) {
    return pthread_setaffinity_np(current_thread, sizeof(cpu_set_t), &cpuset);
 }
 
+
+int get_pair_to_test(){
+	for(int i=0;i<LAST_CPU_ID;i++){
+		for(int j=0;j<LAST_CPU_ID;j++){
+			if(top_stack[i][j] == -1){
+				top_stack[i][j] == -2;
+				return(i * LAST_CPU_ID + j);
+			} 
+		}
+	}
+	return -1;
+}
+
+int get_latency_class(int latency){
+	if( latency< 80000){
+		return 0;
+	}
+	
+	if( 80000<latency< 11000){
+		return 1;
+	}
+	return 2;
+}
+
+void set_latency_pair(int x,int y,int latency_class){
+	top_stack[x][y] = latency_class;
+	top_stack[y][x] = latency_class;
+}
+
+void apply_optimization(int best, int testing_value){
+	int i = testing_value%LAST_CPU_ID;
+	int j =(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID;
+	int latency_class = get_latency_class(best);
+	int sub_rel;
+	set_latency_pair(i,j,latency_class);
+	//do optimization of the I CPU first
+	
+	for(int x=0;x<LAST_CPU_ID;x++){
+		for(int y=0;y<LAST_CPU_ID;y++){
+			sub_rel = top_stack[y][x];
+			
+			for(int z=0;z<LAST_CPU_ID;z++){
+				if(top_stack[y][z]<sub_rel && top_stack[x][z] == -1){
+					set_latency_pair(x,z,sub_rel);
+				}
+				
+			}
+
+		}
+	}
+}
+
 static void *thread_fn1(void *data)
 {	
-	int random_value;
+	int testing_value;
 	int random_index;
 	while (1) {
 		pthread_mutex_lock(&ready_check);
@@ -303,33 +356,17 @@ static void *thread_fn1(void *data)
 			pthread_mutex_unlock(&ready_check);
 			break;
 		}
-		for (int i = 0; i < LAST_CPU_ID; i++) {
-			if(active_cpu_bitmap[i] == 0){
-				stick_this_thread_to_core(i);
-				active_cpu_bitmap[i] == 1;
-				break;
-			}
-		}
+		testing_value = get_pair_to_test();
 
-		while(1){
-        std::uniform_int_distribution<int> uniform_dist(0, task_stack.size() - 1);
 		
-        random_index = uniform_dist(e1);
-        random_value = task_stack[random_index];
-			if(active_cpu_bitmap[random_value%LAST_CPU_ID] == 0 && active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] == 0 ) {
-				break;
-			}
-	    }
-		active_cpu_bitmap[random_value%LAST_CPU_ID] = 1;
-		active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] = 1;
-		std::swap(task_stack[random_index], task_stack.back());
-		task_stack.pop_back();
+		active_cpu_bitmap[testing_value%LAST_CPU_ID] = 1;
+		active_cpu_bitmap[(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID] = 1;
 
 		pthread_mutex_unlock(&ready_check);
 		
-		int best = measure_latency_pair(random_value%LAST_CPU_ID,(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID);
-		active_cpu_bitmap[random_value%LAST_CPU_ID] = 0;
-		active_cpu_bitmap[(random_value-(random_value%LAST_CPU_ID))/LAST_CPU_ID] = 0;
+		int best = measure_latency_pair(testing_value%LAST_CPU_ID,(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID);
+		active_cpu_bitmap[testing_value%LAST_CPU_ID] = 0;
+		active_cpu_bitmap[(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID] = 0;
 		
 		std::cout << "myvector stores " << int(task_stack.size()) << " numbers.\n"<<"Sample passed: "<< best<< "   ";
 		
@@ -347,10 +384,13 @@ static void populate_latency_matrix(void)
 	nr_cpus = get_nprocs();
 	for (i = 0; i < LAST_CPU_ID; i++) {
 		active_cpu_bitmap[i] = 0;
+		std::vector<int> cpumap(LAST_CPU_ID);
+		top_stack.push_back(cpumap);
 		for (j = i + 1; j < LAST_CPU_ID; j++) {
 			task_stack.push_back(LAST_CPU_ID * i + j);
 		}
 	}
+
 	for (i = 0; i < PTHREAD_TASK_AMOUNT; i++) {
 		std::cout << "pthread task amount  " << PTHREAD_TASK_AMOUNT << " numbers.\n";
 		thread_args_t newtest;
