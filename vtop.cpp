@@ -595,7 +595,7 @@ static void construct_vnuma_groups(void)
 			int nr_tt_groups= 0;
 			printf("   Pair Group-%d\n", g);
 			for (j = 0; j < LAST_CPU_ID; j++){
-					if (cpu_tt_id[j] == g) {
+					if (cpu_pair_id[j] == g) {
 						if (cpu_tt_id[j] == -1){
 						cpu_tt_id[j] = nr_tt_groups;
 						nr_tt_groups++;
