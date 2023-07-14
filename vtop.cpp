@@ -41,6 +41,8 @@ int verbose = 0;
 int NR_SAMPLES = 30;
 int SAMPLE_US = 10000;
 int cpu_group_id[MAX_CPUS];
+int cpu_pair_id[MAX_CPUS];
+int cpu_tt_id[MAX_CPUS];
 int active_cpu_bitmap[MAX_CPUS];
 int finished = 0;
 std::vector<int> task_stack;
@@ -542,42 +544,41 @@ static void validate_group_assignment()
 	printf("PASS!!!\n");
 }
 
+
+void DFS(int node, vector<int>& group, vector<bool>& visited, const vector<vector<int>>& matrix) {
+    visited[node] = true;
+    group.push_back(node);
+    for (int i = 0; i < matrix[node].size(); i++) {
+        if (matrix[node][i] != 0 && !visited[i]) {
+            DFS(i, group, visited, matrix);
+        }
+    }
+}
+
+void findGroups(const vector<vector<int>>& matrix) {
+    int n = matrix.size();
+    vector<bool> visited(n, false);
+    for (int i = 0; i < n; i++) {
+        if (!visited[i]) {
+            vector<int> group;
+            DFS(i, group, visited, matrix);
+            
+            // Print group
+            cout << "[";
+            for (int j = 0; j < group.size(); j++) {
+                cout << group[j];
+                if (j < group.size() - 1) {
+                    cout << ",";
+                }
+            }
+            cout << "]" << endl;
+        }
+    }
+}
+
 static void construct_vnuma_groups(void)
 {
-	int i, j, count, nr_numa_groups = 0;
-	double min, min_2;
-
-	/* Invalidate group IDs */
-	for (i = 0; i < LAST_CPU_ID; i++)
-		cpu_group_id[i] = -1;
-
-	for (i = 0; i < LAST_CPU_ID; i++) {
-		/* If already assigned to a vNUMA group, then skip */
-		if (cpu_group_id[i] != -1)
-			continue;
-
-	 	/* Else, add CPU to the next group and generate a new group id */
-		cpu_group_id[i] = nr_numa_groups;
-		nr_numa_groups++;
-
-		/* Add all CPUS that are within 40% of min latency to the same group as i */
-		for (j = 0 ; j < LAST_CPU_ID; j++) {
-			//printf("checking %d %d Min: %f pair: %f\n", i, j, min, top_stack[i][j]);
-			if (top_stack[i][j]<4){
-				cpu_group_id[j] = cpu_group_id[i];
-			}
-		}	
-	}
-	for (i = 0; i < nr_numa_groups; i++) {
-		printf("vNUMA-Group-%d", i);
-		count = 0;
-		for (j = 0; j < LAST_CPU_ID; j++)
-			if (cpu_group_id[j] == i) {
-				printf("%5d", j);
-				count++;
-			}
-		printf("\t(%d CPUS)\n", count);
-	}
+	findGroups(top_stack);
 }
 
 #define CPU_ID_SHIFT		(16)
