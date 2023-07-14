@@ -546,94 +546,42 @@ static void validate_group_assignment()
 
 static void construct_vnuma_groups(void)
 {
-	int i, j, count, nr_numa_groups,nr_tt_groups,nr_pair_groups = 0;
+	int i, j, count, nr_numa_groups = 0;
 	double min, min_2;
 
 	/* Invalidate group IDs */
-	for (i = 0; i < LAST_CPU_ID; i++){
-		cpu_group_id[i] = -1;
-		cpu_pair_id[i] = -1;
-		cpu_tt_id[i] = -1;
-	}
+	for (i = 0; i < LAST_CPU_ID; i++)
+		nr_numa_groups[i] = -1;
 
 	for (i = 0; i < LAST_CPU_ID; i++) {
 		/* If already assigned to a vNUMA group, then skip */
-		
-		bool flag = false;
-		if (cpu_group_id[i] == -1){
-			cpu_group_id[i] = nr_numa_groups;
-			nr_numa_groups++;
-			flag= true;
-		}
-		
-		if (cpu_pair_id[i] == -1){
-			cpu_group_id[i] = nr_pair_groups;
-			nr_pair_groups++;
-			flag= true;
-		}
-		
-		if (cpu_tt_id[i] == -1){
-			cpu_tt_id[i] = nr_tt_groups;
-			nr_tt_groups++;
-			flag= true;
-		}
-		if(flag){
-			for (j = 0 ; j < LAST_CPU_ID; j++) {
-				//printf("checking %d %d Min: %f pair: %f\n", i, j, min, top_stack[i][j]);
-				if (top_stack[i][j]<4){
-					cpu_group_id[j] = cpu_group_id[i];
-				}
-				if (top_stack[i][j]<3){
-					cpu_pair_id[j] = cpu_pair_id[i];
-				}
-				if (top_stack[i][j]<2){
-					cpu_tt_id[j] = cpu_tt_id[i];
-				}
-			}	
-		}
+		if (cpu_group_id[i] != -1)
+			continue;
+
 	 	/* Else, add CPU to the next group and generate a new group id */
+		cpu_group_id[i] = nr_numa_groups;
+		nr_numa_groups++;
 
 		/* Add all CPUS that are within 40% of min latency to the same group as i */
-	
+		for (j = 0 ; j < LAST_CPU_ID; j++) {
+			//printf("checking %d %d Min: %f pair: %f\n", i, j, min, top_stack[i][j]);
+			if (top_stack[i][j]<4){
+				cpu_group_id[j] = cpu_group_id[i];
+			}
+		}	
 	}
 
 
 	
 	for (i = 0; i < nr_numa_groups; i++) {
-		printf("vNUMA-Group-%d\n", i);
-		
-		for (int j = 0; j < nr_pair_groups; j++) {
-			int pair_existence = 0;
-		
-			for (int z = 0; z < nr_tt_groups; z++) {
-				int tt_existence = 0;
-				for (int m = 0; m < LAST_CPU_ID; m++){
-					if(cpu_group_id[m] == i){
-						if (cpu_pair_id[m] == j) {
-							pair_existence = 1;
-							if(cpu_tt_id[m]==z){
-								tt_existence = 1;
-							}
-						}
-					}
-				}
-				if(tt_existence){
-					printf("thread");
-					for (int m = 0; m < LAST_CPU_ID; m++){
-					if(cpu_group_id[m] == i){
-						if (cpu_pair_id[m] == j) {
-							if(cpu_tt_id[m]==z){
-								printf(" CPU%d ", m);
-								}
-							}
-						}
-					}
-				}
+		printf("vNUMA-Group-%d", i);
+		count = 0;
+		for (j = 0; j < LAST_CPU_ID; j++)
+			if (cpu_group_id[j] == i) {
+				printf("%5d", j);
+				count++;
 			}
-			if(pair_existence){
-				printf("Pair-%d:\n", j);
-			}
-		}
+		printf("\t(%d CPUS)\n", count);
 	}
 
 }
