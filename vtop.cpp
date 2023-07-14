@@ -365,8 +365,8 @@ static void *thread_fn1(void *data)
 		pthread_mutex_unlock(&ready_check);
 		
 		int best = measure_latency_pair(testing_value%LAST_CPU_ID,(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID);
-		
-		apply_optimization(best,testing_value)
+
+		apply_optimization(best,testing_value);
 		active_cpu_bitmap[testing_value%LAST_CPU_ID] = 0;
 		active_cpu_bitmap[(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID] = 0;
 		
