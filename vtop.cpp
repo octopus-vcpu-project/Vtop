@@ -411,7 +411,7 @@ static void populate_latency_matrix(void)
 	}
 	std::cout << "myvector stores " << int(task_stack.size()) << " numbers.\n";
 	while(finished == 0){
-		sleep(1);
+		sleep(0.5);
 	}
 	for (int i = 0; i < PTHREAD_TASK_AMOUNT; i++) {
     	pthread_join(worker_tasks[i], NULL);
