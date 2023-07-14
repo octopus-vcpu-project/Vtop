@@ -546,90 +546,51 @@ static void validate_group_assignment()
 
 static void construct_vnuma_groups(void)
 {
-	int i, j, count, nr_numa_groups= 0;
+	int i, j, count, nr_numa_groups = 0;
 	double min, min_2;
 
 	/* Invalidate group IDs */
-	for (i = 0; i < LAST_CPU_ID; i++){
-		cpu_group_id[i] = -1;
-		cpu_pair_id[i] = -1;
-		cpu_tt_id[1]= -1;
-	}
+	for (i = 0; i < LAST_CPU_ID; i++)
+		nr_numa_groups[i] = -1;
 
 	for (i = 0; i < LAST_CPU_ID; i++) {
-		if (cpu_group_id[i] != -1)
+		/* If already assigned to a vNUMA group, then skip */
+		if (cpu_tt_id[i] != -1)
 			continue;
 
-		cpu_group_id[i] = nr_numa_groups;
+	 	/* Else, add CPU to the next group and generate a new group id */
+		cpu_tt_id[i] = nr_numa_groups;
 		nr_numa_groups++;
 
+		/* Add all CPUS that are within 40% of min latency to the same group as i */
 		for (j = 0 ; j < LAST_CPU_ID; j++) {
+			//printf("checking %d %d Min: %f pair: %f\n", i, j, min, top_stack[i][j]);
 			if (top_stack[i][j]<4){
-				cpu_group_id[j] = cpu_group_id[i];
+				cpu_tt_id[j] = cpu_tt_id[i];
 			}
 		}	
 	}
 
 
-
+	
 	for (i = 0; i < nr_numa_groups; i++) {
-		printf("vNUMA-Group-%d\n", i);
+		printf("vNUMA-Group-%d", i);
 		count = 0;
-		int nr_pair_groups= 0;
-		for (j = 0; j < LAST_CPU_ID; j++){
+		for (j = 0; j < LAST_CPU_ID; j++)
 			if (cpu_group_id[j] == i) {
-				if (cpu_pair_id[j] == -1){
-					cpu_pair_id[j] = nr_pair_groups;
-					nr_pair_groups++;
-					for (int z = 0 ; z < LAST_CPU_ID; z++) {
-						if (top_stack[j][z]<3){
-							cpu_pair_id[z] = cpu_pair_id[i];
-						}
-					}
-				}
+				printf("%5d", j);
+				count++;
 			}
-		}
-
-		
-		for (int g = 0; g < nr_pair_groups; g++) {
-			int nr_tt_groups= 0;
-			printf("   Pair Group-%d\n", g);
-			for (j = 0; j < LAST_CPU_ID; j++){
-					if (cpu_pair_id[j] == g) {
-						if (cpu_tt_id[j] == -1){
-						cpu_tt_id[j] = nr_tt_groups;
-						nr_tt_groups++;
-							for (int z = 0 ; z < LAST_CPU_ID; z++) {
-								if (top_stack[j][z]<2){
-									cpu_tt_id[z] = cpu_tt_id[j];
-								}
-							}
-						}
-					}
-			}
-			for (int p = 0; p < nr_tt_groups; p++) {
-				printf("            Thread Group-%d\n", p);
-				printf("                    ");
-				for (j = 0; j < LAST_CPU_ID; j++){
-					if (cpu_tt_id[j] == p) {
-						printf(" CPU%d ", j);
-					}
-				}
-				printf("\n");
-			}
-			
-			for (i = 0; i < LAST_CPU_ID; i++){
-			cpu_tt_id[i] = -1;
-			}
-			
-
-		}
-		for (i = 0; i < LAST_CPU_ID; i++){
-		cpu_pair_id[i] = -1;
-		}
-
+		printf("\t(%d CPUS)\n", count);
 	}
 
+	for (i = 0; i < LAST_CPU_ID; i++) {
+		printf("CPU%7d",i);
+		printf(" Pair");
+		for (j = 0; j < LAST_CPU_ID; j++)
+			printf("%7d", (int)(top_stack[i][j]));
+		printf("\n");
+	}
 }
 
 #define CPU_ID_SHIFT		(16)
