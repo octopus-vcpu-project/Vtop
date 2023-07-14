@@ -373,7 +373,9 @@ static void *thread_fn1(void *data)
 		std::cout << "myvector stores " << int(task_stack.size()) << " numbers.\n"<<"Sample passed: "<< best<< "   ";
 		
 		for (int i = 0; i < LAST_CPU_ID; i++) {
-			std::cout  << " " << active_cpu_bitmap[i] << " ";
+			for (int i = 0; i < LAST_CPU_ID; i++) {
+				std::cout  << " " << top_stack[i] << " ";
+			}
 		}
 		std::cout << "\n";
 	}
