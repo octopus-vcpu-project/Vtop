@@ -595,12 +595,12 @@ static void construct_vnuma_groups(void)
 			printf("   Pair Group-%d\n", g);
 			for (j = 0; j < LAST_CPU_ID; j++){
 					if (cpu_tt_id[j] == g) {
-						if (cpu_tt_id[i] == -1){
-						cpu_tt_id[i] = nr_tt_groups;
+						if (cpu_tt_id[j] == -1){
+						cpu_tt_id[j] = nr_tt_groups;
 						nr_tt_groups++;
-						for (j = 0 ; j < LAST_CPU_ID; j++) {
-							if (top_stack[i][j]<2){
-								cpu_tt_id[j] = cpu_tt_id[i];
+						for (int z = 0 ; z < LAST_CPU_ID; z++) {
+							if (top_stack[i][z]<2){
+								cpu_tt_id[z] = cpu_tt_id[z];
 							}
 						}
 					}
