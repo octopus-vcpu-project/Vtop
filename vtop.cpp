@@ -294,15 +294,21 @@ int stick_this_thread_to_core(int core_id) {
 
 
 int get_pair_to_test(){
+	int valid_pair_exists = false;
 	for(int i=0;i<LAST_CPU_ID;i++){
 		for(int j=0;j<LAST_CPU_ID;j++){
+			valid_pair_exists = true;
 			if(top_stack[i][j] == 0){
+				if(active_cpu_bitmap[i] == 0 && active_cpu_bitmap[j]==0)
 				top_stack[i][j] == -1;
 				return(i * LAST_CPU_ID + j);
 			} 
 		}
 	}
-	return -1;
+	if(valid_pair_exists){
+		return -1;
+	}
+	return -2;
 }
 
 int get_latency_class(int latency){
@@ -327,8 +333,6 @@ void apply_optimization(int best, int testing_value){
 	int latency_class = get_latency_class(best);
 	int sub_rel;
 	set_latency_pair(i,j,latency_class);
-	//do optimization of the I CPU first
-	
 	for(int x=0;x<LAST_CPU_ID;x++){
 		for(int y=0;y<LAST_CPU_ID;y++){
 			sub_rel = top_stack[y][x];
@@ -351,24 +355,29 @@ static void *thread_fn1(void *data)
 	while (1) {
 		pthread_mutex_lock(&ready_check);
 		testing_value = get_pair_to_test();
-		
-		if(testing_value == -1 ){
+		if(testing_value == -2){
 			pthread_mutex_unlock(&ready_check);
 			finished=1;
 			break;
 		}
 		
+		while(testing_value == -1){
+			pthread_mutex_unlock(&ready_check);
+			usleep(100);
+			pthread_mutex_lock(&ready_check);
+			testing_value = get_pair_to_test();
+		}
 		active_cpu_bitmap[testing_value%LAST_CPU_ID] = 1;
 		active_cpu_bitmap[(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID] = 1;
 
 		pthread_mutex_unlock(&ready_check);
 		task_stack.pop_back();
 		int best = measure_latency_pair(testing_value%LAST_CPU_ID,(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID);
-
+		pthread_mutex_lock(&ready_check);
 		apply_optimization(best,testing_value);
 		active_cpu_bitmap[testing_value%LAST_CPU_ID] = 0;
 		active_cpu_bitmap[(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID] = 0;
-		
+		pthread_mutex_unlock(&ready_check);
 		std::cout << "myvector stores " << int(task_stack.size()) << " numbers.\n"<<"Sample passed: "<< best<< "   ";
 		
 		for (int i = 0; i < LAST_CPU_ID; i++) {
