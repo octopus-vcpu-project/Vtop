@@ -374,7 +374,7 @@ static void *thread_fn1(void *data)
 		
 		for (int i = 0; i < LAST_CPU_ID; i++) {
 			for (int z = 0; z < LAST_CPU_ID; z++) {
-				std::cout  << " " << top_stack[i] << " ";
+				std::cout  << " " << top_stack[i][z] << " ";
 			}
 		}
 		std::cout << "\n";
