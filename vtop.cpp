@@ -368,6 +368,12 @@ static void *thread_fn1(void *data)
 			pthread_mutex_lock(&ready_check);
 			testing_value = get_pair_to_test();
 		}
+		
+		if(testing_value == -2){
+			pthread_mutex_unlock(&ready_check);
+			finished=1;
+			break;
+		}
 		active_cpu_bitmap[testing_value%LAST_CPU_ID] = 1;
 		active_cpu_bitmap[(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID] = 1;
 
