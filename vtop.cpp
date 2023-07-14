@@ -42,6 +42,7 @@ int NR_SAMPLES = 30;
 int SAMPLE_US = 10000;
 int cpu_group_id[MAX_CPUS];
 int active_cpu_bitmap[MAX_CPUS];
+int finished = 0;
 std::vector<int> task_stack;
 std::vector<std::vector<int>> top_stack;
 pthread_t worker_tasks[MAX_CPUS];
@@ -353,6 +354,7 @@ static void *thread_fn1(void *data)
 		
 		if(testing_value == -1 ){
 			pthread_mutex_unlock(&ready_check);
+			finished=1;
 			break;
 		}
 		
@@ -398,7 +400,7 @@ static void populate_latency_matrix(void)
 		pthread_create(&worker_tasks[i], NULL, thread_fn1, &newtest);
 	}
 	std::cout << "myvector stores " << int(task_stack.size()) << " numbers.\n";
-	while(testing_value == -1 ){
+	while(finished == 0){
 		sleep(4);
 	}
 	for (int i = 0; i < PTHREAD_TASK_AMOUNT; i++) {
