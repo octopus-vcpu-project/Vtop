@@ -618,7 +618,14 @@ static void construct_vnuma_groups(void)
 				printf("\n");
 			}
 			
+			for (i = 0; i < LAST_CPU_ID; i++){
+			cpu_tt_id[i] = -1;
+			}
+			
 
+		}
+		for (i = 0; i < LAST_CPU_ID; i++){
+		cpu_pair_id[i] = -1;
 		}
 
 	}
