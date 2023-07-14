@@ -580,7 +580,7 @@ static void construct_vnuma_groups(void)
 				if (cpu_pair_id[j] == -1){
 					cpu_pair_id[j] = nr_pair_groups;
 					nr_pair_groups++;
-					for (z = 0 ; z < LAST_CPU_ID; z++) {
+					for (int z = 0 ; z < LAST_CPU_ID; z++) {
 						if (top_stack[i][z]<3){
 							cpu_pair_id[z] = cpu_pair_id[i];
 						}
