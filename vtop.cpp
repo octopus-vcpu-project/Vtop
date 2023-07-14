@@ -656,4 +656,3 @@ int main(int argc, char *argv[])
 	configure_os_numa_groups(1);
 	printf("Done...\n");
 }
-
