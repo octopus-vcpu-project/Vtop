@@ -41,7 +41,6 @@ int verbose = 0;
 int NR_SAMPLES = 30;
 int SAMPLE_US = 10000;
 int cpu_group_id[MAX_CPUS];
-double top_stack[MAX_CPUS][MAX_CPUS];
 int active_cpu_bitmap[MAX_CPUS];
 std::vector<int> task_stack;
 std::vector<std::vector<int>> top_stack;
