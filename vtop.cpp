@@ -306,11 +306,11 @@ int get_pair_to_test(){
 }
 
 int get_latency_class(int latency){
-	if( latency< 6000){
+	if( latency< 5000){
 		return 1;
 	}
 	
-	if( 6000<latency && latency<9000){
+	if( 5000<latency && latency<7000){
 		return 2;
 	}
 	return 3;
