@@ -547,28 +547,14 @@ static void construct_vnuma_groups(void)
 		cpu_group_id[i] = nr_numa_groups;
 		nr_numa_groups++;
 
-		/* Get min latency */	
-		min = get_min_latency(i, GROUP_GLOBAL);
-		min_2 = get_min2_latency(i, GROUP_GLOBAL, min);
-#if 0
-		if (min_2 > 2 * min)
-			min = min_2;
-#endif
 		/* Add all CPUS that are within 40% of min latency to the same group as i */
 		for (j = i + 1 ; j < LAST_CPU_ID; j++) {
 			//printf("checking %d %d Min: %f pair: %f\n", i, j, min, top_stack[i][j]);
-			if (min >= 10000 && top_stack[i][j] < min * 1.40)
+			if (top_stack[i][j]<3){
 				cpu_group_id[j] = cpu_group_id[i];
-
-			/* allow higher tolerance for small values */
-			if (min < 10000 && top_stack[i][j] < min * 1.60)
-				cpu_group_id[j] = cpu_group_id[i]; 
-		}
+			}
+		}	
 	}
-#if 0
-	for (i = 0; i < LAST_CPU_ID; i++)
-		printf("CPUID: %d GroupID: %d\n", i, cpu_group_id[i]);
-#endif
 	for (i = 0; i < nr_numa_groups; i++) {
 		printf("vNUMA-Group-%d", i);
 		count = 0;
