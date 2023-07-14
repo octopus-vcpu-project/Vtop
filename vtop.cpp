@@ -600,21 +600,22 @@ static void construct_vnuma_groups(void)
 						cpu_tt_id[j] = nr_tt_groups;
 						nr_tt_groups++;
 						for (int z = 0 ; z < LAST_CPU_ID; z++) {
-							if (top_stack[i][z]<2){
+							if (top_stack[j][z]<2){
 								cpu_tt_id[z] = cpu_tt_id[z];
 							}
 						}
 					}
 				}
 			}
-			for (int g = 0; g < nr_tt_groups; g++) {
-				printf("            Thread Group-%d\n", g);
+			for (int p = 0; p < nr_tt_groups; p++) {
+				printf("            Thread Group-%d\n", p);
 				printf("                    ");
 				for (j = 0; j < LAST_CPU_ID; j++){
-					if (cpu_tt_id[j] == g) {
-						printf("CPU%d", j);
+					if (cpu_tt_id[j] == p) {
+						printf(" CPU%d ", j);
 					}
 				}
+				printf("\n");
 			}
 			
 
