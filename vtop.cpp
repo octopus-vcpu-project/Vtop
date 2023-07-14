@@ -367,7 +367,7 @@ static void *thread_fn1(void *data)
 		
 		while(testing_value == -1){
 			pthread_mutex_unlock(&ready_check);
-			usleep(50);
+			usleep(10);
 			pthread_mutex_lock(&ready_check);
 			testing_value = get_pair_to_test();
 		}
