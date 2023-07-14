@@ -550,8 +550,11 @@ static void construct_vnuma_groups(void)
 	double min, min_2;
 
 	/* Invalidate group IDs */
-	for (i = 0; i < LAST_CPU_ID; i++)
+	for (i = 0; i < LAST_CPU_ID; i++){
 		cpu_group_id[i] = -1;
+		cpu_pair_id[i] = -1;
+		cpu_tt_id[i] = -1;
+	}
 
 	for (i = 0; i < LAST_CPU_ID; i++) {
 		/* If already assigned to a vNUMA group, then skip */
