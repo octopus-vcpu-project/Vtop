@@ -298,8 +298,8 @@ int stick_this_thread_to_core(int core_id) {
 int get_pair_to_test(){
 	for(int i=0;i<LAST_CPU_ID;i++){
 		for(int j=0;j<LAST_CPU_ID;j++){
-			if(top_stack[i][j] == -1){
-				top_stack[i][j] == -2;
+			if(top_stack[i][j] == 0){
+				top_stack[i][j] == -1;
 				return(i * LAST_CPU_ID + j);
 			} 
 		}
@@ -309,13 +309,13 @@ int get_pair_to_test(){
 
 int get_latency_class(int latency){
 	if( latency< 80000){
-		return 0;
+		return 1;
 	}
 	
 	if( 80000<latency< 11000){
-		return 1;
+		return 2;
 	}
-	return 2;
+	return 3;
 }
 
 void set_latency_pair(int x,int y,int latency_class){
@@ -336,7 +336,7 @@ void apply_optimization(int best, int testing_value){
 			sub_rel = top_stack[y][x];
 			
 			for(int z=0;z<LAST_CPU_ID;z++){
-				if(top_stack[y][z]<sub_rel && top_stack[x][z] == -1){
+				if((top_stack[y][z]<sub_rel && top_stack[y][z]!=0) && top_stack[x][z] == 0){
 					set_latency_pair(x,z,sub_rel);
 				}
 				
@@ -365,6 +365,8 @@ static void *thread_fn1(void *data)
 		pthread_mutex_unlock(&ready_check);
 		
 		int best = measure_latency_pair(testing_value%LAST_CPU_ID,(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID);
+		
+		apply_optimization(best,testing_value)
 		active_cpu_bitmap[testing_value%LAST_CPU_ID] = 0;
 		active_cpu_bitmap[(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID] = 0;
 		
