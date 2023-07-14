@@ -548,7 +548,7 @@ static void construct_vnuma_groups(void)
 		nr_numa_groups++;
 
 		/* Add all CPUS that are within 40% of min latency to the same group as i */
-		for (j = i + 1 ; j < LAST_CPU_ID; j++) {
+		for (j = 0 ; j < LAST_CPU_ID; j++) {
 			//printf("checking %d %d Min: %f pair: %f\n", i, j, min, top_stack[i][j]);
 			if (top_stack[i][j]<3){
 				cpu_group_id[j] = cpu_group_id[i];
