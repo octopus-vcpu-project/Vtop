@@ -564,14 +564,14 @@ void findGroups(const vector<vector<int>>& matrix) {
             DFS(i, group, visited, matrix);
             
             // Print group
-            cout << "[";
+            std::cout << "[";
             for (int j = 0; j < group.size(); j++) {
                 cout << group[j];
                 if (j < group.size() - 1) {
-                    cout << ",";
+                    std::cout << ",";
                 }
             }
-            cout << "]" << endl;
+            std::cout << "]" << std::endl;
         }
     }
 }
