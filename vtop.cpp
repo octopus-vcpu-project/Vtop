@@ -561,13 +561,13 @@ static void construct_vnuma_groups(void)
 		}
 		
 		if (cpu_pair_id[i] == -1){
-			cpu_group_id[i] = nr_tt_groups;
-			nr_tt_groups++;
+			cpu_group_id[i] = nr_pair_groups;
+			nr_pair_groups++;
 		}
 		
 		if (cpu_tt_id[i] == -1){
-			cpu_tt_id[i] = nr_pair_groups;
-			nr_pair_groups++;
+			cpu_tt_id[i] = nr_tt_groups;
+			nr_tt_groups++;
 		}
 	 	/* Else, add CPU to the next group and generate a new group id */
 
@@ -589,14 +589,40 @@ static void construct_vnuma_groups(void)
 
 	
 	for (i = 0; i < nr_numa_groups; i++) {
-		printf("vNUMA-Group-%d", i);
-		count = 0;
-		for (j = 0; j < LAST_CPU_ID; j++)
-			if (cpu_group_id[j] == i) {
-				printf("%5d", j);
-				count++;
+		printf("vNUMA-Group-%d\n", i);
+		
+		for (int j = 0; j < cpu_pair_id; j++) {
+			int pair_existence = 0;
+		
+			for (int z = 0; z < cpu_tt_id; z++) {
+				int tt_existence = 0;
+				for (int m = 0; m < LAST_CPU_ID; m++){
+					if(cpu_group_id[m] == i){
+						if (cpu_pair_id[m] == j) {
+							pair_existence = 1;
+							if(cpu_tt_id[m]==z){
+								tt_existence = 1;
+							}
+						}
+					}
+				}
+				if(tt_existence){
+					printf("thread");
+					for (int m = 0; m < LAST_CPU_ID; m++){
+					if(cpu_group_id[m] == i){
+						if (cpu_pair_id[m] == j) {
+							if(cpu_tt_id[m]==z){
+								printf(" CPU%d ", m);
+								}
+							}
+						}
+					}
+				}
 			}
-		printf("\t(%d CPUS)\n", count);
+			if(pair_existence){
+				printf("Pair-%d:\n", j);
+			}
+		}
 	}
 
 }
