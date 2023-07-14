@@ -306,7 +306,7 @@ int get_pair_to_test(){
 }
 
 int get_latency_class(int latency){
-	if( latency< 8000){
+	if( latency< 11000){
 		return 1;
 	}
 	return 2;
