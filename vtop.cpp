@@ -591,10 +591,10 @@ static void construct_vnuma_groups(void)
 	for (i = 0; i < nr_numa_groups; i++) {
 		printf("vNUMA-Group-%d\n", i);
 		
-		for (int j = 0; j < cpu_pair_id; j++) {
+		for (int j = 0; j < nr_pair_groups; j++) {
 			int pair_existence = 0;
 		
-			for (int z = 0; z < cpu_tt_id; z++) {
+			for (int z = 0; z < nr_tt_groups; z++) {
 				int tt_existence = 0;
 				for (int m = 0; m < LAST_CPU_ID; m++){
 					if(cpu_group_id[m] == i){
