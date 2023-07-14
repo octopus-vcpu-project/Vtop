@@ -558,35 +558,43 @@ static void construct_vnuma_groups(void)
 
 	for (i = 0; i < LAST_CPU_ID; i++) {
 		/* If already assigned to a vNUMA group, then skip */
+		
+		bool flag = false;
 		if (cpu_group_id[i] == -1){
 			cpu_group_id[i] = nr_numa_groups;
 			nr_numa_groups++;
+			flag= true;
 		}
 		
 		if (cpu_pair_id[i] == -1){
 			cpu_group_id[i] = nr_pair_groups;
 			nr_pair_groups++;
+			flag= true;
 		}
 		
 		if (cpu_tt_id[i] == -1){
 			cpu_tt_id[i] = nr_tt_groups;
 			nr_tt_groups++;
+			flag= true;
+		}
+		if(flag){
+			for (j = 0 ; j < LAST_CPU_ID; j++) {
+				//printf("checking %d %d Min: %f pair: %f\n", i, j, min, top_stack[i][j]);
+				if (top_stack[i][j]<4){
+					cpu_group_id[j] = cpu_group_id[i];
+				}
+				if (top_stack[i][j]<3){
+					cpu_pair_id[j] = cpu_pair_id[i];
+				}
+				if (top_stack[i][j]<2){
+					cpu_tt_id[j] = cpu_tt_id[i];
+				}
+			}	
 		}
 	 	/* Else, add CPU to the next group and generate a new group id */
 
 		/* Add all CPUS that are within 40% of min latency to the same group as i */
-		for (j = 0 ; j < LAST_CPU_ID; j++) {
-			//printf("checking %d %d Min: %f pair: %f\n", i, j, min, top_stack[i][j]);
-			if (top_stack[i][j]<4){
-				cpu_group_id[j] = cpu_group_id[i];
-			}
-			if (top_stack[i][j]<3){
-				cpu_pair_id[j] = cpu_pair_id[i];
-			}
-			if (top_stack[i][j]<2){
-				cpu_tt_id[j] = cpu_tt_id[i];
-			}
-		}	
+	
 	}
 
 
