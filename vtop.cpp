@@ -599,13 +599,13 @@ static void construct_vnuma_groups(void)
 						if (cpu_tt_id[j] == -1){
 						cpu_tt_id[j] = nr_tt_groups;
 						nr_tt_groups++;
-						for (int z = 0 ; z < LAST_CPU_ID; z++) {
-							if (top_stack[j][z]<2){
-								cpu_tt_id[z] = cpu_tt_id[z];
+							for (int z = 0 ; z < LAST_CPU_ID; z++) {
+								if (top_stack[j][z]<2){
+									cpu_tt_id[z] = cpu_tt_id[j];
+								}
 							}
 						}
 					}
-				}
 			}
 			for (int p = 0; p < nr_tt_groups; p++) {
 				printf("            Thread Group-%d\n", p);
