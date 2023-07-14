@@ -333,41 +333,20 @@ void apply_optimization(int best, int testing_value){
 	int j =(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID;
 	int latency_class = get_latency_class(best);
 	int sub_rel;
-	int other_class;
 	set_latency_pair(i,j,latency_class);
 	for(int x=0;x<LAST_CPU_ID;x++){
-		if(top_stack[i][x]<latency_class && latency_class != 0){
-			set_latency_pair(j,x,latency_class);
-
-		}
-		if(top_stack[j][x]<latency_class && latency_class != 0){
-			set_latency_pair(i,x,latency_class);
-		}
-	}
-
-	for(int x=0;x<LAST_CPU_ID;x++){
-		if(top_stack[i][x]<latency_class && latency_class != 0){
-			other_class = top_stack[i][x];
-			for(int z=0;x<LAST_CPU_ID;x++){
-					if(top_stack[i][z]>other_class){
-						top_stack[x][z] = other_class;
-					} 
-			}
-		}
-
-		if(top_stack[j][x]<latency_class && latency_class != 0){
-			other_class = top_stack[j][x];
-			for(int z=0;x<LAST_CPU_ID;x++){
-					if(top_stack[j][z]>other_class){
-						top_stack[x][z] = other_class;
-					} 
-			}
-		}
-	}
-	
+		for(int y=0;y<LAST_CPU_ID;y++){
+			sub_rel = top_stack[y][x];
 			
-	
-	set_latency_pair(i,j,latency_class);
+			for(int z=0;z<LAST_CPU_ID;z++){
+				if((top_stack[y][z]<sub_rel && top_stack[y][z]!=0) && top_stack[x][z] == 0){
+					set_latency_pair(x,z,sub_rel);
+				}
+				
+			}
+
+		}
+	}
 }
 
 static void *thread_fn1(void *data)
@@ -385,7 +364,7 @@ static void *thread_fn1(void *data)
 		
 		while(testing_value == -1){
 			pthread_mutex_unlock(&ready_check);
-			usleep(60);
+			usleep(50);
 			pthread_mutex_lock(&ready_check);
 			testing_value = get_pair_to_test();
 		}
@@ -408,12 +387,6 @@ static void *thread_fn1(void *data)
 		pthread_mutex_unlock(&ready_check);
 		std::cout << "myvector stores " << int(task_stack.size()) << " numbers.\n"<<"Sample passed: "<< best<< "   ";
 		
-		for (int i = 0; i < LAST_CPU_ID; i++) {
-			for (int z = 0; z < LAST_CPU_ID; z++) {
-				std::cout  << " " << top_stack[i][z] << " ";
-			}
-			std::cout<<"\n";
-		}
 	}
 	return NULL;
 }
