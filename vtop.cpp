@@ -364,7 +364,7 @@ static void *thread_fn1(void *data)
 		
 		while(testing_value == -1){
 			pthread_mutex_unlock(&ready_check);
-			usleep(100);
+			usleep(50);
 			pthread_mutex_lock(&ready_check);
 			testing_value = get_pair_to_test();
 		}
@@ -387,12 +387,6 @@ static void *thread_fn1(void *data)
 		pthread_mutex_unlock(&ready_check);
 		std::cout << "myvector stores " << int(task_stack.size()) << " numbers.\n"<<"Sample passed: "<< best<< "   ";
 		
-		for (int i = 0; i < LAST_CPU_ID; i++) {
-			for (int z = 0; z < LAST_CPU_ID; z++) {
-				std::cout  << " " << top_stack[i][z] << " ";
-			}
-			std::cout<<"\n";
-		}
 	}
 	return NULL;
 }
