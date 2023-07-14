@@ -41,7 +41,7 @@ int verbose = 0;
 int NR_SAMPLES = 30;
 int SAMPLE_US = 10000;
 int cpu_group_id[MAX_CPUS];
-double comm_latency[MAX_CPUS][MAX_CPUS];
+double top_stack[MAX_CPUS][MAX_CPUS];
 int active_cpu_bitmap[MAX_CPUS];
 std::vector<int> task_stack;
 std::vector<std::vector<int>> top_stack;
@@ -270,8 +270,6 @@ int measure_latency_pair(int i, int j)
 		}
 
 	}
-	comm_latency[i][j] = best_sample;
-	comm_latency[j][i] = best_sample;
 	stop_loops = 1;
 	pthread_join(t_odd, NULL);
 	pthread_join(t_even, NULL);
@@ -416,7 +414,7 @@ static void print_population_matrix(void)
 
 	for (i = 0; i < LAST_CPU_ID; i++) {
 		for (j = 0; j < LAST_CPU_ID; j++)
-			printf("%7d", (int)(comm_latency[i][j]));
+			printf("%7d", (int)(top_stack[i][j]));
 		printf("\n");
 	}
 }
@@ -427,22 +425,22 @@ static double get_min_latency(int cpu, int group)
 	double min = INT_MAX;
 
 	for (j = 0; j < LAST_CPU_ID; j++) {
-		if (comm_latency[cpu][j] == 0)
+		if (top_stack[cpu][j] == 0)
 			continue;
 
 		/* global check */
-		if (group == GROUP_GLOBAL && comm_latency[cpu][j] < min)
-			min = comm_latency[cpu][j];
+		if (group == GROUP_GLOBAL && top_stack[cpu][j] < min)
+			min = top_stack[cpu][j];
 
 		/* local check */
 		if (group == GROUP_LOCAL && cpu_group_id[cpu] == cpu_group_id[j]
-			&& comm_latency[cpu][j] < min)
-			min = comm_latency[cpu][j];
+			&& top_stack[cpu][j] < min)
+			min = top_stack[cpu][j];
 
 		/* non-local check */
 		if (group == GROUP_NONLOCAL && cpu_group_id[cpu] != cpu_group_id[j]
-			&& comm_latency[cpu][j] < min)
-			min = comm_latency[cpu][j];
+			&& top_stack[cpu][j] < min)
+			min = top_stack[cpu][j];
 	}
 
 	return min == INT_MAX ? 0 : min;
@@ -455,22 +453,22 @@ static double get_min2_latency(int cpu, int group, double val)
 	double min = INT_MAX;
 
 	for (j = 0; j < LAST_CPU_ID; j++) {
-		if (comm_latency[cpu][j] == 0)
+		if (top_stack[cpu][j] == 0)
 			continue;
 
 		/* global check */
-		if (group == GROUP_GLOBAL && comm_latency[cpu][j] < min && comm_latency[cpu][j] > val)
-			min = comm_latency[cpu][j];
+		if (group == GROUP_GLOBAL && top_stack[cpu][j] < min && top_stack[cpu][j] > val)
+			min = top_stack[cpu][j];
 
 		/* local check */
 		if (group == GROUP_LOCAL && cpu_group_id[cpu] == cpu_group_id[j]
-			&& comm_latency[cpu][j] < min && comm_latency[cpu][j] > val)
-			min = comm_latency[cpu][j];
+			&& top_stack[cpu][j] < min && top_stack[cpu][j] > val)
+			min = top_stack[cpu][j];
 
 		/* non-local check */
 		if (group == GROUP_NONLOCAL && cpu_group_id[cpu] != cpu_group_id[j]
-			&& comm_latency[cpu][j] < min && comm_latency[cpu][j] > val)
-			min = comm_latency[cpu][j];
+			&& top_stack[cpu][j] < min && top_stack[cpu][j] > val)
+			min = top_stack[cpu][j];
 	}
 
 	return min == INT_MAX ? 0 : min;
@@ -482,22 +480,22 @@ static double get_max_latency(int cpu, int group)
 	double max = -1;
 
 	for (j = 0; j < LAST_CPU_ID; j++) {
-		if (comm_latency[cpu][j] == 0)
+		if (top_stack[cpu][j] == 0)
 			continue;
 
 		/* global check */
-		if (group == GROUP_GLOBAL && comm_latency[cpu][j] > max)
-			max = comm_latency[cpu][j];
+		if (group == GROUP_GLOBAL && top_stack[cpu][j] > max)
+			max = top_stack[cpu][j];
 
 		/* local check */
 		if (group == GROUP_LOCAL && cpu_group_id[cpu] == cpu_group_id[j]
-			&& comm_latency[cpu][j] > max)
-			max = comm_latency[cpu][j];
+			&& top_stack[cpu][j] > max)
+			max = top_stack[cpu][j];
 
 		/* non-local check */
 		if (group == GROUP_NONLOCAL && cpu_group_id[cpu] != cpu_group_id[j]
-			&& comm_latency[cpu][j] > max)
-			max = comm_latency[cpu][j];
+			&& top_stack[cpu][j] > max)
+			max = top_stack[cpu][j];
 	}
 
 	return max == -1 ? INT_MAX : max;
@@ -557,12 +555,12 @@ static void construct_vnuma_groups(void)
 #endif
 		/* Add all CPUS that are within 40% of min latency to the same group as i */
 		for (j = i + 1 ; j < LAST_CPU_ID; j++) {
-			//printf("checking %d %d Min: %f pair: %f\n", i, j, min, comm_latency[i][j]);
-			if (min >= 100 && comm_latency[i][j] < min * 1.40)
+			//printf("checking %d %d Min: %f pair: %f\n", i, j, min, top_stack[i][j]);
+			if (min >= 100 && top_stack[i][j] < min * 1.40)
 				cpu_group_id[j] = cpu_group_id[i];
 
 			/* allow higher tolerance for small values */
-			if (min < 100 && comm_latency[i][j] < min * 1.60)
+			if (min < 100 && top_stack[i][j] < min * 1.60)
 				cpu_group_id[j] = cpu_group_id[i]; 
 		}
 	}
