@@ -352,18 +352,18 @@ static void *thread_fn1(void *data)
 	int random_index;
 	while (1) {
 		pthread_mutex_lock(&ready_check);
-		if(task_stack.size() < 1 ){
+		testing_value = get_pair_to_test();
+		
+		if(testing_value == -1 ){
 			pthread_mutex_unlock(&ready_check);
 			break;
 		}
-		testing_value = get_pair_to_test();
-
 		
 		active_cpu_bitmap[testing_value%LAST_CPU_ID] = 1;
 		active_cpu_bitmap[(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID] = 1;
 
 		pthread_mutex_unlock(&ready_check);
-		
+		task_stack.pop_back();
 		int best = measure_latency_pair(testing_value%LAST_CPU_ID,(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID);
 
 		apply_optimization(best,testing_value);
