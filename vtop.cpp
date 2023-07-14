@@ -306,10 +306,14 @@ int get_pair_to_test(){
 }
 
 int get_latency_class(int latency){
-	if( latency< 11000){
+	if( latency< 8000){
 		return 1;
 	}
-	return 2;
+	
+	if( 8000<latency&& latency<11000){
+		return 2;
+	}
+	return 3;
 }
 
 void set_latency_pair(int x,int y,int latency_class){
@@ -553,11 +557,11 @@ static void construct_vnuma_groups(void)
 		/* Add all CPUS that are within 40% of min latency to the same group as i */
 		for (j = i + 1 ; j < LAST_CPU_ID; j++) {
 			//printf("checking %d %d Min: %f pair: %f\n", i, j, min, top_stack[i][j]);
-			if (min >= 100 && top_stack[i][j] < min * 1.40)
+			if (min >= 10000 && top_stack[i][j] < min * 1.40)
 				cpu_group_id[j] = cpu_group_id[i];
 
 			/* allow higher tolerance for small values */
-			if (min < 100 && top_stack[i][j] < min * 1.60)
+			if (min < 10000 && top_stack[i][j] < min * 1.60)
 				cpu_group_id[j] = cpu_group_id[i]; 
 		}
 	}
