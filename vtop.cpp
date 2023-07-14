@@ -310,10 +310,9 @@ int get_latency_class(int latency){
 		return 1;
 	}
 	
-	if( 8000<latency&& latency<11000){
+	if( 8000<latency){
 		return 2;
 	}
-	return 3;
 }
 
 void set_latency_pair(int x,int y,int latency_class){
