@@ -555,18 +555,18 @@ static void construct_vnuma_groups(void)
 
 	for (i = 0; i < LAST_CPU_ID; i++) {
 		/* If already assigned to a vNUMA group, then skip */
-		if (cpu_tt_id[i] != -1)
+		if (cpu_group_id[i] != -1)
 			continue;
 
 	 	/* Else, add CPU to the next group and generate a new group id */
-		cpu_tt_id[i] = nr_numa_groups;
+		cpu_group_id[i] = nr_numa_groups;
 		nr_numa_groups++;
 
 		/* Add all CPUS that are within 40% of min latency to the same group as i */
 		for (j = 0 ; j < LAST_CPU_ID; j++) {
 			//printf("checking %d %d Min: %f pair: %f\n", i, j, min, top_stack[i][j]);
 			if (top_stack[i][j]<4){
-				cpu_tt_id[j] = cpu_tt_id[i];
+				cpu_group_id[j] = cpu_group_id[i];
 			}
 		}	
 	}
@@ -584,13 +584,6 @@ static void construct_vnuma_groups(void)
 		printf("\t(%d CPUS)\n", count);
 	}
 
-	for (i = 0; i < LAST_CPU_ID; i++) {
-		printf("CPU%7d",i);
-		printf(" Pair");
-		for (j = 0; j < LAST_CPU_ID; j++)
-			printf("%7d", (int)(top_stack[i][j]));
-		printf("\n");
-	}
 }
 
 #define CPU_ID_SHIFT		(16)
