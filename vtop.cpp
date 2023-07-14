@@ -297,11 +297,12 @@ int get_pair_to_test(){
 	int valid_pair_exists = false;
 	for(int i=0;i<LAST_CPU_ID;i++){
 		for(int j=0;j<LAST_CPU_ID;j++){
-			valid_pair_exists = true;
 			if(top_stack[i][j] == 0){
-				if(active_cpu_bitmap[i] == 0 && active_cpu_bitmap[j]==0)
-				top_stack[i][j] == -1;
-				return(i * LAST_CPU_ID + j);
+				valid_pair_exists = true;
+					if(active_cpu_bitmap[i] == 0 && active_cpu_bitmap[j]==0){
+					top_stack[i][j] == -1;
+					return(i * LAST_CPU_ID + j);
+				}
 			} 
 		}
 	}
