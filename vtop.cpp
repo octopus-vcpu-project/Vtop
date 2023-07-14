@@ -577,12 +577,12 @@ static void construct_vnuma_groups(void)
 		int nr_pair_groups= 0;
 		for (j = 0; j < LAST_CPU_ID; j++){
 			if (cpu_group_id[j] == i) {
-				if (cpu_pair_id[i] == -1){
-					cpu_pair_id[i] = nr_pair_groups;
+				if (cpu_pair_id[j] == -1){
+					cpu_pair_id[j] = nr_pair_groups;
 					nr_pair_groups++;
-					for (j = 0 ; j < LAST_CPU_ID; j++) {
-						if (top_stack[i][j]<3){
-							cpu_pair_id[j] = cpu_pair_id[i];
+					for (z = 0 ; z < LAST_CPU_ID; z++) {
+						if (top_stack[i][z]<3){
+							cpu_pair_id[z] = cpu_pair_id[i];
 						}
 					}
 				}
