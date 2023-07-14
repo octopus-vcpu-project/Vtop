@@ -312,7 +312,7 @@ int get_latency_class(int latency){
 		return 1;
 	}
 	
-	if( 8000<latency< 11000){
+	if( 8000<latency&& latency<11000){
 		return 2;
 	}
 	return 3;
