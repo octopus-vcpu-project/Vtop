@@ -348,7 +348,7 @@ void set_latency_pair(int x,int y,int latency_class){
 	top_stack[y][x] = latency_class;
 }
 
-void apply_optimization(int best, int testing_value){
+void apply_optimization1(int best, int testing_value){
 	int i = testing_value%LAST_CPU_ID;
 	int j =(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID;
 	int latency_class = get_latency_class(best);
@@ -388,7 +388,7 @@ void apply_optimization_recur(int cpu, int last_cpu,int latency_class,std::unord
 	}
 }
 
-void apply_optimization1(int best, int testing_value){
+void apply_optimization(int best, int testing_value){
 	int i = testing_value%LAST_CPU_ID;
 	int j =(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID;
 	int latency_class = get_latency_class(best);
