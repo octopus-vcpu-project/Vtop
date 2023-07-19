@@ -639,7 +639,7 @@ static void configure_os_numa_groups(int mode)
 	}
 }
 
-std::vector<pii> linkPairs(const vector<int>& nums) {
+std::vector<pii> linkPairs(const std::vector<int>& nums) {
     std::vector<pii> vec;
 
     // If the input list is empty or has only one element, return the empty vector
@@ -661,11 +661,11 @@ std::vector<pii> linkPairs(const vector<int>& nums) {
     return vec;
 }
 
-void printPairs(const vector<pii>& vec) {
+void printPairs(const std::vector<pii>& vec) {
     for (const pii& pair : vec) {
-        cout << "(" << pair.first << ", " << pair.second << ") ";
+        std::cout << "(" << pair.first << ", " << pair.second << ") ";
     }
-    cout << endl;
+    std::cout << std::endl;
 }
 
 int main(int argc, char *argv[])
