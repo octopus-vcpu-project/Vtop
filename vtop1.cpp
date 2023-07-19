@@ -49,6 +49,7 @@ int active_cpu_bitmap[MAX_CPUS];
 int finished = 0;
 int last_i = 0;
 int last_j = 0;
+int return_pair = 0;
 std::vector<int> task_stack;
 std::vector<std::vector<int>> top_stack;
 pthread_t worker_tasks[MAX_CPUS];
@@ -301,25 +302,46 @@ int stick_this_thread_to_core(int core_id) {
 //TODO optimize with queue
 
 int get_pair_to_test(){
-	int valid_pair_exists = false;
-	for(int i=last_i;i<LAST_CPU_ID;i++){
-		for(int j=last_j;j<LAST_CPU_ID;j++){
+
+	bool valid_pair_exists = false;
+	int last_pair = -1;
+
+	for(int i=(testing_value%LAST_CPU_ID);i<LAST_CPU_ID;i++){
+		if(active_cpu_bitmap[i]==1){
+			continue;
+		}
+		for(int j=0;j<LAST_CPU_ID;j++){
+			if(active_cpu_bitmap[j]==1){
+				continue;
+			}
 			if(top_stack[i][j] == 0){
-				valid_pair_exists = true;
-					if(active_cpu_bitmap[i] == 0 && active_cpu_bitmap[j]==0){
-						top_stack[i][j] == -1;
-						return(i * LAST_CPU_ID + j);
+				if(last_pair == -1 && active_cpu_bitmap[i] != 0){
+					last_pair = (i * LAST_CPU_ID + j);
 				}
+
+				valid_pair_exists = true;
+				if(active_cpu_bitmap[i] == 0 ){
+					if(last_pair == -1){
+						return_pair = i * LAST_CPU_ID + j
+					}else{
+						return_pair = last_pair;
+					}
+					top_stack[i][j] == -1;
+					return(i * LAST_CPU_ID + j);
+				}
+
+
 			}
 		}
 	}
-	//TODO add comments(everywhere)
+	//We're testing 
 	if(valid_pair_exists){
 		return -1;
 	}
 
 	return -2;
 }
+
 
 int get_latency_class(int latency){
 	if(latency<3000){
@@ -341,15 +363,20 @@ void apply_optimization(int best, int testing_value){
 	int sub_rel;
 	set_latency_pair(i,j,latency_class);
 	for(int x=0;x<LAST_CPU_ID;x++){
-		if(top_stack[i][x]<latency_class && top_stack[i][x]!=0){
-			set_latency_pair(x,j,latency_class);
-		}
-		if(top_stack[j][x]<latency_class && top_stack[j][x]!=0){
-			set_latency_pair(x,i,latency_class);
-		}
+		for(int y=0;y<LAST_CPU_ID;y++){
+			sub_rel = top_stack[y][x];
+			
+			for(int z=0;z<LAST_CPU_ID;z++){
+				if((top_stack[y][z]<sub_rel && top_stack[y][z]!=0) && top_stack[x][z] == 0){
+					set_latency_pair(x,z,sub_rel);
+				}
+				
+			}
 
+		}
 	}
 }
+
 
 static void *thread_fn1(void *data)
 {	
@@ -440,12 +467,6 @@ static void print_population_matrix(void)
 
 
 
-/*
- * For proper assignment, the following invariant must hold:
- * The maximum latency between two CPUs in the same group (any group)
- * should be less than the minimum latency between any two CPUs from
- * different groups.
- */
 //TODO-change this to do multi-level topology
 static void construct_vnuma_groups(void)
 {
