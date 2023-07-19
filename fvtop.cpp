@@ -354,50 +354,11 @@ void apply_optimization(int best, int testing_value){
 	int latency_class = get_latency_class(best);
 	int sub_rel;
 	set_latency_pair(i,j,latency_class);
-	for(int x=0;x<LAST_CPU_ID;x++){
-		if(x==i){
-			continue;
-		}
-		for(int y=0;y<LAST_CPU_ID;y++){
-			sub_rel = top_stack[y][x];
-			
-			for(int z=0;z<LAST_CPU_ID;z++){
-				if((top_stack[y][z]<sub_rel && top_stack[y][z]!=0) && top_stack[x][z] == 0){
-					set_latency_pair(x,z,sub_rel);
-				}
-				
-			}
-
-		}
-	}
-
-	
-}
-
-
-void apply_optimization_recur(int cpu, int last_cpu,int latency_class,std::unordered_map<int,int>& tested_arr){
-	tested_arr[cpu] = 1;
-	for(int x=0;x<LAST_CPU_ID;x++){
-		if(top_stack[cpu][x] < latency_class){
-			if(top_stack[cpu][x] != 0 && tested_arr[x] == 0){
-				apply_optimization_recur(x,cpu,latency_class,tested_arr);
-			}else if(top_stack[last_cpu][x] == latency_class && top_stack[cpu][x]==0){
-				top_stack[cpu][x] = latency_class;
-			}
-		}
-	}
-}
-
-void apply_optimization1(int best, int testing_value){
-	int i = testing_value%LAST_CPU_ID;
-	int j =(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID;
-	int latency_class = get_latency_class(best);
-	int sub_rel;
-	set_latency_pair(i,j,latency_class);
 
 	std::unordered_map<int,int> tested_arr_1;
 	std::unordered_map<int,int> tested_arr_2;
-	
+	tested_arr_1[i] = 1;
+	tested_arr_2[j] = 1;
 	for(int x=0;x<LAST_CPU_ID;x++){
 		if(top_stack[i][x]<latency_class && top_stack[i][x]!=0){
 			set_latency_pair(x,j,latency_class);
@@ -409,11 +370,11 @@ void apply_optimization1(int best, int testing_value){
 	}
 
 	for(int x=0;x<LAST_CPU_ID;x++){
-		if(top_stack[i][x]<latency_class && top_stack[i][x]!=0){
+		if((tested_arr_1[x] != 1) && (true && top_stack[i][x]!=0)){
 			apply_optimization_recur(x,i,latency_class,tested_arr_1);
 		}
 
-		if(top_stack[j][x]<latency_class && top_stack[j][x]!=0){
+		if((tested_arr_2[x] != 1) && top_stack[j][x]!=0){
 			apply_optimization_recur(x,j,latency_class,tested_arr_2);
 		}
 	}
@@ -465,18 +426,6 @@ static void populate_latency_matrix(void)
 {
 	int i, j;
 	nr_cpus = get_nprocs();
-	for (i = 0; i < LAST_CPU_ID; i++) {
-		active_cpu_bitmap[i] = 0;
-		std::vector<int> cpumap(LAST_CPU_ID);
-		top_stack.push_back(cpumap);
-
-		for (j = i + 1; j < LAST_CPU_ID; j++) {
-			task_stack.push_back(LAST_CPU_ID * i + j);
-		}
-	}
-	for(int p=0;p< LAST_CPU_ID;p++){
-		top_stack[p][p] = 1;
-	}
 
 
 	for (i = 0; i < PTHREAD_TASK_AMOUNT; i++) {
@@ -701,28 +650,54 @@ static void configure_os_numa_groups(int mode)
 
 int main(int argc, char *argv[])
 {
-	moveCurrentThread();
-	int nr_pages = 0;
-	const std::vector<std::string_view> args(argv, argv + argc);
-  	setArguments(args);
-	uint64_t popul_laten_last = now_nsec();
-	printf("populating latency matrix...\n");
-	populate_latency_matrix();
-	uint64_t popul_laten_now = now_nsec();
-	printf("This time it took for latency matrix to be populated%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
-	if (verbose)
-		print_population_matrix();
-	printf("constructing NUMA groups...\n");
-	popul_laten_last = now_nsec();
-	construct_vnuma_groups();
-	popul_laten_now = now_nsec();
-	printf("This time it took for NUma groups to be contstructed%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
-	popul_laten_last = now_nsec();
-	printf("validating group assignment...");
-	validate_group_assignment();
-	popul_laten_now = now_nsec();
-	printf("This time it took for group assignment to be verified%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
+	if(argc < 4) {
+        std::cout << "Insufficient arguments." << std::endl;
+        return 1;
+    }
+    
+    // Getting the amount of each group from the command line args
+    int group1_count = std::atoi(argv[1]);
+    int group2_count = std::atoi(argv[2]);
+    int group3_count = std::atoi(argv[3]);
 
-	configure_os_numa_groups(1);
+    if(argc != 3 * (group1_count + group2_count + group3_count) + 4) {
+        std::cout << "Incorrect number of arguments." << std::endl;
+        return 1;
+    }
+    
+    // Initialize arrays of arrays
+    std::vector<std::vector<int>> group1(group1_count);
+    std::vector<std::vector<int>> group2(group2_count);
+    std::vector<std::vector<int>> group3(group3_count);
+
+    // Loop through the groups data
+    for(int i = 0; i < (group1_count + group2_count + group3_count); ++i) {
+        int group1_id = std::atoi(argv[4 + 3 * i]);
+        int group2_id = std::atoi(argv[5 + 3 * i]);
+        int group3_id = std::atoi(argv[6 + 3 * i]);
+
+        if(group1_id < group1_count) {
+            group1[group1_id].push_back(i);
+        }
+        if(group2_id < group2_count) {
+            group2[group2_id].push_back(i);
+        }
+        if(group3_id < group3_count) {
+            group3[group3_id].push_back(i);
+        }
+    }
+
+    // For the purpose of verification, let's print the groups
+    for(int i = 0; i < group1_count; ++i) {
+        std::cout << "Group 1, ID " << i << ": ";
+        for(int j : group1[i]) {
+            std::cout << j << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    // Repeat for group2 and group3 as necessary...
+
+    return 0;
 	printf("Done...\n");
 }

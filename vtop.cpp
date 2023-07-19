@@ -664,19 +664,16 @@ static void construct_vnuma_groups(void)
 				}
 		}
 	}
-	for (i = 0; i < nr_numa_groups; i++) {
-		printf("vNUMA-Group-%d", i);
-		count = 0;
-		for (j = 0; j < LAST_CPU_ID; j++)
-			if (cpu_group_id[j] == i) {
-				printf("%5d", j);
-				count++;
-			}
-		printf("\t(%d CPUS)\n", count);
-	}
+	printf("%5d ", nr_numa_groups);	
+	printf("%5d ", nr_pair_groups);	
+	printf("%5d ", nr_tt_groups);	
 
-	printf("new test-%d", nr_numa_groups);
-	printf("lmao-%d", nr_pair_groups);
+	for (j = 0; j < LAST_CPU_ID; j++){
+		printf("%5d ", cpu_group_id[j]);	
+		printf("%5d ", cpu_pair_id[j]);	
+		printf("%5d ", cpu_tt_id[j]);	
+	}
+	
 }
 
 #define CPU_ID_SHIFT		(16)
