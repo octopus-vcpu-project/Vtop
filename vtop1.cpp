@@ -484,7 +484,7 @@ static void construct_vnuma_groups(void)
 
 
 	for (i = 0; i < LAST_CPU_ID; i++) {
-		printf("ddddd");
+		
 		if (cpu_group_id[i] == -1){
 			cpu_group_id[i] = nr_numa_groups;
 			nr_numa_groups++;
@@ -513,17 +513,8 @@ static void construct_vnuma_groups(void)
 	}
 
 
-	
-	for (i = 0; i < nr_numa_groups; i++) {
-		printf("vNUMA-Group-%d", i);
-		count = 0;
-		for (j = 0; j < LAST_CPU_ID; j++)
-			if (cpu_group_id[j] == i) {
-				printf("%5d", j);
-				count++;
-			}
-		printf("\t(%d CPUS)\n", count);
-	}
+	printf("new test-%d", nr_numa_groups);
+	printf("lmao-%d", nr_pair_groups);
 }
 
 #define CPU_ID_SHIFT		(16)
