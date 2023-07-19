@@ -651,7 +651,7 @@ int main(int argc, char *argv[])
     int group3_count = std::atoi(argv[3]);
 
     if(argc != 3 * (group1_count + group2_count + group3_count) + 3) {
-        std::cout << "Incorrect number of arguments." << std::endl;
+        std::cout << "Incorrect waaa number of arguments." << std::endl;
 		std::cout <<argc; 
 		std::cout <<" "<< 3 * (group1_count + group2_count + group3_count) + 3; 
         return 1;
