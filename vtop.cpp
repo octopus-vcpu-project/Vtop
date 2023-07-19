@@ -380,7 +380,7 @@ void apply_optimization_recur(int cpu, int last_cpu,int latency_class,std::unord
 	for(int x=0;x<LAST_CPU_ID;x++){
 		if(top_stack[cpu][x] < latency_class){
 			if(top_stack[cpu][x] != 0 && tested_arr[x] == 0){
-				apply_optimization_recur(x,answer_array,latency_class,tested_arr);
+				apply_optimization_recur(x,cpu,latency_class,tested_arr);
 			}else if(top_stack[last_cpu][x] == latency_class && top_stack[cpu][x]==0){
 				top_stack[cpu][x] = latency_class;
 			}
