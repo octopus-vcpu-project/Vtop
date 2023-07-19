@@ -699,5 +699,4 @@ int main(int argc, char *argv[])
     // Repeat for group2 and group3 as necessary...
 
     return 0;
-	printf("Done...\n");
 }
