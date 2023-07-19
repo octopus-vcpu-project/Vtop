@@ -645,32 +645,27 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // Getting the maximum group id for each group type
-    int group1_max = std::atoi(argv[1]);
-    int group2_max = std::atoi(argv[2]);
-    int group3_max = std::atoi(argv[3]);
+    int numa_max = std::atoi(argv[1]);
+    int pair_max = std::atoi(argv[2]);
+    int tt_max = std::atoi(argv[3]);
 
-    // Initialize vectors of vectors
-    std::vector<std::vector<int>> group1(group1_max);
-    std::vector<std::vector<int>> group2(group2_max);
-    std::vector<std::vector<int>> group3(group3_max);
+    std::vector<std::vector<int>> numa_group(numa_max);
+    std::vector<std::vector<int>> pair_group(pair_max);
+    std::vector<std::vector<int>> tt_group(tt_max);
 
-    // Loop through the elements
     for(int i = 4; i < argc; i += 3) {
-        int group1_id = std::atoi(argv[i]);
-        int group2_id = std::atoi(argv[i + 1]);
-        int group3_id = std::atoi(argv[i + 2]);
+        int numa_id = std::atoi(argv[i]);
+        int pair_id = std::atoi(argv[i + 1]);
+        int tt_id = std::atoi(argv[i + 2]);
 
-        // Add the element to the corresponding groups
-        group1[group1_id].push_back((i - 4) / 3);
-        group2[group2_id].push_back((i - 4) / 3);
-        group3[group3_id].push_back((i - 4) / 3);
+        numa_group[group1_id].push_back((i - 4) / 3);
+        pair_group[group2_id].push_back((i - 4) / 3);
+        tt_group[group3_id].push_back((i - 4) / 3);
     }
 
-    // For the purpose of verification, let's print the groups
     for(int i = 0; i < group1_max; ++i) {
         std::cout << "Group 1, ID " << i << ": ";
-        for(int j : group1[i]) {
+        for(int j : numa_group[i]) {
             std::cout << j << " ";
         }
         std::cout << std::endl;
