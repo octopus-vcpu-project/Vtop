@@ -312,17 +312,6 @@ int get_pair_to_test(){
 				continue;
 			}
 			if(top_stack[i][j] == 0){
-				if(last_pair == -1 && active_cpu_bitmap[i] != 0){
-					last_pair = (i * LAST_CPU_ID + j);
-				}
-
-				valid_pair_exists = true;
-				if(active_cpu_bitmap[i] == 0 ){
-					if(last_pair == -1){
-						return_pair = i * LAST_CPU_ID + j;
-					}else{
-						return_pair = last_pair;
-					}
 					top_stack[i][j] == -1;
 					return(i * LAST_CPU_ID + j);
 				}
