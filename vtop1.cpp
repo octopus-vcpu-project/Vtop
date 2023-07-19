@@ -322,7 +322,7 @@ int get_pair_to_test(){
 				valid_pair_exists = true;
 				if(active_cpu_bitmap[i] == 0 ){
 					if(last_pair == -1){
-						return_pair = i * LAST_CPU_ID + j
+						return_pair = i * LAST_CPU_ID + j;
 					}else{
 						return_pair = last_pair;
 					}
