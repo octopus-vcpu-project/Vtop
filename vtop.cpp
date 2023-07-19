@@ -388,7 +388,7 @@ void apply_optimization_recur(int cpu, int last_cpu,int latency_class,std::unord
 	}
 }
 
-void apply_optimization(int best, int testing_value){
+void apply_optimization1(int best, int testing_value){
 	int i = testing_value%LAST_CPU_ID;
 	int j =(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID;
 	int latency_class = get_latency_class(best);
@@ -419,6 +419,22 @@ void apply_optimization(int best, int testing_value){
 	}
 }
 
+void apply_optimization(int best, int testing_value){
+	int i = testing_value%LAST_CPU_ID;
+	int j =(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID;
+	int latency_class = get_latency_class(best);
+	int sub_rel;
+	set_latency_pair(i,j,latency_class);
+	for(int x=0;x<LAST_CPU_ID;x++){
+		if(top_stack[i][x]<latency_class && top_stack[i][x]!=0){
+			set_latency_pair(x,j,latency_class);
+		}
+		if(top_stack[j][x]<latency_class && top_stack[j][x]!=0){
+			set_latency_pair(x,i,latency_class);
+		}
+
+	}
+}
 
 
 static void *thread_fn1(void *data)
