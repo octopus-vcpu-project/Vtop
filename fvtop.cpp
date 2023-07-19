@@ -54,7 +54,7 @@ pthread_t worker_tasks[MAX_CPUS];
 static size_t nr_relax = 0;
 pthread_mutex_t ready_check = PTHREAD_MUTEX_INITIALIZER;
 //static size_t nr_tested_cores = 0;
-typedef pair<int, int> pii;
+typedef std::pair<int, int> pii;
 
 std::random_device rd;
 std::default_random_engine e1(rd());
