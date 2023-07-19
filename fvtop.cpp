@@ -658,9 +658,9 @@ int main(int argc, char *argv[])
         int pair_id = std::atoi(argv[i + 1]);
         int tt_id = std::atoi(argv[i + 2]);
 
-        numa_group[group1_id].push_back((i - 4) / 3);
-        pair_group[group2_id].push_back((i - 4) / 3);
-        tt_group[group3_id].push_back((i - 4) / 3);
+        numa_group[numa_id].push_back((i - 4) / 3);
+        pair_group[pair_id].push_back((i - 4) / 3);
+        tt_group[tt_id].push_back((i - 4) / 3);
     }
 
     for(int i = 0; i < group1_max; ++i) {
