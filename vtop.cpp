@@ -664,14 +664,14 @@ static void construct_vnuma_groups(void)
 				}
 		}
 	}
-	printf("%5d ", nr_numa_groups);	
-	printf("%5d ", nr_pair_groups);	
-	printf("%5d ", nr_tt_groups);	
+	printf("%d ", nr_numa_groups);	
+	printf("%d ", nr_pair_groups);	
+	printf("%d ", nr_tt_groups);	
 
 	for (j = 0; j < LAST_CPU_ID; j++){
-		printf("%5d ", cpu_group_id[j]);	
-		printf("%5d ", cpu_pair_id[j]);	
-		printf("%5d ", cpu_tt_id[j]);	
+		printf("%d ", cpu_group_id[j]);	
+		printf("%d ", cpu_pair_id[j]);	
+		printf("%d ", cpu_tt_id[j]);	
 	}
 	
 }
