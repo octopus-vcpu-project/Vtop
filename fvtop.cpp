@@ -649,13 +649,13 @@ std::vector<pii> linkPairs(const std::vector<int>& nums) {
 
     // Pair and push all available pairs into the vector
     for (int i = 0; i < nums.size() - 1; i += 2) {
-        pii pair1 = make_pair(nums[i], nums[i+1]);
+        pii pair1 = std::make_pair(nums[i], nums[i+1]);
         vec.push_back(pair1);
     }
 
     // Add linking pairs to the vector, but only every two pairs
     for (int i = 2; i < nums.size() - 1; i += 2) {
-        pii pair2 = make_pair(nums[i-1], nums[i]);
+        pii pair2 = std::make_pair(nums[i-1], nums[i]);
         vec.push_back(pair2);
     }
     return vec;
