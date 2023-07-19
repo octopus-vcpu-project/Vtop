@@ -45,6 +45,7 @@ int cpu_pair_id[MAX_CPUS];
 int cpu_tt_id[MAX_CPUS];
 int active_cpu_bitmap[MAX_CPUS];
 int finished = 0;
+int return_pair = 0;
 std::vector<int> task_stack;
 std::vector<std::vector<int>> top_stack;
 pthread_t worker_tasks[MAX_CPUS];
@@ -295,22 +296,46 @@ int stick_this_thread_to_core(int core_id) {
 }
 
 
+
+
 int get_pair_to_test(){
-	int valid_pair_exists = false;
-	for(int i=0;i<LAST_CPU_ID;i++){
+
+	bool valid_pair_exists = false;
+	int last_pair = -1;
+
+	for(int i=(return_pair%LAST_CPU_ID);i<LAST_CPU_ID;i++){
+		if(active_cpu_bitmap[i]==1){
+			continue;
+		}
 		for(int j=0;j<LAST_CPU_ID;j++){
+			if(active_cpu_bitmap[j]==1){
+				continue;
+			}
 			if(top_stack[i][j] == 0){
+				if(last_pair == -1 && active_cpu_bitmap[i] != 0){
+					last_pair = (i * LAST_CPU_ID + j);
+				}
+
 				valid_pair_exists = true;
-					if(active_cpu_bitmap[i] == 0 && active_cpu_bitmap[j]==0){
+				if(active_cpu_bitmap[i] == 0 ){
+					if(last_pair == -1){
+						return_pair = i * LAST_CPU_ID + j;
+					}else{
+						return_pair = last_pair;
+					}
 					top_stack[i][j] == -1;
 					return(i * LAST_CPU_ID + j);
 				}
-			} 
+
+
+			}
 		}
 	}
+	//We're testing 
 	if(valid_pair_exists){
 		return -1;
 	}
+
 	return -2;
 }
 
