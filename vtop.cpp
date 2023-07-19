@@ -413,7 +413,7 @@ static void *thread_fn1(void *data)
 static void populate_latency_matrix(void)
 {
 	int i, j;
-	nr_cpus = 16;
+	nr_cpus = get_nprocs();
 	for (i = 0; i < LAST_CPU_ID; i++) {
 		active_cpu_bitmap[i] = 0;
 		std::vector<int> cpumap(LAST_CPU_ID);
