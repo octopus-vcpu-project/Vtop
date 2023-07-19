@@ -401,7 +401,8 @@ void apply_optimization(int best, int testing_value){
 
 	std::unordered_map<int,int> tested_arr_1;
 	std::unordered_map<int,int> tested_arr_2;
-	
+	tested_arr_1[i] = 1;
+	tested_arr_1[j] = 1;
 	for(int x=0;x<LAST_CPU_ID;x++){
 		if(top_stack[i][x]<latency_class && top_stack[i][x]!=0){
 			set_latency_pair(x,j,latency_class);
