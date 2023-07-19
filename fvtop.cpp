@@ -640,48 +640,35 @@ static void configure_os_numa_groups(int mode)
 
 int main(int argc, char *argv[])
 {
-	if(argc < 3) {
-        std::cout << "Insufficient arguments." << std::endl;
+	if(argc < 4 || (argc - 4) % 3 != 0) {
+        std::cout << "Invalid arguments." << std::endl;
         return 1;
     }
-    
-    // Getting the amount of each group from the command line args
-    int group1_count = std::atoi(argv[1]);
-    int group2_count = std::atoi(argv[2]);
-    int group3_count = std::atoi(argv[3]);
 
-    if(argc != 3 * (group1_count + group2_count + group3_count) + 3) {
-		
-		std::cout << argc; 
-		std::cout <<" aaa"<< 3 * (group1_count + group2_count + group3_count) + 3; 
-        std::cout << "Incorrect waaa number of arguments." << std::endl;
-        return 1;
-    }
-    
-    // Initialize arrays of arrays
-    std::vector<std::vector<int>> group1(group1_count);
-    std::vector<std::vector<int>> group2(group2_count);
-    std::vector<std::vector<int>> group3(group3_count);
+    // Getting the maximum group id for each group type
+    int group1_max = std::atoi(argv[1]);
+    int group2_max = std::atoi(argv[2]);
+    int group3_max = std::atoi(argv[3]);
 
-    // Loop through the groups data
-    for(int i = 0; i < (group1_count + group2_count + group3_count); ++i) {
-        int group1_id = std::atoi(argv[4 + 3 * i]);
-        int group2_id = std::atoi(argv[5 + 3 * i]);
-        int group3_id = std::atoi(argv[6 + 3 * i]);
+    // Initialize vectors of vectors
+    std::vector<std::vector<int>> group1(group1_max + 1);
+    std::vector<std::vector<int>> group2(group2_max + 1);
+    std::vector<std::vector<int>> group3(group3_max + 1);
 
-        if(group1_id < group1_count) {
-            group1[group1_id].push_back(i);
-        }
-        if(group2_id < group2_count) {
-            group2[group2_id].push_back(i);
-        }
-        if(group3_id < group3_count) {
-            group3[group3_id].push_back(i);
-        }
+    // Loop through the elements
+    for(int i = 4; i < argc; i += 3) {
+        int group1_id = std::atoi(argv[i]);
+        int group2_id = std::atoi(argv[i + 1]);
+        int group3_id = std::atoi(argv[i + 2]);
+
+        // Add the element to the corresponding groups
+        group1[group1_id].push_back((i - 4) / 3);
+        group2[group2_id].push_back((i - 4) / 3);
+        group3[group3_id].push_back((i - 4) / 3);
     }
 
     // For the purpose of verification, let's print the groups
-    for(int i = 0; i < group1_count; ++i) {
+    for(int i = 0; i <= group1_max; ++i) {
         std::cout << "Group 1, ID " << i << ": ";
         for(int j : group1[i]) {
             std::cout << j << " ";
@@ -689,6 +676,9 @@ int main(int argc, char *argv[])
         std::cout << std::endl;
     }
 
+    // Repeat for group2 and group3 as necessary...
+
+    return 0;
     // Repeat for group2 and group3 as necessary...
 
     return 0;
