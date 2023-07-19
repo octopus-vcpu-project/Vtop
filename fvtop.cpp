@@ -651,9 +651,9 @@ int main(int argc, char *argv[])
     int group3_max = std::atoi(argv[3]);
 
     // Initialize vectors of vectors
-    std::vector<std::vector<int>> group1(group1_max + 1);
-    std::vector<std::vector<int>> group2(group2_max + 1);
-    std::vector<std::vector<int>> group3(group3_max + 1);
+    std::vector<std::vector<int>> group1(group1_max);
+    std::vector<std::vector<int>> group2(group2_max);
+    std::vector<std::vector<int>> group3(group3_max);
 
     // Loop through the elements
     for(int i = 4; i < argc; i += 3) {
