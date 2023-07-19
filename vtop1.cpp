@@ -563,7 +563,7 @@ int main(int argc, char *argv[])
 		print_population_matrix();
 	printf("constructing NUMA groups...\n");
 	popul_laten_last = now_nsec();
-	construct_vnuma_groups();
+	//construct_vnuma_groups();
 	popul_laten_now = now_nsec();
 	printf("This time it took for NUma groups to be contstructed%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 	popul_laten_last = now_nsec();
