@@ -640,7 +640,7 @@ static void configure_os_numa_groups(int mode)
 
 int main(int argc, char *argv[])
 {
-	if(argc < 4) {
+	if(argc < 3) {
         std::cout << "Insufficient arguments." << std::endl;
         return 1;
     }
@@ -650,8 +650,10 @@ int main(int argc, char *argv[])
     int group2_count = std::atoi(argv[2]);
     int group3_count = std::atoi(argv[3]);
 
-    if(argc != 3 * (group1_count + group2_count + group3_count) + 4) {
+    if(argc != 3 * (group1_count + group2_count + group3_count) + 3) {
         std::cout << "Incorrect number of arguments." << std::endl;
+		std::cout <<argc; 
+		std::cout <<" "<< 3 * (group1_count + group2_count + group3_count) + 3; 
         return 1;
     }
     
