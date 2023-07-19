@@ -368,16 +368,6 @@ void apply_optimization(int best, int testing_value){
 		}
 
 	}
-
-	for(int x=0;x<LAST_CPU_ID;x++){
-		if((tested_arr_1[x] != 1) && (true && top_stack[i][x]!=0)){
-			apply_optimization_recur(x,i,latency_class,tested_arr_1);
-		}
-
-		if((tested_arr_2[x] != 1) && top_stack[j][x]!=0){
-			apply_optimization_recur(x,j,latency_class,tested_arr_2);
-		}
-	}
 }
 
 static void *thread_fn1(void *data)
