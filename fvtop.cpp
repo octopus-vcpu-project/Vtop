@@ -663,7 +663,7 @@ int main(int argc, char *argv[])
         tt_group[tt_id].push_back((i - 4) / 3);
     }
 
-    for(int i = 0; i < group1_max; ++i) {
+    for(int i = 0; i < numa_max; ++i) {
         std::cout << "Group 1, ID " << i << ": ";
         for(int j : numa_group[i]) {
             std::cout << j << " ";
