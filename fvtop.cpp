@@ -53,6 +53,7 @@ pthread_t worker_tasks[MAX_CPUS];
 static size_t nr_relax = 0;
 pthread_mutex_t ready_check = PTHREAD_MUTEX_INITIALIZER;
 //static size_t nr_tested_cores = 0;
+typedef pair<int, int> pii;
 
 std::random_device rd;
 std::default_random_engine e1(rd());
@@ -637,6 +638,34 @@ static void configure_os_numa_groups(int mode)
 	}
 }
 
+std::vector<pii> linkPairs(const vector<int>& nums) {
+    std::vector<pii> vec;
+
+    // If the input list is empty or has only one element, return the empty vector
+    if (nums.size() < 2) {
+        return vec;
+    }
+
+    // Pair and push all available pairs into the vector
+    for (int i = 0; i < nums.size() - 1; i += 2) {
+        pii pair1 = make_pair(nums[i], nums[i+1]);
+        vec.push_back(pair1);
+    }
+
+    // Add linking pairs to the vector, but only every two pairs
+    for (int i = 2; i < nums.size() - 1; i += 2) {
+        pii pair2 = make_pair(nums[i-1], nums[i]);
+        vec.push_back(pair2);
+    }
+    return vec;
+}
+
+void printPairs(const vector<pii>& vec) {
+    for (const pii& pair : vec) {
+        cout << "(" << pair.first << ", " << pair.second << ") ";
+    }
+    cout << endl;
+}
 
 int main(int argc, char *argv[])
 {
@@ -653,7 +682,7 @@ int main(int argc, char *argv[])
     std::vector<std::vector<int>> pair_group(pair_max);
     std::vector<std::vector<int>> tt_group(tt_max);
 
-    for(int i = 4; i < argc; i += 3) {
+    for(int i=4; i<argc; i+=3) {
         int numa_id = std::atoi(argv[i]);
         int pair_id = std::atoi(argv[i + 1]);
         int tt_id = std::atoi(argv[i + 2]);
@@ -662,16 +691,9 @@ int main(int argc, char *argv[])
         pair_group[pair_id].push_back((i - 4) / 3);
         tt_group[tt_id].push_back((i - 4) / 3);
     }
+	std::vector<pii> test = linkPairs(numa_group[0]);
+	printPairs(test);
 
-    for(int i = 0; i < numa_max; ++i) {
-        std::cout << "Group 1, ID " << i << ": ";
-        for(int j : numa_group[i]) {
-            std::cout << j << " ";
-        }
-        std::cout << std::endl;
-    }
-
-    // Repeat for group2 and group3 as necessary...
 
     return 0;
 }
