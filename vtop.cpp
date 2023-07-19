@@ -373,6 +373,20 @@ void apply_optimization1(int best, int testing_value){
 	
 }
 
+
+void apply_optimization_recur(int cpu, int last_cpu,int latency_class,std::unordered_map<int,int>& tested_arr){
+	tested_arr[cpu] = 1;
+	for(int x=0;x<LAST_CPU_ID;x++){
+		if(top_stack[cpu][x] < latency_class){
+			if(top_stack[cpu][x] != 0 && tested_arr[x] == 0){
+				apply_optimization_recur(x,answer_array,latency_class,tested_arr);
+			}else if(top_stack[last_cpu][x] == latency_class && top_stack[cpu][x]==0){
+				top_stack[cpu][x] = latency_class;
+			}
+		}
+	}
+}
+
 void apply_optimization(int best, int testing_value){
 	int i = testing_value%LAST_CPU_ID;
 	int j =(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID;
@@ -404,18 +418,6 @@ void apply_optimization(int best, int testing_value){
 	}
 }
 
-void apply_optimization_recur(int cpu, int last_cpu,int latency_class,std::unordered_map<int,int>& tested_arr){
-	tested_arr[cpu] = 1;
-	for(int x=0;x<LAST_CPU_ID;x++){
-		if(top_stack[cpu][x] < latency_class){
-			if(top_stack[cpu][x] != 0 && tested_arr[x] == 0){
-				apply_optimization_recur(x,answer_array,latency_class,tested_arr);
-			}else if(top_stack[last_cpu][x] == latency_class && top_stack[cpu][x]==0){
-				top_stack[cpu][x] = latency_class;
-			}
-		}
-	}
-}
 
 
 static void *thread_fn1(void *data)
