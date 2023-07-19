@@ -306,7 +306,7 @@ int get_pair_to_test(){
 	bool valid_pair_exists = false;
 	int last_pair = -1;
 
-	for(int i=(testing_value%LAST_CPU_ID);i<LAST_CPU_ID;i++){
+	for(int i=(return_pair%LAST_CPU_ID);i<LAST_CPU_ID;i++){
 		if(active_cpu_bitmap[i]==1){
 			continue;
 		}
