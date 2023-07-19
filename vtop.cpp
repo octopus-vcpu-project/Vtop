@@ -380,9 +380,8 @@ void apply_optimization_recur(int cpu, int last_cpu,int latency_class,std::unord
 	int sub_rel = top_stack[cpu][last_cpu];
 	for(int x=0;x<LAST_CPU_ID;x++){
 		if(top_stack[last_cpu][x]!=0 && (top_stack[last_cpu][x] < sub_rel && top_stack[cpu][x]==0)){
-			top_stack[cpu][x] = sub_rel;
+			set_latency_pair(cpu,x,sub_rel);
 		}
-
 	}
 	for(int x=0;x<LAST_CPU_ID;x++){
 		if(top_stack[cpu][x] < latency_class && (top_stack[cpu][x] != 0 && tested_arr[x] != 1)){
