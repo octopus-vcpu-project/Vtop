@@ -377,7 +377,7 @@ void apply_optimization1(int best, int testing_value){
 
 void apply_optimization_recur(int cpu, int last_cpu,int latency_class,std::unordered_map<int,int>& tested_arr){
 	tested_arr[cpu] = 1;
-	sub_rel = top_stack[cpu][last_cpu]
+	int sub_rel = top_stack[cpu][last_cpu]
 	for(int x=0;x<LAST_CPU_ID;x++){
 		if(top_stack[cpu][x] < latency_class && (top_stack[cpu][x] != 0 && tested_arr[x] == 0)){
 			apply_optimization_recur(x,cpu,latency_class,tested_arr);
