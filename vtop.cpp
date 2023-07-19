@@ -314,12 +314,11 @@ int get_pair_to_test(){
 			if(top_stack[i][j] == 0){
 					top_stack[i][j] == -1;
 					return(i * LAST_CPU_ID + j);
-				}
-
-
 			}
+
 		}
 	}
+	
 	//We're testing 
 	if(valid_pair_exists){
 		return -1;
