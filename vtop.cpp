@@ -384,7 +384,7 @@ void apply_optimization_recur(int cpu, int last_cpu,int latency_class,std::unord
 		}
 	}
 	for(int x=0;x<LAST_CPU_ID;x++){
-		if(top_stack[cpu][x] != 0 && tested_arr[x] != 1)){
+		if(top_stack[cpu][x] != 0 && tested_arr[x] != 1){
 			apply_optimization_recur(x,cpu,latency_class,tested_arr);
 		}
 
