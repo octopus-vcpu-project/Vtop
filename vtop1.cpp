@@ -472,8 +472,10 @@ static void print_population_matrix(void)
 //TODO-change this to do multi-level topology
 static void construct_vnuma_groups(void)
 {
-	int i, j, count,nr_pair_groups,nr_tt_groups = 0;
+	int i, j, count = 0;
 	int nr_numa_groups = 0;
+	int nr_pair_groups = 0;
+	int nr_tt_groups = 0;
 	double min, min_2;
 	nr_cpus = get_nprocs();
 	/* Invalidate group IDs */
