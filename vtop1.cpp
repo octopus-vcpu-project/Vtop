@@ -484,6 +484,7 @@ static void construct_vnuma_groups(void)
 
 
 	for (i = 0; i < LAST_CPU_ID; i++) {
+		printf("ddddd");
 		if (cpu_group_id[i] == -1){
 			cpu_group_id[i] = nr_numa_groups;
 			nr_numa_groups++;
