@@ -668,7 +668,7 @@ int main(int argc, char *argv[])
     }
 
     // For the purpose of verification, let's print the groups
-    for(int i = 0; i <= group1_max; ++i) {
+    for(int i = 0; i < group1_max; ++i) {
         std::cout << "Group 1, ID " << i << ": ";
         for(int j : group1[i]) {
             std::cout << j << " ";
@@ -676,9 +676,6 @@ int main(int argc, char *argv[])
         std::cout << std::endl;
     }
 
-    // Repeat for group2 and group3 as necessary...
-
-    return 0;
     // Repeat for group2 and group3 as necessary...
 
     return 0;
