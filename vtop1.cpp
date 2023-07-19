@@ -472,7 +472,7 @@ static void construct_vnuma_groups(void)
 {
 	int i, j, count, nr_numa_groups,nr_pair_groups,nr_tt_groups = 0;
 	double min, min_2;
-
+	nr_cpus = get_nprocs();
 	/* Invalidate group IDs */
 	for (i = 0; i < LAST_CPU_ID; i++){
 		cpu_group_id[i] = -1;
