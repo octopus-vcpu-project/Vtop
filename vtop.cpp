@@ -563,35 +563,51 @@ static void validate_group_assignment()
 	printf("PASS!!!\n");
 }
 
+//TODO-change this to do multi-level topology
 static void construct_vnuma_groups(void)
 {
-	int i, j, count, nr_numa_groups = 0;
+	int i, j, count = 0;
+	int nr_numa_groups = 0;
+	int nr_pair_groups = 0;
+	int nr_tt_groups = 0;
 	double min, min_2;
-
+	nr_cpus = get_nprocs();
 	/* Invalidate group IDs */
-	for (i = 0; i < LAST_CPU_ID; i++)
+	for (i = 0; i < LAST_CPU_ID; i++){
 		cpu_group_id[i] = -1;
-
-	for (i = 0; i < LAST_CPU_ID; i++) {
-		/* If already assigned to a vNUMA group, then skip */
-		if (cpu_group_id[i] != -1)
-			continue;
-
-	 	/* Else, add CPU to the next group and generate a new group id */
-		cpu_group_id[i] = nr_numa_groups;
-		nr_numa_groups++;
-
-		/* Add all CPUS that are within 40% of min latency to the same group as i */
-		for (j = 0 ; j < LAST_CPU_ID; j++) {
-			//printf("checking %d %d Min: %f pair: %f\n", i, j, min, top_stack[i][j]);
-			if (top_stack[i][j]<4){
-				cpu_group_id[j] = cpu_group_id[i];
-			}
-		}	
+		cpu_pair_id[i] = -1;
+		cpu_tt_id[i] = -1;
 	}
 
 
-	
+	for (i = 0; i < LAST_CPU_ID; i++) {
+		
+		if (cpu_group_id[i] == -1){
+			cpu_group_id[i] = nr_numa_groups;
+			nr_numa_groups++;
+		}
+		if (cpu_pair_id[i] == -1){
+			cpu_pair_id[i] = nr_pair_groups;
+			nr_pair_groups++;
+		}
+		if (cpu_tt_id[i] == -1){
+			cpu_tt_id[i] = nr_tt_groups;
+			nr_tt_groups++;
+		}
+
+		
+		for (j = 0 ; j < LAST_CPU_ID; j++) {
+				if (top_stack[i][j]<4 && cpu_group_id[i] != -1){
+					cpu_group_id[j] = cpu_group_id[i];
+				}
+				if (top_stack[i][j]<3 && cpu_pair_id[i] != -1){
+					cpu_pair_id[j] = cpu_pair_id[i];
+				}
+				if (top_stack[i][j]<2 && cpu_tt_id[i] != -1){
+					cpu_tt_id[j] = cpu_tt_id[i];
+				}
+		}
+	}
 	for (i = 0; i < nr_numa_groups; i++) {
 		printf("vNUMA-Group-%d", i);
 		count = 0;
@@ -603,6 +619,8 @@ static void construct_vnuma_groups(void)
 		printf("\t(%d CPUS)\n", count);
 	}
 
+	printf("new test-%d", nr_numa_groups);
+	printf("lmao-%d", nr_pair_groups);
 }
 
 #define CPU_ID_SHIFT		(16)
