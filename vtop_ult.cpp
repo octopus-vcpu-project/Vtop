@@ -648,7 +648,7 @@ void ST_find_topology(void){
 	}
 }
 
-bool verify_numa_group(std::vector input){
+bool verify_numa_group(std::vector<int> input){
 	std::vector<int> nums;
 	for (int i = 0; i < input.size(); ++i) {
         if (input[i] == 1) {
@@ -665,7 +665,7 @@ bool verify_numa_group(std::vector input){
 	return true;
 }
 
-bool verify_pair_group(std::vector input){
+bool verify_pair_group(std::vector<int> input){
 	std::vector<int> nums;
 	for (int i = 0; i < input.size(); ++i) {
         if (input[i] == 1) {
