@@ -708,6 +708,13 @@ static void configure_os_numa_groups(int mode)
 int main(int argc, char *argv[])
 {
 	nr_cpus = get_nprocs();
+	for (i = 0; i < LAST_CPU_ID; i++) {
+		std::vector<int> cpumap(LAST_CPU_ID);
+		top_stack.push_back(cpumap);
+	}
+	for(int p=0;p< LAST_CPU_ID;p++){
+		top_stack[p][p] = 1;
+	}
 	const std::vector<std::string_view> args(argv, argv + argc);
   	setArguments(args);
 	uint64_t popul_laten_last = now_nsec();
