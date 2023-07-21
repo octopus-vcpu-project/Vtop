@@ -647,7 +647,7 @@ void ST_find_topology(void){
 
 
 bool verify_topology(void){
-
+	return true;
 }
 
 
