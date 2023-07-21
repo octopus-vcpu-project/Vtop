@@ -67,6 +67,7 @@ std::vector<std::vector<int>> pair_to_thread_arr;
 std::vector<std::vector<int>> thread_to_cpu_arr;
 std::vector<int> numas_to_cpu;
 std::vector<int> pairs_to_cpu;
+std::vector<int> threads_to_cpu;
 std::vector<numa_gr> numa_array;
 
 
@@ -676,7 +677,7 @@ bool verify_pair_group(std::vector<int> input){
     }
 	
 	for(int i=0; i < nums.size() - 1; i += 2){
-		int latency = measure_latency_pair(pairs_to_cpu[nums[i]],pairs_to_cpu[nums[i+1]]);
+		int latency = measure_latency_pair(threads_to_cpu[nums[i]],threads_to_cpu[nums[i+1]]);
 		if(get_latency_class(latency) != 3){
 			return false;
 		}
@@ -738,6 +739,7 @@ static void construct_vnuma_groups(void)
 		if (cpu_tt_id[i] == -1){
 			cpu_tt_id[i] = nr_tt_groups;
 			nr_tt_groups++;
+			threads_to_cpu.push_back(i);
 		}
 
 		
