@@ -34,8 +34,6 @@
 #define min(a,b)	(a < b ? a : b)
 #define LAST_CPU_ID	(min(nr_cpus, MAX_CPUS))
 
-
-int nr_numa_groups;
 int nr_cpus;
 int PTHREAD_TASK_AMOUNT=10;
 int verbose = 0;
