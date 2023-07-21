@@ -614,7 +614,7 @@ static void find_numa_groups(void)
 			}
 			if(top_stack[i][j] == 0 ){
 				int latency = measure_latency_pair(i,j);
-				top_stack[i][j] = get_latency_class(latency);
+				set_latency_pair(i,j,get_latency_class(latency));
 			}
 			if(top_stack[i][j] < 4){
 				banned_characters[i] = 1;
