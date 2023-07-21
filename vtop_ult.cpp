@@ -653,6 +653,7 @@ bool verify_numa_group(std::vector<int> input){
 	for (int i = 0; i < input.size(); ++i) {
         if (input[i] == 1) {
             nums.push_back(i); 
+			std::cout<<"d"<<i<<std::endl;
         }
     }
 	
