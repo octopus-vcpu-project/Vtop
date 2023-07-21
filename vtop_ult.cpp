@@ -42,6 +42,8 @@ int verbose = 0;
 int NR_SAMPLES = 30;
 int SAMPLE_US = 10000;
 int cpu_group_id[MAX_CPUS];
+int nr_numa_groups;
+int nr_pair_groups
 int cpu_pair_id[MAX_CPUS];
 int cpu_tt_id[MAX_CPUS];
 int active_cpu_bitmap[MAX_CPUS];
@@ -57,6 +59,56 @@ pthread_mutex_t ready_check = PTHREAD_MUTEX_INITIALIZER;
 std::random_device rd;
 std::default_random_engine e1(rd());
 typedef unsigned atomic_t;
+
+typedef std::vector<int> ind_thread;
+typedef std::vector<ind_thread> core_pair;
+typedef std::vector<core_pair> numa_gr;
+
+std::vector<numa_gr> numa_array;
+
+
+int get_representative(const ind_thread& it) {
+    // Check for empty vector
+    if (it.empty()) {
+        throw std::runtime_error("ind_thread is empty");
+    }
+    return it[0];
+}
+
+int get_representative(const core_pair& cp) {
+    if (cp.empty()) {
+        throw std::runtime_error("core_pair is empty");
+    }
+    return get_representative(cp[0]); 
+}
+
+int get_representative(const numa_gr& ng) {
+    if (ng.empty()) {
+        throw std::runtime_error("numa_gr is empty");
+    }
+    return get_representative(ng[0]); 
+}
+
+
+void add_int_to_array(int n, ind_thread& arr) {
+    arr.push_back(n);
+}
+
+void add_int_to_array(int n, core_pair& arr) {
+    ind_thread it;
+    it.push_back(n);
+    arr.push_back(it);
+}
+
+void add_int_to_array(int n, numa_gr& arr) {
+    ind_thread it;
+    it.push_back(n);
+    core_pair cp;
+    cp.push_back(it);
+    arr.push_back(cp);
+}
+
+
 
 void moveThreadtoHighPrio(pid_t tid) {
 
@@ -349,30 +401,17 @@ void set_latency_pair(int x,int y,int latency_class){
 	top_stack[y][x] = latency_class;
 }
 
-void apply_optimization1(int best, int testing_value){
-	int i = testing_value%LAST_CPU_ID;
-	int j =(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID;
-	int latency_class = get_latency_class(best);
-	int sub_rel;
-	set_latency_pair(i,j,latency_class);
+void apply_optimization(void){
 	for(int x=0;x<LAST_CPU_ID;x++){
-		if(x==i){
-			continue;
-		}
 		for(int y=0;y<LAST_CPU_ID;y++){
 			sub_rel = top_stack[y][x];
-			
 			for(int z=0;z<LAST_CPU_ID;z++){
 				if((top_stack[y][z]<sub_rel && top_stack[y][z]!=0) && top_stack[x][z] == 0){
 					set_latency_pair(x,z,sub_rel);
 				}
-				
 			}
-
 		}
 	}
-
-	
 }
 
 
@@ -393,37 +432,7 @@ void apply_optimization_recur(int cpu, int last_cpu,int latency_class,std::unord
 
 }
 
-void apply_optimization(int best, int testing_value){
-	int i = testing_value%LAST_CPU_ID;
-	int j =(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID;
-	int latency_class = get_latency_class(best);
-	int sub_rel;
-	set_latency_pair(i,j,latency_class);
 
-	std::unordered_map<int,int> tested_arr_1;
-	std::unordered_map<int,int> tested_arr_2;
-	tested_arr_1[i] = 1;
-	tested_arr_2[j] = 1;
-	for(int x=0;x<LAST_CPU_ID;x++){
-		if(top_stack[i][x]<latency_class && top_stack[i][x]!=0){
-			set_latency_pair(x,j,latency_class);
-		}
-		if(top_stack[j][x]<latency_class && top_stack[j][x]!=0){
-			set_latency_pair(x,i,latency_class);
-		}
-
-	}
-
-	for(int x=0;x<LAST_CPU_ID;x++){
-		if((tested_arr_1[x] != 1) && (true && top_stack[i][x]!=0)){
-			apply_optimization_recur(x,i,latency_class,tested_arr_1);
-		}
-
-		if((tested_arr_2[x] != 1) && top_stack[j][x]!=0){
-			apply_optimization_recur(x,j,latency_class,tested_arr_2);
-		}
-	}
-}
 
 static void *thread_fn1(void *data)
 {	
@@ -593,22 +602,19 @@ static double get_max_latency(int cpu, int group)
 	return max == -1 ? INT_MAX : max;
 }
 
-/*
- * For proper assignment, the following invariant must hold:
- * The maximum latency between two CPUs in the same group (any group)
- * should be less than the minimum latency between any two CPUs from
- * different groups.
- */
 int find_numa_groups(void)
 {
-	int groups = 0;
+	nr_numa_groups = 0;
 	int banned_characters[MAX_CPUS];
 	bool finished=false;
 	for (int i = 0; i < LAST_CPU_ID; i++) {
 		if(banned_characters[i] == 1){
 			continue;
 		}
-		groups++;
+		nr_numa_groups++;
+		cpu_group_id[i] == nr_numa_groups;
+		numa_gr numa_append;
+		numa_append.push_back([[i]]);
 		for (int j = 0; j < LAST_CPU_ID; j++) {
 			if(banned_characters[j] == 1){
 				continue;
@@ -618,13 +624,30 @@ int find_numa_groups(void)
 				set_latency_pair(i,j,get_latency_class(latency));
 			}
 			if(top_stack[i][j] < 4){
+				cpu_group_id[j] = nr_numa_groups;
 				banned_characters[i] = 1;
 				banned_characters[j] = 1;
+				numa_append.push_back([[j]]);
+			}
+		}
+		numa_array.push_back(numa_append);
+	}
+	return nr_numa_groups;
+}
+
+
+void ST_find_topology(void){
+	for(int i=0;i<LAST_CPU_ID;i++){
+		for(int j=i+1;i<LAST_CPU_ID;j++){
+			if(top_stack[i][j] == 0){
+				int latency = measure_latency_pair(i,j);
+				set_latency_pair(i,j,get_latency_class(latency));
+				apply_optimization();
 			}
 		}
 	}
-	return groups;
 }
+
 
 //TODO-change this to do multi-level topology
 static void construct_vnuma_groups(void)
@@ -740,16 +763,9 @@ int main(int argc, char *argv[])
 	printf("This time it took to find NUMA Groups%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 	if (verbose)
 		print_population_matrix();
-	printf("constructing NUMA groups...\n");
-	popul_laten_last = now_nsec();
-	construct_vnuma_groups();
-	popul_laten_now = now_nsec();
-	printf("This time it took for NUma groups to be contstructed%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
-	popul_laten_last = now_nsec();
-	printf("validating group assignment...");
 	
-	popul_laten_now = now_nsec();
-	printf("This time it took for group assignment to be verified%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
+	ST_find_topology();
+	construct_vnuma_groups();
 
 	configure_os_numa_groups(1);
 	printf("Done...\n");
