@@ -611,8 +611,6 @@ int find_numa_groups(void)
 		}
 		nr_numa_groups++;
 		cpu_group_id[i] == nr_numa_groups;
-		numa_gr numa_append;
-		numa_append.push_back([[i]]);
 		for (int j = 0; j < LAST_CPU_ID; j++) {
 			if(banned_characters[j] == 1){
 				continue;
@@ -625,10 +623,9 @@ int find_numa_groups(void)
 				cpu_group_id[j] = nr_numa_groups;
 				banned_characters[i] = 1;
 				banned_characters[j] = 1;
-				numa_append.push_back([[j]]);
 			}
 		}
-		numa_array.push_back(numa_append);
+		
 	}
 	return nr_numa_groups;
 }
