@@ -734,7 +734,7 @@ int main(int argc, char *argv[])
   	setArguments(args);
 	uint64_t popul_laten_last = now_nsec();
 	printf("Finding NUMA groups...\n");
-	int numa_groups = find_numa_groups;
+	int numa_groups = find_numa_groups();
 	std::cout<<"numa group"<<numa_groups<<std::endl;
 	uint64_t popul_laten_now = now_nsec();
 	printf("This time it took to find NUMA Groups%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
