@@ -400,6 +400,7 @@ void set_latency_pair(int x,int y,int latency_class){
 }
 
 void apply_optimization(void){
+	int sub_rel;
 	for(int x=0;x<LAST_CPU_ID;x++){
 		for(int y=0;y<LAST_CPU_ID;y++){
 			sub_rel = top_stack[y][x];
