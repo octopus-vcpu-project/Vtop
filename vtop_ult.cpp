@@ -611,7 +611,7 @@ static void find_numa_groups(void)
 				continue;
 			}
 			if(top_stack[i][j] == 0 ){
-				int latency = measure_latency_pair();
+				int latency = measure_latency_pair(i,j);
 				top_stack[i][j] = get_latency_class(latency);
 			}
 			if(top_stack[i][j] < 4){
@@ -724,7 +724,7 @@ int main(int argc, char *argv[])
 	printf("This time it took for NUma groups to be contstructed%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 	popul_laten_last = now_nsec();
 	printf("validating group assignment...");
-	validate_group_assignment();
+	
 	popul_laten_now = now_nsec();
 	printf("This time it took for group assignment to be verified%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 
