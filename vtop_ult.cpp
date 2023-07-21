@@ -635,6 +635,7 @@ void ST_find_topology(void){
 	for(int i=0;i<LAST_CPU_ID;i++){
 		for(int j=i+1;i<LAST_CPU_ID;j++){
 			if(top_stack[i][j] == 0){
+				std::cout<<"I:"<<i<<" J:"<<j<<std::endl;
 				int latency = measure_latency_pair(i,j);
 				set_latency_pair(i,j,get_latency_class(latency));
 				apply_optimization();
