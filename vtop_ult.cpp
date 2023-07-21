@@ -686,6 +686,7 @@ bool verify_pair_group(std::vector<int> input){
 bool verify_topology(void){
 	//verify numa level topology
 	for (int i = 0; i < numa_to_pair_arr.size(); i+=1) {
+		std::cout<<"ding";
 		if(!verify_numa_group(numa_to_pair_arr[i])){
 			return false;
 		}
