@@ -633,7 +633,7 @@ int find_numa_groups(void)
 
 void ST_find_topology(void){
 	for(int i=0;i<LAST_CPU_ID;i++){
-		for(int j=i+1;i<LAST_CPU_ID;j++){
+		for(int j=i+1;j<LAST_CPU_ID;j++){
 			std::cout<<LAST_CPU_ID<<std::endl;
 			if(top_stack[i][j] == 0){
 				std::cout<<"I:"<<i<<" J:"<<j<<std::endl;
