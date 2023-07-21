@@ -64,6 +64,9 @@ typedef std::vector<core_pair> numa_gr;
 
 std::vector<std::vector<int>> numa_to_pair_arr;
 std::vector<std::vector<int>> pair_to_thread_arr;
+std::vector<std::vector<int>> thread_to_cpu_arr;
+std::vector<int> numas_to_cpu;
+std::vector<int> pairs_to_cpu;
 std::vector<numa_gr> numa_array;
 
 
@@ -645,8 +648,53 @@ void ST_find_topology(void){
 	}
 }
 
+bool verify_numa_group(std::vector input){
+	std::vector<int> nums;
+	for (int i = 0; i < input.size(); ++i) {
+        if (input[i] == 1) {
+            nums.push_back(i); 
+        }
+    }
+	
+	for(int i=0; i < nums.size() - 1; i += 2){
+		int latency = measure_latency_pair(numas_to_cpu[nums[i]],numas_to_cpu[nums[i+1]]);
+		if(get_latency_class(latency) != 4){
+			return false;
+		}
+	}
+	return true;
+}
+
+bool verify_pair_group(std::vector input){
+	std::vector<int> nums;
+	for (int i = 0; i < input.size(); ++i) {
+        if (input[i] == 1) {
+            nums.push_back(i); 
+        }
+    }
+	
+	for(int i=0; i < nums.size() - 1; i += 2){
+		int latency = measure_latency_pair(pairs_to_cpu[nums[i]],pairs_to_cpu[nums[i+1]]);
+		if(get_latency_class(latency) != 3){
+			return false;
+		}
+	}
+	return true;
+}
+
 
 bool verify_topology(void){
+	//verify numa level topology
+	for (int i = 0; i < numa_to_pair_arr.size(); i+=1) {
+		if(!verify_numa_group(numa_to_pair_arr[i])){
+			return false;
+		}
+	}
+	for (int i = 0; i < pair_to_thread_arr.size(); i+=1) {
+		if(!verify_pair_group(pair_to_thread_arr[i])){
+			return false;
+		}
+	}
 	return true;
 }
 
@@ -675,12 +723,14 @@ static void construct_vnuma_groups(void)
 			nr_numa_groups++;
 			std::vector<int> new_thing(LAST_CPU_ID);
 			numa_to_pair_arr.push_back(new_thing);
+			numas_to_cpu.push_back(i);
 		}
 		if (cpu_pair_id[i] == -1){
 			cpu_pair_id[i] = nr_pair_groups;
 			nr_pair_groups++;
 			std::vector<int> newer_thing(LAST_CPU_ID);
 			pair_to_thread_arr.push_back(newer_thing);
+			pairs_to_cpu.push_back(i);
 		}
 		if (cpu_tt_id[i] == -1){
 			cpu_tt_id[i] = nr_tt_groups;
@@ -702,6 +752,7 @@ static void construct_vnuma_groups(void)
 		}
 		numa_to_pair_arr[cpu_group_id[i]][cpu_pair_id[i]] = 1;
 		pair_to_thread_arr[cpu_pair_id[i]][cpu_tt_id[i]] = 1;
+		thread_to_cpu_arr[cpu_tt_id[i]][i] = 1;
 	}
 
 	for (i = 0; i < nr_numa_groups; i++) {
@@ -777,8 +828,8 @@ int main(int argc, char *argv[])
 	ST_find_topology();
 	popul_laten_now = now_nsec();
 	printf("This time it took to find all topology%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
-	if (verbose)
-		print_population_matrix();
+	if (verify_topology())
+		printf("TOPOLOGY IS VERIFIEd...\n");
 	
 	ST_find_topology();
 	construct_vnuma_groups();
