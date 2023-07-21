@@ -756,6 +756,12 @@ int main(int argc, char *argv[])
 	std::cout<<"numa group"<<numa_groups<<std::endl;
 	uint64_t popul_laten_now = now_nsec();
 	printf("This time it took to find NUMA Groups%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
+	
+	uint64_t popul_laten_last = now_nsec();
+	printf("Consturcting overall topology...\n");
+	ST_find_topology();
+	uint64_t popul_laten_now = now_nsec();
+	printf("This time it took to find all topology%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 	if (verbose)
 		print_population_matrix();
 	
