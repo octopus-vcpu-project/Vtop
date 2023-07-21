@@ -70,22 +70,6 @@ void moveThreadtoHighPrio(pid_t tid) {
     ofs.close();
 }
 
-void moveCurrentThread() {
-    pid_t tid;
-    tid = syscall(SYS_gettid);
-    std::string path = "/sys/fs/cgroup//hi_prgroup/cgroup.procs";
-    std::ofstream ofs(path, std::ios_base::app);
-    if (!ofs) {
-        std::cerr << "Could not open the file\n";
-        return;
-    }
-    ofs << tid << "\n";
-    ofs.close();
-    struct sched_param params;
-    params.sched_priority = sched_get_priority_max(SCHED_RR);
-    sched_setscheduler(tid,SCHED_RR,&params);
-}
-
 std::string_view get_option(
     const std::vector<std::string_view>& args, 
     const std::string_view& option_name) {
