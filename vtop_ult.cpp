@@ -599,15 +599,16 @@ static double get_max_latency(int cpu, int group)
  * should be less than the minimum latency between any two CPUs from
  * different groups.
  */
-static void find_numa_groups(void)
+int find_numa_groups(void)
 {
-	
+	int groups;
 	int banned_characters[MAX_CPUS];
 	bool finished=false;
 	for (int i = 0; i < LAST_CPU_ID; i++) {
 		if(banned_characters[i] == 1){
 			continue;
 		}
+		groups++;
 		for (int j = 0; j < LAST_CPU_ID; j++) {
 			if(banned_characters[j] == 1){
 				continue;
@@ -622,6 +623,7 @@ static void find_numa_groups(void)
 			}
 		}
 	}
+	return groups;
 }
 
 //TODO-change this to do multi-level topology
@@ -732,7 +734,7 @@ int main(int argc, char *argv[])
   	setArguments(args);
 	uint64_t popul_laten_last = now_nsec();
 	printf("Finding NUMA groups...\n");
-	find_numa_groups();
+	std::cout<<"Numa Groups:"<<find_numa_groups()<<std::endl;
 	uint64_t popul_laten_now = now_nsec();
 	printf("This time it took to find NUMA Groups%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 	if (verbose)
