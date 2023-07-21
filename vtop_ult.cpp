@@ -752,7 +752,7 @@ static void construct_vnuma_groups(void)
 		}
 		numa_to_pair_arr[cpu_group_id[i]][cpu_pair_id[i]] = 1;
 		pair_to_thread_arr[cpu_pair_id[i]][cpu_tt_id[i]] = 1;
-		thread_to_cpu_arr[cpu_tt_id[i]][i] = 1;
+		
 	}
 
 	for (i = 0; i < nr_numa_groups; i++) {
