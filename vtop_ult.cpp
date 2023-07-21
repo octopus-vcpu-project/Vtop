@@ -828,12 +828,12 @@ int main(int argc, char *argv[])
 	ST_find_topology();
 	popul_laten_now = now_nsec();
 	printf("This time it took to find all topology%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
-	if (verify_topology())
-		printf("TOPOLOGY IS VERIFIEd...\n");
 	
 	ST_find_topology();
 	construct_vnuma_groups();
-
+	if (verify_topology())
+		printf("TOPOLOGY IS VERIFIEd...\n");
+	
 	configure_os_numa_groups(1);
 	printf("Done...\n");
 }
