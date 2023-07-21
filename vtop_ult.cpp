@@ -21,7 +21,6 @@
 #include <fstream>
 #include <sstream>
 #include <sys/syscall.h>
-#include <utility>
 #include <unordered_map>
 #define PROBE_MODE	(0)
 #define DIRECT_MODE	(1)
@@ -35,7 +34,7 @@
 #define min(a,b)	(a < b ? a : b)
 #define LAST_CPU_ID	(min(nr_cpus, MAX_CPUS))
 
-std::vector<pii> global_task_list;
+
 int nr_numa_groups;
 int nr_cpus;
 int PTHREAD_TASK_AMOUNT=10;
@@ -54,7 +53,6 @@ pthread_t worker_tasks[MAX_CPUS];
 static size_t nr_relax = 0;
 pthread_mutex_t ready_check = PTHREAD_MUTEX_INITIALIZER;
 //static size_t nr_tested_cores = 0;
-typedef std::pair<int, int> pii;
 
 std::random_device rd;
 std::default_random_engine e1(rd());
@@ -350,6 +348,50 @@ void set_latency_pair(int x,int y,int latency_class){
 	top_stack[y][x] = latency_class;
 }
 
+void apply_optimization1(int best, int testing_value){
+	int i = testing_value%LAST_CPU_ID;
+	int j =(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID;
+	int latency_class = get_latency_class(best);
+	int sub_rel;
+	set_latency_pair(i,j,latency_class);
+	for(int x=0;x<LAST_CPU_ID;x++){
+		if(x==i){
+			continue;
+		}
+		for(int y=0;y<LAST_CPU_ID;y++){
+			sub_rel = top_stack[y][x];
+			
+			for(int z=0;z<LAST_CPU_ID;z++){
+				if((top_stack[y][z]<sub_rel && top_stack[y][z]!=0) && top_stack[x][z] == 0){
+					set_latency_pair(x,z,sub_rel);
+				}
+				
+			}
+
+		}
+	}
+
+	
+}
+
+
+void apply_optimization_recur(int cpu, int last_cpu,int latency_class,std::unordered_map<int,int>& tested_arr){
+	tested_arr[cpu] = 1;
+	int sub_rel = top_stack[cpu][last_cpu];
+	for(int x=0;x<LAST_CPU_ID;x++){
+		if(top_stack[last_cpu][x]!=0 && (top_stack[last_cpu][x] < sub_rel && top_stack[cpu][x]==0)){
+			set_latency_pair(cpu,x,sub_rel);
+		}
+	}
+	for(int x=0;x<LAST_CPU_ID;x++){
+		if((top_stack[cpu][x] != 0 && tested_arr[x] != 1)){
+			apply_optimization_recur(x,cpu,latency_class,tested_arr);
+		}
+
+	}
+
+}
+
 void apply_optimization(int best, int testing_value){
 	int i = testing_value%LAST_CPU_ID;
 	int j =(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID;
@@ -369,6 +411,16 @@ void apply_optimization(int best, int testing_value){
 			set_latency_pair(x,i,latency_class);
 		}
 
+	}
+
+	for(int x=0;x<LAST_CPU_ID;x++){
+		if((tested_arr_1[x] != 1) && (true && top_stack[i][x]!=0)){
+			apply_optimization_recur(x,i,latency_class,tested_arr_1);
+		}
+
+		if((tested_arr_2[x] != 1) && top_stack[j][x]!=0){
+			apply_optimization_recur(x,j,latency_class,tested_arr_2);
+		}
 	}
 }
 
@@ -418,6 +470,18 @@ static void populate_latency_matrix(void)
 {
 	int i, j;
 	nr_cpus = get_nprocs();
+	for (i = 0; i < LAST_CPU_ID; i++) {
+		active_cpu_bitmap[i] = 0;
+		std::vector<int> cpumap(LAST_CPU_ID);
+		top_stack.push_back(cpumap);
+
+		for (j = i + 1; j < LAST_CPU_ID; j++) {
+			task_stack.push_back(LAST_CPU_ID * i + j);
+		}
+	}
+	for(int p=0;p< LAST_CPU_ID;p++){
+		top_stack[p][p] = 1;
+	}
 
 
 	for (i = 0; i < PTHREAD_TASK_AMOUNT; i++) {
@@ -534,25 +598,28 @@ static double get_max_latency(int cpu, int group)
  * should be less than the minimum latency between any two CPUs from
  * different groups.
  */
-static void validate_group_assignment()
+static void find_numa_groups(void)
 {
-	int i;
-	double local_max = 0, nonlocal_min = INT_MAX;
-
-	for (i = 0; i < LAST_CPU_ID; i++) {
-		local_max = get_max_latency(i, GROUP_LOCAL);
-		nonlocal_min = get_min_latency(i, GROUP_NONLOCAL);
-		if (local_max == INT_MAX || nonlocal_min == 0)
+	int banned_characters[MAX_CPUS];
+	bool finished=false;
+	for (int i = 0; i < LAST_CPU_ID; i++) {
+		if(banned_characters[i] == 1){
 			continue;
-
-		if(local_max > 1.10 * nonlocal_min) {
-			printf("FAIL!!!\n");
-			printf("local max is bigger than NonLocal min for CPU: %d %d %d\n",
-							i, (int)local_max, (int)nonlocal_min);
-			exit(1);
+		}
+		for (int j = 0; j < LAST_CPU_ID; j++) {
+			if(banned_characters[j] == 1){
+				continue;
+			}
+			if(top_stack[i][j] == 0 ){
+				int latency = measure_latency_pair();
+				top_stack[i][j] = get_latency_class(latency);
+			}
+			if(top_stack[i][j] < 4){
+				banned_characters[i] = 1;
+				banned_characters[j] = 1;
+			}*
 		}
 	}
-	printf("PASS!!!\n");
 }
 
 //TODO-change this to do multi-level topology
@@ -600,19 +667,16 @@ static void construct_vnuma_groups(void)
 				}
 		}
 	}
-	for (i = 0; i < nr_numa_groups; i++) {
-		printf("vNUMA-Group-%d", i);
-		count = 0;
-		for (j = 0; j < LAST_CPU_ID; j++)
-			if (cpu_group_id[j] == i) {
-				printf("%5d", j);
-				count++;
-			}
-		printf("\t(%d CPUS)\n", count);
-	}
+	printf("%d ", nr_numa_groups);	
+	printf("%d ", nr_pair_groups);	
+	printf("%d ", nr_tt_groups);	
 
-	printf("new test-%d", nr_numa_groups);
-	printf("lmao-%d", nr_pair_groups);
+	for (j = 0; j < LAST_CPU_ID; j++){
+		printf("%d ", cpu_group_id[j]);	
+		printf("%d ", cpu_pair_id[j]);	
+		printf("%d ", cpu_tt_id[j]);	
+	}
+	
 }
 
 #define CPU_ID_SHIFT		(16)
@@ -639,104 +703,31 @@ static void configure_os_numa_groups(int mode)
 	}
 }
 
-std::vector<pii> linkPairs(const std::vector<int>& nums) {
-    std::vector<pii> vec;
-
-    // If the input list is empty or has only one element, return the empty vector
-    if (nums.size() < 2) {
-        return vec;
-    }
-
-    // Pair and push all available pairs into the vector
-    for (int i = 0; i < nums.size() - 1; i += 2) {
-        pii pair1 = std::make_pair(nums[i], nums[i+1]);
-        vec.push_back(pair1);
-		global_task_list.push_back(pair1);
-    }
-
-    // Add linking pairs to the vector, but only every two pairs
-    for (int i = 2; i < nums.size() - 1; i += 2) {
-        pii pair2 = std::make_pair(nums[i-1], nums[i]);
-        vec.push_back(pair2);
-		global_task_list.push_back(pair2);
-    }
-    return vec;
-}
-
-void printPairs(const std::vector<pii>& vec) {
-    for (const pii& pair : vec) {
-        std::cout << "(" << pair.first << ", " << pair.second << ") ";
-    }
-    std::cout << std::endl;
-}
-bool isInVector(std::vector<int>& vec,int input){
-	return(std::binary_search(vec.begin(), vec.end(), input))
-}
 
 int main(int argc, char *argv[])
 {
-	if(argc < 4 || (argc - 4) % 3 != 0) {
-        std::cout << "Invalid arguments." << std::endl;
-        return 1;
-    }
+	moveCurrentThread();
+	int nr_pages = 0;
+	const std::vector<std::string_view> args(argv, argv + argc);
+  	setArguments(args);
+	uint64_t popul_laten_last = now_nsec();
+	printf("Finding NUMA groups...\n");
+	find_numa_groups();
+	uint64_t popul_laten_now = now_nsec();
+	printf("This time it took to find NUMA Groups%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
+	if (verbose)
+		print_population_matrix();
+	printf("constructing NUMA groups...\n");
+	popul_laten_last = now_nsec();
+	construct_vnuma_groups();
+	popul_laten_now = now_nsec();
+	printf("This time it took for NUma groups to be contstructed%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
+	popul_laten_last = now_nsec();
+	printf("validating group assignment...");
+	validate_group_assignment();
+	popul_laten_now = now_nsec();
+	printf("This time it took for group assignment to be verified%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 
-    int numa_max = std::atoi(argv[1]);
-    int pair_max = std::atoi(argv[2]);
-    int tt_max = std::atoi(argv[3]);
-	std::vector<std::vector<int>> cpu_map;
-    std::vector<std::vector<int>> numa_group(numa_max);
-    std::vector<std::vector<int>> pair_group(pair_max);
-    std::vector<std::vector<int>> tt_group(tt_max);
-
-	std::vector<std::vector<int>> numa_group_pairs(numa_max);
-    std::vector<std::vector<int>> pair_group_tt(pair_max);
-    std::vector<std::vector<int>> tt_group(tt_max);
-
-
-    for(int i=4; i<argc; i+=3) {
-		std::vector<int> other_line;
-        int numa_id = std::atoi(argv[i]);
-        int pair_id = std::atoi(argv[i + 1]);
-        int tt_id = std::atoi(argv[i + 2]);
-
-		other_line.push_back(numa_id);
-		other_line.push_back(pair_id);
-		other_line.push_back(tt_id);
-		cpu_map.push_back(other_line);
-        numa_group[numa_id].push_back((i - 4) / 3);
-        pair_group[pair_id].push_back((i - 4) / 3);
-        tt_group[tt_id].push_back((i - 4) / 3);
-
-		if(!isInVector(numa_group_pairs[numa_id],pair_id)){
-			numa_group_pairs[numa_id].push_back(pair_id);
-		}
-		if(!isInVector(pair_group_tt[pair_id],tt_id)){
-			numa_group_pairs[pair_id].push_back(tt_id);
-		}
-    }
-	for(int g=0; g<tt_max;g++){
-		if(tt_max.size()>1){
-			std::vector<pii> newthing = linkPairs(tt_max[g]);
-			printPairs(test);
-		}
-	}
-
-	for(int g=0; g<pair_max;g++){
-		std::vector<int> test_sub;
-		std::vector<int> tts = pair_group_tt[g];
-		for(int z=0; z<tts.size();z++){
-			if(cpu_map())
-		}
-	}
-
-	for(int g=0; g<numa_max;g++){
-		if(tt_max.size()>1){
-			std::vector<pii> newthing = linkPairs(tt_max[g]);
-			printPairs(test);
-		}
-	}
-
-
-
-    return 0;
+	configure_os_numa_groups(1);
+	printf("Done...\n");
 }
