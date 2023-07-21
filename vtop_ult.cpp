@@ -62,6 +62,8 @@ typedef std::vector<int> ind_thread;
 typedef std::vector<ind_thread> core_pair;
 typedef std::vector<core_pair> numa_gr;
 
+std::vector<std::vector<int>> numa_to_pair_arr;
+std::vector<std::vector<int>> pair_to_thread_arr;
 std::vector<numa_gr> numa_array;
 
 
@@ -635,13 +637,17 @@ void ST_find_topology(void){
 	for(int i=0;i<LAST_CPU_ID;i++){
 		for(int j=i+1;j<LAST_CPU_ID;j++){
 			if(top_stack[i][j] == 0){
-				std::cout<<"I:"<<i<<" J:"<<j<<std::endl;
 				int latency = measure_latency_pair(i,j);
 				set_latency_pair(i,j,get_latency_class(latency));
 				apply_optimization();
 			}
 		}
 	}
+}
+
+
+bool verify_topology(void){
+
 }
 
 
@@ -667,10 +673,14 @@ static void construct_vnuma_groups(void)
 		if (cpu_group_id[i] == -1){
 			cpu_group_id[i] = nr_numa_groups;
 			nr_numa_groups++;
+			std::vector<int> new_thing(LAST_CPU_ID);
+			numa_to_pair_arr.push_back(new_thing);
 		}
 		if (cpu_pair_id[i] == -1){
 			cpu_pair_id[i] = nr_pair_groups;
 			nr_pair_groups++;
+			std::vector<int> newer_thing(LAST_CPU_ID);
+			pair_to_thread_arr.push_back(newer_thing);
 		}
 		if (cpu_tt_id[i] == -1){
 			cpu_tt_id[i] = nr_tt_groups;
@@ -688,8 +698,12 @@ static void construct_vnuma_groups(void)
 				if (top_stack[i][j]<2 && cpu_tt_id[i] != -1){
 					cpu_tt_id[j] = cpu_tt_id[i];
 				}
+
 		}
+		numa_to_pair_arr[cpu_group_id[i]][cpu_pair_id[i]] = 1;
+		pair_to_thread_arr[cpu_pair_id[i]][cpu_tt_id[i]] = 1;
 	}
+
 	for (i = 0; i < nr_numa_groups; i++) {
 		printf("vNUMA-Group-%d", i);
 		count = 0;
