@@ -465,7 +465,6 @@ static void *thread_fn1(void *data)
 		task_stack.pop_back();
 		int best = measure_latency_pair(testing_value%LAST_CPU_ID,(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID);
 		pthread_mutex_lock(&ready_check);
-		apply_optimization(best,testing_value);
 		active_cpu_bitmap[testing_value%LAST_CPU_ID] = 0;
 		active_cpu_bitmap[(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID] = 0;
 		pthread_mutex_unlock(&ready_check);
