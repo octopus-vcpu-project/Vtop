@@ -617,7 +617,7 @@ static void find_numa_groups(void)
 			if(top_stack[i][j] < 4){
 				banned_characters[i] = 1;
 				banned_characters[j] = 1;
-			}*
+			}
 		}
 	}
 }
