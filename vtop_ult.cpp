@@ -601,7 +601,7 @@ static double get_max_latency(int cpu, int group)
  */
 int find_numa_groups(void)
 {
-	int groups;
+	int groups = 0;
 	int banned_characters[MAX_CPUS];
 	bool finished=false;
 	for (int i = 0; i < LAST_CPU_ID; i++) {
