@@ -678,7 +678,7 @@ bool verify_pair_group(std::vector<int> input){
 	
 	for(int i=0; i < nums.size() - 1; i += 2){
 		int latency = measure_latency_pair(threads_to_cpu[nums[i]],threads_to_cpu[nums[i+1]]);
-		if(get_latency_class(latency) != 3){
+		if(get_latency_class(latency) != 2){
 			return false;
 		}
 	}
