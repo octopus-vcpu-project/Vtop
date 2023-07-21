@@ -280,6 +280,7 @@ int measure_latency_pair(int i, int j)
 	stop_loops = 0;
 	odd.buddy = 0;
 	pingpong_mutex = NULL;
+	std::cout << "Sample passed " << (int)(best_sample*100) << " next.\n";
 	return (int)(best_sample*100);
 }
 
