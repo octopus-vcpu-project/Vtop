@@ -658,7 +658,7 @@ bool verify_numa_group(std::vector<int> input){
     }
 	
 	for(int i=0; i < nums.size() - 1; i += 2){
-		int latency = measure_latency_pair(numas_to_cpu[nums[i]],numas_to_cpu[nums[i+1]]);
+		int latency = measure_latency_pair(pairs_to_cpu[nums[i]],pairs_to_cpu[nums[i+1]]);
 		std::cout<<"z"<<get_latency_class(latency)<<std::endl;
 		if(get_latency_class(latency) != 3){
 			return false;
