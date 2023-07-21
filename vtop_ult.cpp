@@ -600,6 +600,7 @@ static double get_max_latency(int cpu, int group)
  */
 static void find_numa_groups(void)
 {
+	
 	int banned_characters[MAX_CPUS];
 	bool finished=false;
 	for (int i = 0; i < LAST_CPU_ID; i++) {
@@ -708,6 +709,7 @@ int main(int argc, char *argv[])
 {
 	moveCurrentThread();
 	int nr_pages = 0;
+	nr_cpus = get_nprocs();
 	const std::vector<std::string_view> args(argv, argv + argc);
   	setArguments(args);
 	uint64_t popul_laten_last = now_nsec();
