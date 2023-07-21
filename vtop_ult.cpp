@@ -708,7 +708,7 @@ static void configure_os_numa_groups(int mode)
 int main(int argc, char *argv[])
 {
 	nr_cpus = get_nprocs();
-	for (i = 0; i < LAST_CPU_ID; i++) {
+	for (int i = 0; i < LAST_CPU_ID; i++) {
 		std::vector<int> cpumap(LAST_CPU_ID);
 		top_stack.push_back(cpumap);
 	}
