@@ -638,8 +638,7 @@ void MT_find_topology(void){
 
 	pthread_mutex_lock(&readiest_check);
 	while(ready_counter != nr_numa_groups){
-		pthread_cond_wait(&cv, &readiest_check);
-		std::cout<<"herec"<<ready_counter<<std::endl;
+		sleep(0.5);
 	}
 	pthread_mutex_unlock(&readiest_check);
 	
