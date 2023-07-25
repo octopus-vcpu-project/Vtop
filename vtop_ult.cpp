@@ -609,7 +609,7 @@ static void *thread_fn2(void *data)
 	pthread_mutex_lock(&readiest_check);
  	ready_counter += 1;
 	pthread_mutex_unlock(&readiest_check);
-	pthread_cond_signal(&cv);
+	pthread_cond_broadcast(&cv);
 
 	return NULL;
 }
