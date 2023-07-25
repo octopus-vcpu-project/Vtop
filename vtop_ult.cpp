@@ -596,6 +596,8 @@ void ST_find_topology(std::vector<int> input){
 			pthread_mutex_unlock(&readier_check);
 		}
 	}
+	std::cout<<"fin"<<std::endl;
+		
 }
 
 static void *thread_fn2(void *data)
