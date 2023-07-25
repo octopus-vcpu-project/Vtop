@@ -612,13 +612,13 @@ void MT_find_topology(void){
 	for(int i=0;i<LAST_CPU_ID;i++){
 		for(int j=i+1;j<LAST_CPU_ID;j++){
 			if(top_stack[i][j] == 0){
-				pairs_to_test[amount % nr_numa_groups].push_back(i * LAST_CPU_ID + j);
+				all_pairs_to_test[amount % nr_numa_groups].push_back(i * LAST_CPU_ID + j);
 				amount++;
 			}
 		}
 	}
 	pthread_t worker_tasks[nr_numa_groups];
-	for (i = 0; i < nr_numa_groups; i++) {
+	for (int i = 0; i < nr_numa_groups; i++) {
 		worker_thread_args wrk_args;
 		wrk_args.pairs_to_test = all_pairs_to_test[i];
 		pthread_create(&worker_tasks[i], NULL, thread_fn2, &wrk_args);
