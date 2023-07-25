@@ -625,7 +625,7 @@ void MT_find_topology(void){
 		pthread_create(&worker_tasks[i], NULL, thread_fn2, &wrk_args);
 	}
 	std::cout<<"here"<<std::endl;
-	
+
 	pthread_mutex_lock(&ready_check);
 	while(ready_counter != nr_numa_groups){
 		pthread_cond_wait(&cv, &ready_check);
@@ -635,6 +635,7 @@ void MT_find_topology(void){
 	for (int i = 0; i < nr_numa_groups; i++) {
     		pthread_join(worker_tasks[i], NULL);
   	}
+	std::cout<<"here"<<std::endl;
 	ready_counter = 0;
 }
 
