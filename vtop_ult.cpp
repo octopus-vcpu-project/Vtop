@@ -626,7 +626,7 @@ void MT_find_topology(void){
 
 //TODO convert to something more parallel
 void ST_find_topology(std::vector<int> input){
-	for(int x=0;i<input.size();x++){
+	for(int x=0;x<input.size();x++){
 		int j = input[x] % LAST_CPU_ID;
 		int i = (input[x] - j)/LAST_CPU_ID;
 		if(top_stack[i][j] == 0){
