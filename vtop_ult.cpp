@@ -639,9 +639,6 @@ void MT_find_topology(void){
 	pthread_mutex_lock(&readiest_check);
 	while(ready_counter != nr_numa_groups){
 		sleep(0.5);
-		if(ready_counter>0){
-		std::cout<<ready_counter<<std::endl;
-		}
 		}
 	pthread_mutex_unlock(&readiest_check);
 	
