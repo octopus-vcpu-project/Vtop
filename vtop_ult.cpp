@@ -53,6 +53,7 @@ std::vector<std::vector<int>> top_stack;
 pthread_t worker_tasks[MAX_CPUS];
 static size_t nr_relax = 0;
 pthread_mutex_t ready_check = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t readier_check = PTHREAD_MUTEX_INITIALIZER;
 //static size_t nr_tested_cores = 0;
 pthread_cond_t cv = PTHREAD_COND_INITIALIZER;
 std::random_device rd;
@@ -585,10 +586,14 @@ void ST_find_topology(std::vector<int> input){
 		int i = (input[x] - j)/LAST_CPU_ID;
 		
 		std::cout<<"here"<<i<<"here"<<j<<std::endl;
+		
+		
 		if(top_stack[i][j] == 0){
 			int latency = measure_latency_pair(i,j);
+			pthread_mutex_lock(&readier_check);
 			set_latency_pair(i,j,get_latency_class(latency));
 			apply_optimization();
+			pthread_mutex_unlock(&readier_check);
 		}
 	}
 }
