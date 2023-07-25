@@ -627,9 +627,8 @@ void MT_find_topology(void){
 	worker_thread_args worker_args[nr_numa_groups];
 	pthread_t worker_tasks[nr_numa_groups];
 	for (int i = 0; i < nr_numa_groups; i++) {
-		worker_thread_args wrk_args = new worker_thread_args;
-		wrk_args.pairs_to_test = all_pairs_to_test[i];
-		pthread_create(&worker_tasks[i], NULL, thread_fn2, &wrk_args);
+		worker_args[i].pairs_to_test = all_pairs_to_test[i];
+		pthread_create(&worker_tasks[i], NULL, thread_fn2, &worker_args[i]);
 	}
 	std::cout<<"here"<<std::endl;
 
