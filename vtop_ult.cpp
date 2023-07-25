@@ -585,7 +585,7 @@ void ST_find_topology(std::vector<int> input){
 		int j = input[x] % LAST_CPU_ID;
 		int i = (input[x]-(input[x]%LAST_CPU_ID))/LAST_CPU_ID;
 		
-		std::cout<<"here"<<i<<"here"<<j<<std::endl;
+		std::cout<<"here"<<input[x]<<"here"<<j<<std::endl;
 		
 		
 		if(top_stack[i][j] == 0){
