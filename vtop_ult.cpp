@@ -642,6 +642,7 @@ void MT_find_topology(void){
 	for (int i = 0; i < nr_numa_groups; i++) {
     		pthread_join(worker_tasks[i], NULL);
   	}
+	std::cout<<"finished"<<std::endl;
 	ready_counter = 0;
 }
 
