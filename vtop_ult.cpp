@@ -54,6 +54,7 @@ pthread_t worker_tasks[MAX_CPUS];
 static size_t nr_relax = 0;
 pthread_mutex_t ready_check = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t readier_check = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t readiest_check = PTHREAD_MUTEX_INITIALIZER;
 //static size_t nr_tested_cores = 0;
 pthread_cond_t cv = PTHREAD_COND_INITIALIZER;
 std::random_device rd;
@@ -597,7 +598,7 @@ void ST_find_topology(std::vector<int> input){
 		}
 	}
 	std::cout<<"fin"<<std::endl;
-		
+	return;	
 }
 
 static void *thread_fn2(void *data)
@@ -605,9 +606,9 @@ static void *thread_fn2(void *data)
 	worker_thread_args *args = (worker_thread_args *)data;
 	ST_find_topology(args->pairs_to_test);
 
-	pthread_mutex_lock(&ready_check);
+	pthread_mutex_lock(&readiest_check);
  	ready_counter += 1;
-	pthread_mutex_unlock(&ready_check);
+	pthread_mutex_unlock(&readiest_check);
 	pthread_cond_signal(&cv);
 
 	return NULL;
@@ -634,11 +635,11 @@ void MT_find_topology(void){
 	}
 	std::cout<<"here"<<std::endl;
 
-	pthread_mutex_lock(&ready_check);
+	pthread_mutex_lock(&readiest_check);
 	while(ready_counter != nr_numa_groups){
 		pthread_cond_wait(&cv, &ready_check);
 	}
-	pthread_mutex_unlock(&ready_check);
+	pthread_mutex_unlock(&readiest_check);
 	
 	std::cout<<"here"<<std::endl;
 	for (int i = 0; i < nr_numa_groups; i++) {
