@@ -583,7 +583,7 @@ typedef struct {
 void ST_find_topology(std::vector<int> input){
 	for(int x=0;x<input.size();x++){
 		int j = input[x] % LAST_CPU_ID;
-		int i = (input[x] - j)/LAST_CPU_ID;
+		int i = (input[x]-(input[x]%LAST_CPU_ID))/LAST_CPU_ID;
 		
 		std::cout<<"here"<<i<<"here"<<j<<std::endl;
 		
