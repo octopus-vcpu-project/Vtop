@@ -583,6 +583,8 @@ void ST_find_topology(std::vector<int> input){
 	for(int x=0;x<input.size();x++){
 		int j = input[x] % LAST_CPU_ID;
 		int i = (input[x] - j)/LAST_CPU_ID;
+		
+		std::cout<<"here"<<i<<"here"<<j<<std::endl;
 		if(top_stack[i][j] == 0){
 			int latency = measure_latency_pair(i,j);
 			set_latency_pair(i,j,get_latency_class(latency));
@@ -617,7 +619,6 @@ void MT_find_topology(void){
 			}
 		}
 	}
-	std::cout<<"here"<<std::endl;
 	pthread_t worker_tasks[nr_numa_groups];
 	for (int i = 0; i < nr_numa_groups; i++) {
 		worker_thread_args wrk_args;
@@ -632,10 +633,10 @@ void MT_find_topology(void){
 	}
 	pthread_mutex_unlock(&ready_check);
 	
+	std::cout<<"here"<<std::endl;
 	for (int i = 0; i < nr_numa_groups; i++) {
     		pthread_join(worker_tasks[i], NULL);
   	}
-	std::cout<<"here"<<std::endl;
 	ready_counter = 0;
 }
 
