@@ -444,38 +444,6 @@ void apply_optimization_recur(int cpu, int last_cpu,int latency_class,std::unord
 
 
 
-static void populate_latency_matrix(void)
-{
-	int i, j;
-	nr_cpus = get_nprocs();
-	for (i = 0; i < LAST_CPU_ID; i++) {
-		active_cpu_bitmap[i] = 0;
-		std::vector<int> cpumap(LAST_CPU_ID);
-		top_stack.push_back(cpumap);
-
-		for (j = i + 1; j < LAST_CPU_ID; j++) {
-			task_stack.push_back(LAST_CPU_ID * i + j);
-		}
-	}
-	for(int p=0;p< LAST_CPU_ID;p++){
-		top_stack[p][p] = 1;
-	}
-
-
-	for (i = 0; i < PTHREAD_TASK_AMOUNT; i++) {
-		std::cout << "pthread task amount  " << PTHREAD_TASK_AMOUNT << " numbers.\n";
-		thread_args_t newtest;
-		pthread_create(&worker_tasks[i], NULL, thread_fn1, &newtest);
-	}
-	std::cout << "myvector stores " << int(task_stack.size()) << " numbers.\n";
-	while(finished == 0){
-		sleep(0.5);
-	}
-	for (int i = 0; i < PTHREAD_TASK_AMOUNT; i++) {
-    	pthread_join(worker_tasks[i], NULL);
-  	}
-
-}
 
 static void print_population_matrix(void)
 {
