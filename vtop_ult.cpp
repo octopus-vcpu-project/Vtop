@@ -578,6 +578,18 @@ typedef struct {
 	std::vector<int> pairs_to_test;
 } worker_thread_args;
 
+//TODO convert to something more parallel
+void ST_find_topology(std::vector<int> input){
+	for(int x=0;x<input.size();x++){
+		int j = input[x] % LAST_CPU_ID;
+		int i = (input[x] - j)/LAST_CPU_ID;
+		if(top_stack[i][j] == 0){
+			int latency = measure_latency_pair(i,j);
+			set_latency_pair(i,j,get_latency_class(latency));
+			apply_optimization();
+		}
+	}
+}
 
 static void *thread_fn2(void *data)
 {
@@ -624,18 +636,6 @@ void MT_find_topology(void){
 	ready_counter = 0;
 }
 
-//TODO convert to something more parallel
-void ST_find_topology(std::vector<int> input){
-	for(int x=0;x<input.size();x++){
-		int j = input[x] % LAST_CPU_ID;
-		int i = (input[x] - j)/LAST_CPU_ID;
-		if(top_stack[i][j] == 0){
-			int latency = measure_latency_pair(i,j);
-			set_latency_pair(i,j,get_latency_class(latency));
-			apply_optimization();
-		}
-	}
-}
 
 
 
