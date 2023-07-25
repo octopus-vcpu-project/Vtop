@@ -633,7 +633,7 @@ void MT_find_topology(void){
 		worker_args[i].pairs_to_test = all_pairs_to_test[i];
 		pthread_create(&worker_tasks[i], NULL, thread_fn2, &worker_args[i]);
 	}
-	std::cout<<"here"<<std::endl;
+	std::cout<<"herssse"<<nr_numa_groups<<std::endl;
 
 	pthread_mutex_lock(&readiest_check);
 	while(ready_counter != nr_numa_groups){
