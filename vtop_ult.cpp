@@ -606,8 +606,8 @@ static void *thread_fn2(void *data)
 	worker_thread_args *args = (worker_thread_args *)data;
 	ST_find_topology(args->pairs_to_test);
 
-	pthread_mutex_lock(&readiest_check);
  	ready_counter += 1;
+	pthread_mutex_lock(&readiest_check);
 	
 	pthread_cond_broadcast(&cv);
 	pthread_mutex_unlock(&readiest_check);
@@ -639,8 +639,10 @@ void MT_find_topology(void){
 	pthread_mutex_lock(&readiest_check);
 	while(ready_counter != nr_numa_groups){
 		sleep(0.5);
+		if(ready_couter>0){
 		std::cout<<ready_counter<<std::endl;
-	}
+		}
+		}
 	pthread_mutex_unlock(&readiest_check);
 	
 	std::cout<<"here"<<std::endl;
