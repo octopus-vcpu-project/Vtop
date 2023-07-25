@@ -47,6 +47,8 @@ int cpu_tt_id[MAX_CPUS];
 int active_cpu_bitmap[MAX_CPUS];
 int finished = 0;
 int return_pair = 0;
+int cpu1 = 0;
+int cpu2 = 0;
 std::vector<int> task_stack;
 std::vector<std::vector<int>> top_stack;
 pthread_t worker_tasks[MAX_CPUS];
@@ -129,6 +131,8 @@ void setArguments(const std::vector<std::string_view>& arguments) {
     set_option_value("-p", PTHREAD_TASK_AMOUNT);
     set_option_value("-s", NR_SAMPLES);
     set_option_value("-u", SAMPLE_US);
+    set_option_value("-d", cpu1);
+    set_option_value("-i",cpu2);
 }
 
 
@@ -203,7 +207,7 @@ static void *thread_fn(void *data)
 		}
 		if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
 			++nr;
-			if (nr == 10000 && me == 0) {
+			if (nr == 500 && me == 0) {
 				__sync_fetch_and_add(&(nr_pingpongs->x), 2 * nr);
 				nr = 0;
 			}
@@ -257,14 +261,14 @@ int measure_latency_pair(int i, int j)
 		printf("ERROR creating even thread\n");
 		exit(1);
 	}
-
-	uint64_t last_stamp = now_nsec();
 	double best_sample = 1./0.;
+	uint64_t last_stamp = now_nsec();
 	for (size_t sample_no = 0; sample_no < NR_SAMPLES; ++sample_no) {
 		usleep(SAMPLE_US);
 		atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
 		uint64_t time_stamp = now_nsec();
 		double sample = (time_stamp - last_stamp) / (double)s;
+		uint64_t newtest = time_stamp - last_stamp;
 		last_stamp = time_stamp;
 
 	
@@ -297,30 +301,36 @@ int stick_this_thread_to_core(int core_id) {
 }
 
 
+int unpin_thread(){
+   cpu_set_t cpuset;
+   CPU_ZERO(&cpuset);
+   int num_cores = sysconf(_SC_NPROCESSORS_ONLN);
+   for(int z = 0;z<num_cores;z++){
+   	CPU_SET(z, &cpuset);
+   }
+
+   pthread_t current_thread = pthread_self();    
+   return pthread_setaffinity_np(current_thread, sizeof(cpu_set_t), &cpuset);
+
+}
 
 
 int get_pair_to_test(){
 
 	bool valid_pair_exists = false;
-	int last_pair = -1;
 
 	for(int i=0;i<LAST_CPU_ID;i++){
-		if(active_cpu_bitmap[i]==1){
-			continue;
-		}
 		for(int j=0;j<LAST_CPU_ID;j++){
-			if(active_cpu_bitmap[j]==1){
-				continue;
-			}
-			if(top_stack[i][j] == 0){
-					top_stack[i][j] == -1;
-					return(i * LAST_CPU_ID + j);
+			if(top_stack[i][j] == 0 || top_stack[i][j] == -1){
+					valid_pair_exists = true;
+					if(top_stack[i][j] ==0 && (active_cpu_bitmap[i]==0 && active_cpu_bitmap[j]==0)){
+						top_stack[i][j] == -1;
+						return(i * LAST_CPU_ID + j);
+					}
 			}
 
 		}
 	}
-	
-	//We're testing 
 	if(valid_pair_exists){
 		return -1;
 	}
@@ -336,7 +346,7 @@ int get_latency_class(int latency){
 	if(latency< 1000){
 		return 2;
 	}
-	if(latency< 6000){
+	if(latency< 7000){
 		return 3;
 	}
 	
@@ -348,7 +358,7 @@ void set_latency_pair(int x,int y,int latency_class){
 	top_stack[y][x] = latency_class;
 }
 
-void apply_optimization1(int best, int testing_value){
+void apply_optimization(int best, int testing_value){
 	int i = testing_value%LAST_CPU_ID;
 	int j =(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID;
 	int latency_class = get_latency_class(best);
@@ -358,20 +368,27 @@ void apply_optimization1(int best, int testing_value){
 		if(x==i){
 			continue;
 		}
+		//get all neightbors of x cpu
 		for(int y=0;y<LAST_CPU_ID;y++){
+			//get relationship between x cpu and neighbor
 			sub_rel = top_stack[y][x];
 			
+			//compare x cpu and neighbor
 			for(int z=0;z<LAST_CPU_ID;z++){
-				if((top_stack[y][z]<sub_rel && top_stack[y][z]!=0) && top_stack[x][z] == 0){
-					set_latency_pair(x,z,sub_rel);
+				//validation
+				if((top_stack[y][z]<sub_rel && top_stack[y][z]!=0)){
+					if(top_stack[x][z] == 0){
+						set_latency_pair(x,z,sub_rel);
+					}else if(top_stack[x][z]!=top_stack[y][x]){
+						//std::cout<<"error"<<std::endl;
+						//exit(1);
+					}
 				}
-				
 			}
 
 		}
 	}
 
-	
 }
 
 
@@ -392,7 +409,7 @@ void apply_optimization_recur(int cpu, int last_cpu,int latency_class,std::unord
 
 }
 
-void apply_optimization(int best, int testing_value){
+void apply_optimization1(int best, int testing_value){
 	int i = testing_value%LAST_CPU_ID;
 	int j =(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID;
 	int latency_class = get_latency_class(best);
@@ -429,13 +446,14 @@ static void *thread_fn1(void *data)
 	int testing_value;
 	int random_index;
 	while (1) {
+
 		pthread_mutex_lock(&ready_check);
+		
+		int me_index = -1;
+		
+
 		testing_value = get_pair_to_test();
-		if(testing_value == -2){
-			pthread_mutex_unlock(&ready_check);
-			finished=1;
-			break;
-		}
+		
 		
 		while(testing_value == -1){
 			pthread_mutex_unlock(&ready_check);
@@ -443,24 +461,40 @@ static void *thread_fn1(void *data)
 			pthread_mutex_lock(&ready_check);
 			testing_value = get_pair_to_test();
 		}
-		
 		if(testing_value == -2){
-			pthread_mutex_unlock(&ready_check);
-			finished=1;
-			break;
-		}
+                        pthread_mutex_unlock(&ready_check);
+                        finished=1;
+                        break;
+                }
+
+
+		
+
 		active_cpu_bitmap[testing_value%LAST_CPU_ID] = 1;
 		active_cpu_bitmap[(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID] = 1;
+		for(int g=0;g<LAST_CPU_ID;g++){
+                        if(active_cpu_bitmap[g] ==0){
+                                active_cpu_bitmap[g] = 1;
+                                stick_this_thread_to_core(g);
+                                me_index=g;
+                                break;
+                        }
+                }
 
 		pthread_mutex_unlock(&ready_check);
 		task_stack.pop_back();
 		int best = measure_latency_pair(testing_value%LAST_CPU_ID,(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID);
 		pthread_mutex_lock(&ready_check);
 		apply_optimization(best,testing_value);
+		if(me_index != -1){
+			active_cpu_bitmap[me_index] = 0;
+			unpin_thread();
+		}
 		active_cpu_bitmap[testing_value%LAST_CPU_ID] = 0;
 		active_cpu_bitmap[(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID] = 0;
 		pthread_mutex_unlock(&ready_check);
-		std::cout << "myvector stores " << int(task_stack.size()) << " numbers.\n"<<"Sample passed: "<< best<< "   ";
+		
+		std::cout << "myvector stores " << int(task_stack.size()) << " numbers.\n"<<"X Val "<<testing_value%LAST_CPU_ID<<"Y VaL"<<(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID <<" Sample passed: "<< best<< "   ";
 		
 	}
 	return NULL;
@@ -619,7 +653,7 @@ static void validate_group_assignment()
 	printf("PASS!!!\n");
 }
 
-//TODO-change this to do multi-level topology
+
 static void construct_vnuma_groups(void)
 {
 	int i, j, count = 0;
@@ -708,8 +742,9 @@ int main(int argc, char *argv[])
 	const std::vector<std::string_view> args(argv, argv + argc);
   	setArguments(args);
 	uint64_t popul_laten_last = now_nsec();
-	printf("populating latency matrix...\n");
 	populate_latency_matrix();
+	int result = measure_latency_pair(cpu1,cpu2);
+	std::cout<<"Result of 2CPUS:"<<result<<std::endl;
 	uint64_t popul_laten_now = now_nsec();
 	printf("This time it took for latency matrix to be populated%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 	if (verbose)

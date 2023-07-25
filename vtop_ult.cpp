@@ -316,16 +316,19 @@ int measure_latency_pair(int i, int j)
 
 	uint64_t last_stamp = now_nsec();
 	double best_sample = 1./0.;
-	for (size_t sample_no = 0; sample_no < NR_SAMPLES; ++sample_no) {
+	int test = 0;
+	for (test = 0; test < NR_SAMPLES; test++) {
 		usleep(SAMPLE_US);
 		atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
 		uint64_t time_stamp = now_nsec();
 		double sample = (time_stamp - last_stamp) / (double)s;
 		last_stamp = time_stamp;
 
-	
-		
+
 		if ((sample < best_sample && sample != 1.0/0.)||(best_sample==1.0/0.)){
+			//if((!best_sample==1.0/0.)&&((best_sample-sample)/best_sample > 0.05)){
+                         //       test = test - 10;
+                        //}
 			best_sample = sample;
 		}
 
@@ -336,7 +339,7 @@ int measure_latency_pair(int i, int j)
 	stop_loops = 0;
 	odd.buddy = 0;
 	pingpong_mutex = NULL;
-	std::cout << "Sample passed " << (int)(best_sample*100) << " next.\n";
+	std::cout << "I:"<<i<<" J:"<<j<<" Sample passed " << (int)(best_sample*100) << " next.\n";
 	return (int)(best_sample*100);
 }
 
@@ -393,7 +396,7 @@ int get_latency_class(int latency){
 	if(latency< 1000){
 		return 2;
 	}
-	if(latency< 6000){
+	if(latency< 8000){
 		return 3;
 	}
 	
@@ -609,34 +612,43 @@ static double get_max_latency(int cpu, int group)
 int find_numa_groups(void)
 {
 	nr_numa_groups = 0;
+	//TODO CPUS we don't have to test NAMING(skipped cpu) more comments
 	int banned_characters[MAX_CPUS];
 	bool finished=false;
+	for(int i = 0;i<LAST_CPU_ID;i++){
+		cpu_group_id[i] = -1;
+	}
 	for (int i = 0; i < LAST_CPU_ID; i++) {
-		if(banned_characters[i] == 1){
+		//intialize and use;
+		if(cpu_group_id[i] != -1){
 			continue;
 		}
-		nr_numa_groups++;
 		cpu_group_id[i] == nr_numa_groups;
 		for (int j = 0; j < LAST_CPU_ID; j++) {
-			if(banned_characters[j] == 1){
+			if(cpu_group_id[j] != -1){
 				continue;
 			}
 			if(top_stack[i][j] == 0 ){
+				if(i==0 && j==1){
+					NR_SAMPLES = NR_SAMPLES*20;
+				}
 				int latency = measure_latency_pair(i,j);
 				set_latency_pair(i,j,get_latency_class(latency));
+				if(i==0 && j==1){
+					NR_SAMPLES = NR_SAMPLES/20;
+				}
 			}
 			if(top_stack[i][j] < 4){
 				cpu_group_id[j] = nr_numa_groups;
-				banned_characters[i] = 1;
-				banned_characters[j] = 1;
 			}
 		}
-		
+		nr_numa_groups++;
 	}
+	apply_optimization();
 	return nr_numa_groups;
 }
 
-
+//TODO convert to something more parallel
 void ST_find_topology(void){
 	for(int i=0;i<LAST_CPU_ID;i++){
 		for(int j=i+1;j<LAST_CPU_ID;j++){
@@ -652,53 +664,96 @@ void ST_find_topology(void){
 bool verify_numa_group(std::vector<int> input){
 	std::vector<int> nums;
 	for (int i = 0; i < input.size(); ++i) {
-        if (input[i] == 1) {
-            nums.push_back(i); 
-			std::cout<<"d"<<i<<std::endl;
-        }
-    }
-	
-	for(int i=0; i < nums.size() - 1; i += 2){
-		int latency = measure_latency_pair(pairs_to_cpu[nums[i]],pairs_to_cpu[nums[i+1]]);
-		std::cout<<"z"<<get_latency_class(latency)<<std::endl;
-		if(get_latency_class(latency) != 3){
-			return false;
+        	if (input[i] == 1) {
+            		nums.push_back(i);
+        	}
+    	}
+	for(int i=0; i < nums.size();i++){
+		for(int j=i+1;j<nums.size();j++){
+			int latency = measure_latency_pair(pairs_to_cpu[nums[i]],pairs_to_cpu[nums[j]]);
+			if(get_latency_class(latency) != 3){
+				return false;
+			}
 		}
 	}
 	return true;
 }
 
-bool verify_pair_group(std::vector<int> input){
-	std::vector<int> nums;
-	for (int i = 0; i < input.size(); ++i) {
-        if (input[i] == 1) {
-            nums.push_back(i); 
+bool verify_thread_group(std::vector<int> input){
+        std::vector<int> nums;
+        for (int i = 0; i < input.size(); ++i) {
+                if (input[i] == 1) {
+                        nums.push_back(i);
+                }
         }
-    }
-	
-	for(int i=0; i < nums.size() - 1; i += 2){
-		int latency = measure_latency_pair(threads_to_cpu[nums[i]],threads_to_cpu[nums[i+1]]);
-		if(get_latency_class(latency) != 2){
-			return false;
-		}
-	}
-	return true;
+        for(int i=0; i < nums.size();i++){
+                for(int j=i+1;j<nums.size();j++){
+                        int latency = measure_latency_pair(nums[i],nums[j]);
+                        //TODO save
+			if(get_latency_class(latency) != 1){
+				return false;
+                        }
+                }
+        }
+        return true;
 }
+
+
+bool verify_pair_group(std::vector<int> input){
+        std::vector<int> nums;
+        for (int i = 0; i < input.size(); ++i) {
+                if (input[i] == 1) {
+                        nums.push_back(i);
+                }
+        }
+        for(int i=0; i < nums.size();i++){
+                for(int j=i+1;j<nums.size();j++){
+                        int latency = measure_latency_pair(threads_to_cpu[nums[i]],threads_to_cpu[nums[j]]);
+                        //TODO save
+                        if(get_latency_class(latency) != 2){
+                                return false;
+                        }
+                }
+        }
+        return true;
+}
+
 
 
 bool verify_topology(void){
-	//verify numa level topology
+	//do thread
+	
+	for(int i = 0; i< thread_to_cpu_arr.size();i++) {
+		if(!verify_thread_group(thread_to_cpu_arr[i])){
+			return false;
+		}
+	}
+
+	for (int i = 0; i < pair_to_thread_arr.size(); i+=1) {
+                if(!verify_pair_group(pair_to_thread_arr[i])){
+                        return false;
+                }
+        }
+
 	for (int i = 0; i < numa_to_pair_arr.size(); i+=1) {
-		std::cout<<"ding";
 		if(!verify_numa_group(numa_to_pair_arr[i])){
 			return false;
 		}
 	}
-	for (int i = 0; i < pair_to_thread_arr.size(); i+=1) {
-		if(!verify_pair_group(pair_to_thread_arr[i])){
-			return false;
+	NR_SAMPLES = NR_SAMPLES*2;
+        SAMPLE_US = SAMPLE_US*2;
+
+
+
+	for(int i=0;i<nr_numa_groups;i++){
+                for(int j=i+1;j<nr_numa_groups;j++){
+			int latency = measure_latency_pair(numas_to_cpu[i],numas_to_cpu[i+1]);
+                	if(get_latency_class(latency) != 4){
+                        	return false;
+                	}
 		}
-	}
+        }
+
 	return true;
 }
 
@@ -740,6 +795,9 @@ static void construct_vnuma_groups(void)
 			cpu_tt_id[i] = nr_tt_groups;
 			nr_tt_groups++;
 			threads_to_cpu.push_back(i);
+			std::vector<int> cpu_bitmap(LAST_CPU_ID);
+                        thread_to_cpu_arr.push_back(cpu_bitmap);
+
 		}
 
 		
@@ -755,9 +813,11 @@ static void construct_vnuma_groups(void)
 				}
 
 		}
+		//TODO change naming
+		//whatever below is equivalent to :numa_to_pair_arr[cpu_group_id[i]].push_back(cpu_pair_id[i]);
 		numa_to_pair_arr[cpu_group_id[i]][cpu_pair_id[i]] = 1;
 		pair_to_thread_arr[cpu_pair_id[i]][cpu_tt_id[i]] = 1;
-		
+		thread_to_cpu_arr[cpu_tt_id[i]][i] = 1;
 	}
 
 	for (i = 0; i < nr_numa_groups; i++) {
@@ -773,12 +833,7 @@ static void construct_vnuma_groups(void)
 	printf("%d ", nr_numa_groups);	
 	printf("%d ", nr_pair_groups);	
 	printf("%d ", nr_tt_groups);	
-
-	for (j = 0; j < LAST_CPU_ID; j++){
-		printf("%d ", cpu_group_id[j]);	
-		printf("%d ", cpu_pair_id[j]);	
-		printf("%d ", cpu_tt_id[j]);	
-	}
+	printf("\n");
 
 
 	
@@ -811,6 +866,8 @@ static void configure_os_numa_groups(int mode)
 
 int main(int argc, char *argv[])
 {
+	moveCurrentThread();
+	moveThreadtoHighPrio(syscall(SYS_gettid));
 	nr_cpus = get_nprocs();
 	for (int i = 0; i < LAST_CPU_ID; i++) {
 		std::vector<int> cpumap(LAST_CPU_ID);
@@ -824,21 +881,34 @@ int main(int argc, char *argv[])
 	uint64_t popul_laten_last = now_nsec();
 	printf("Finding NUMA groups...\n");
 	int numa_groups = find_numa_groups();
+
+	NR_SAMPLES = NR_SAMPLES /2;
+	SAMPLE_US = SAMPLE_US/2;
+
 	std::cout<<"numa group"<<numa_groups<<std::endl;
 	uint64_t popul_laten_now = now_nsec();
 	printf("This time it took to find NUMA Groups%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
-	
 	popul_laten_last = now_nsec();
 	printf("Consturcting overall topology...\n");
 	ST_find_topology();
 	popul_laten_now = now_nsec();
 	printf("This time it took to find all topology%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 	
-	ST_find_topology();
 	construct_vnuma_groups();
-	if (verify_topology())
-		printf("TOPOLOGY IS VERIFIEd...\n");
-	
+	if(verbose){
+		print_population_matrix();
+	}
+	popul_laten_last = now_nsec();
+
+	if (verify_topology()){
+		printf("TOPOLOGY IS VERIFIED...\n");
+	}else{
+		printf("FAILED VERIFICATION \n");
+	}
+	popul_laten_now = now_nsec();
+	printf("This time it took to verify%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
+
 	configure_os_numa_groups(1);
 	printf("Done...\n");
 }
+
