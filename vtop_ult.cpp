@@ -862,7 +862,7 @@ int main(int argc, char *argv[])
 	printf("This time it took to find NUMA Groups%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 	popul_laten_last = now_nsec();
 	printf("Consturcting overall topology...\n");
-	ST_find_topology();
+	MT_find_topology();
 	popul_laten_now = now_nsec();
 	printf("This time it took to find all topology%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 	
