@@ -44,6 +44,7 @@ int nr_numa_groups;
 int nr_pair_groups;
 int cpu_pair_id[MAX_CPUS];
 int cpu_tt_id[MAX_CPUS];
+int ready_counter = 0;
 int active_cpu_bitmap[MAX_CPUS];
 int finished = 0;
 int return_pair = 0;
@@ -53,7 +54,7 @@ pthread_t worker_tasks[MAX_CPUS];
 static size_t nr_relax = 0;
 pthread_mutex_t ready_check = PTHREAD_MUTEX_INITIALIZER;
 //static size_t nr_tested_cores = 0;
-
+pthread_cond_t cv = PTHREAD_COND_INITIALIZER;
 std::random_device rd;
 std::default_random_engine e1(rd());
 typedef unsigned atomic_t;
@@ -442,46 +443,6 @@ void apply_optimization_recur(int cpu, int last_cpu,int latency_class,std::unord
 
 
 
-static void *thread_fn1(void *data)
-{	
-	int testing_value;
-	int random_index;
-	while (1) {
-		pthread_mutex_lock(&ready_check);
-		testing_value = get_pair_to_test();
-		if(testing_value == -2){
-			pthread_mutex_unlock(&ready_check);
-			finished=1;
-			break;
-		}
-		
-		while(testing_value == -1){
-			pthread_mutex_unlock(&ready_check);
-			usleep(10);
-			pthread_mutex_lock(&ready_check);
-			testing_value = get_pair_to_test();
-		}
-		
-		if(testing_value == -2){
-			pthread_mutex_unlock(&ready_check);
-			finished=1;
-			break;
-		}
-		active_cpu_bitmap[testing_value%LAST_CPU_ID] = 1;
-		active_cpu_bitmap[(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID] = 1;
-
-		pthread_mutex_unlock(&ready_check);
-		task_stack.pop_back();
-		int best = measure_latency_pair(testing_value%LAST_CPU_ID,(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID);
-		pthread_mutex_lock(&ready_check);
-		active_cpu_bitmap[testing_value%LAST_CPU_ID] = 0;
-		active_cpu_bitmap[(testing_value-(testing_value%LAST_CPU_ID))/LAST_CPU_ID] = 0;
-		pthread_mutex_unlock(&ready_check);
-		std::cout << "myvector stores " << int(task_stack.size()) << " numbers.\n"<<"Sample passed: "<< best<< "   ";
-		
-	}
-	return NULL;
-}
 
 static void populate_latency_matrix(void)
 {
@@ -612,14 +573,11 @@ static double get_max_latency(int cpu, int group)
 int find_numa_groups(void)
 {
 	nr_numa_groups = 0;
-	//TODO CPUS we don't have to test NAMING(skipped cpu) more comments
-	int banned_characters[MAX_CPUS];
 	bool finished=false;
 	for(int i = 0;i<LAST_CPU_ID;i++){
 		cpu_group_id[i] = -1;
 	}
 	for (int i = 0; i < LAST_CPU_ID; i++) {
-		//intialize and use;
 		if(cpu_group_id[i] != -1){
 			continue;
 		}
@@ -648,18 +606,70 @@ int find_numa_groups(void)
 	return nr_numa_groups;
 }
 
-//TODO convert to something more parallel
-void ST_find_topology(void){
+typedef struct {
+	std::vector<int> pairs_to_test;
+} worker_thread_args;
+
+
+static void *thread_fn2(void *data)
+{
+	worker_thread_args *args = (thread_args_t *)data;
+	ST_find_topology(args->pairs_to_test);
+
+	pthread_mutex_lock(&ready_check);
+ 	ready_counter += 1;
+	pthread_mutex_unlock(&ready_check);
+	pthread_cond_signal(&cv);
+
+	return NULL;
+}
+
+
+void MT_find_topology(void){
+	pthread_cond_t cv = PTHREAD_COND_INITIALIZER;
+	std::vector<std::vector<int>> all_pairs_to_test(nr_numa_groups);
+	int amount = 0;
 	for(int i=0;i<LAST_CPU_ID;i++){
 		for(int j=i+1;j<LAST_CPU_ID;j++){
 			if(top_stack[i][j] == 0){
-				int latency = measure_latency_pair(i,j);
-				set_latency_pair(i,j,get_latency_class(latency));
-				apply_optimization();
+				pairs_to_test[amount % nr_numa_groups].push_back(i * LAST_CPU_ID + j);
+				amount++;
 			}
 		}
 	}
+	pthread_t worker_tasks[nr_numa_groups];
+	for (i = 0; i < nr_numa_groups; i++) {
+		worker_thread_args wrk_args;
+		wrk_args.pairs_to_test = all_pairs_to_test[i];
+		pthread_create(&worker_tasks[i], NULL, thread_fn2, &wrk_args);
+	}
+
+	pthread_mutex_lock(&ready_check);
+	while(ready_counter != nr_numa_groups){
+		pthread_cond_wait(&cv, &ready_check);
+	}
+	pthread_mutex_unlock(&ready_check);
+	
+	for (int i = 0; i < nr_numa_groups; i++) {
+    		pthread_join(worker_tasks[i], NULL);
+  	}
+	ready_counter = 0;
 }
+
+//TODO convert to something more parallel
+void ST_find_topology(std::vector<int> input){
+	for(int x=0;i<input.size();x++){
+		int j = input[x] % LAST_CPU_ID;
+		int i = (input[x] - j)/LAST_CPU_ID;
+		if(top_stack[i][j] == 0){
+			int latency = measure_latency_pair(i,j);
+			set_latency_pair(i,j,get_latency_class(latency));
+			apply_optimization();
+		}
+	}
+}
+
+
 
 bool verify_numa_group(std::vector<int> input){
 	std::vector<int> nums;
@@ -721,7 +731,6 @@ bool verify_pair_group(std::vector<int> input){
 
 
 bool verify_topology(void){
-	//do thread
 	
 	for(int i = 0; i< thread_to_cpu_arr.size();i++) {
 		if(!verify_thread_group(thread_to_cpu_arr[i])){
@@ -757,8 +766,6 @@ bool verify_topology(void){
 	return true;
 }
 
-
-//TODO-change this to do multi-level topology
 static void construct_vnuma_groups(void)
 {
 	int i, j, count = 0;
@@ -767,7 +774,6 @@ static void construct_vnuma_groups(void)
 	int nr_tt_groups = 0;
 	double min, min_2;
 	nr_cpus = get_nprocs();
-	/* Invalidate group IDs */
 	for (i = 0; i < LAST_CPU_ID; i++){
 		cpu_group_id[i] = -1;
 		cpu_pair_id[i] = -1;
@@ -813,8 +819,6 @@ static void construct_vnuma_groups(void)
 				}
 
 		}
-		//TODO change naming
-		//whatever below is equivalent to :numa_to_pair_arr[cpu_group_id[i]].push_back(cpu_pair_id[i]);
 		numa_to_pair_arr[cpu_group_id[i]][cpu_pair_id[i]] = 1;
 		pair_to_thread_arr[cpu_pair_id[i]][cpu_tt_id[i]] = 1;
 		thread_to_cpu_arr[cpu_tt_id[i]][i] = 1;
