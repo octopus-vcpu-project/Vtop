@@ -581,7 +581,7 @@ typedef struct {
 
 static void *thread_fn2(void *data)
 {
-	worker_thread_args *args = (thread_args_t *)data;
+	worker_thread_args *args = (worker_thread_args *)data;
 	ST_find_topology(args->pairs_to_test);
 
 	pthread_mutex_lock(&ready_check);
