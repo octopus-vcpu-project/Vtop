@@ -265,7 +265,7 @@ static void *thread_fn(void *data)
 
 		if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
 			++nr;
-			if (nr == 10000 && me == 0) {
+			if (nr == 5000 && me == 0) {
 				__sync_fetch_and_add(&(nr_pingpongs->x), 2 * nr);
 
 				(args->timestamps).push_back(now_nsec());
@@ -343,14 +343,14 @@ int measure_latency_pair(int i, int j)
 	uint64_t last_stamp = now_nsec();
 	double best_sample = 1./0.;
 	int test = 0;
-	for (test = 0; test < NR_SAMPLES; test++) {
+	//for (test = 0; test < NR_SAMPLES; test++) {
 		
-		usleep(SAMPLE_US);
+	//	usleep(SAMPLE_US);
 	//	atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);;
 	//	quick_test = 1; 
-		uint64_t time_stamp = now_nsec();
+	//	uint64_t time_stamp = now_nsec();
 	//	double sample = (time_stamp - last_stamp) / (double)s;
-		last_stamp = time_stamp;
+	//	last_stamp = time_stamp;
 
 
 	//	if ((sample < best_sample && sample != 1.0/0.)||(best_sample==1.0/0.)){
@@ -360,19 +360,22 @@ int measure_latency_pair(int i, int j)
 	//		best_sample = sample;
 	//	}
 
-	}
+	//}
+	usleep(5000);
 	stop_loops = 1;
 	pthread_join(t_odd, NULL);
 	pthread_join(t_even, NULL);
 	pingpong_mutex = NULL;
 	uint64_t stamp_stamp;
+
 	for(int z=0;z<even.timestamps.size() - 1;z++){
-		double sample = (even.timestamps[z+1] - even.timestamps[z]) / (double)20000;
+		double sample = (even.timestamps[z+1] - even.timestamps[z]) / (double)10000;
 		if (sample < best_sample){
 			best_sample = sample;
 			stamp_stamp = even.timestamps[z+1] - even.timestamps[z];
 		}
 	}
+
 	std::cout << "I:"<<stamp_stamp<<" J:"<<even.timestamps.size()<<" Sample passed " << (int)(best_sample*100) << " next.\n";
 	return (int)(best_sample*100);
 }
