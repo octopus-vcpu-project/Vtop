@@ -273,7 +273,7 @@ static void *thread_fn(void *data)
 	}
 	return NULL;
 }
-int stick_this_thread_to_core(int core_id) {
+int stick_this_thread_to_core(int core_id,int core_id2) {
    int num_cores = sysconf(_SC_NPROCESSORS_ONLN);
    if (core_id < 0 || core_id >= num_cores)
       return EINVAL;
@@ -281,7 +281,7 @@ int stick_this_thread_to_core(int core_id) {
    cpu_set_t cpuset;
    CPU_ZERO(&cpuset);
    CPU_SET(core_id, &cpuset);
-
+   CPU_SET(core_id2, &cpuset);
    pthread_t current_thread = pthread_self();    
    return pthread_setaffinity_np(current_thread, sizeof(cpu_set_t), &cpuset);
 }
@@ -292,7 +292,7 @@ int measure_latency_pair(int i, int j)
 	thread_args_t even, odd;
 	CPU_ZERO(&even.cpus);
 	CPU_SET(i, &even.cpus);
-	
+	stick_this_thread_to_core(i,j);
 	even.me = 0;
 	even.buddy = 1;
 	CPU_ZERO(&odd.cpus);
