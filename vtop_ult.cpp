@@ -273,10 +273,25 @@ static void *thread_fn(void *data)
 	}
 	return NULL;
 }
+int stick_this_thread_to_core(int core_id) {
+   int num_cores = sysconf(_SC_NPROCESSORS_ONLN);
+   if (core_id < 0 || core_id >= num_cores)
+      return EINVAL;
+
+   cpu_set_t cpuset;
+   CPU_ZERO(&cpuset);
+   CPU_SET(core_id, &cpuset);
+
+   pthread_t current_thread = pthread_self();    
+   return pthread_setaffinity_np(current_thread, sizeof(cpu_set_t), &cpuset);
+}
+
 
 int measure_latency_pair(int i, int j)
 {
 	thread_args_t even, odd;
+	stick_this_thread_to_core(i);
+
 	CPU_ZERO(&even.cpus);
 	CPU_SET(i, &even.cpus);
 	even.me = 0;
@@ -346,18 +361,7 @@ int measure_latency_pair(int i, int j)
 	return (int)(best_sample*100);
 }
 
-int stick_this_thread_to_core(int core_id) {
-   int num_cores = sysconf(_SC_NPROCESSORS_ONLN);
-   if (core_id < 0 || core_id >= num_cores)
-      return EINVAL;
 
-   cpu_set_t cpuset;
-   CPU_ZERO(&cpuset);
-   CPU_SET(core_id, &cpuset);
-
-   pthread_t current_thread = pthread_self();    
-   return pthread_setaffinity_np(current_thread, sizeof(cpu_set_t), &cpuset);
-}
 
 
 
@@ -620,12 +624,10 @@ void MT_find_topology(void){
 	apply_optimization();
 	pthread_cond_t cv = PTHREAD_COND_INITIALIZER;
 	std::vector<std::vector<int>> all_pairs_to_test(nr_numa_groups);
-	int amount = 0;
 	for(int i=0;i<LAST_CPU_ID;i++){
 		for(int j=i+1;j<LAST_CPU_ID;j++){
 			if(top_stack[i][j] == 0){
 				all_pairs_to_test[cpu_group_id[i]].push_back(i * LAST_CPU_ID + j);
-				amount++;
 			}
 		}
 	}
