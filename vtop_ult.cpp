@@ -265,7 +265,7 @@ static void *thread_fn(void *data)
 
 		if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
 			++nr;
-			if (nr == 50000 && me == 0) {
+			if (nr == 100000 && me == 0) {
 				(args->timestamps).push_back(now_nsec());
 				nr = 0;
 			}
