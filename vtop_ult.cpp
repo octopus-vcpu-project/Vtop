@@ -305,7 +305,7 @@ int measure_latency_pair(int i, int j)
 	CPU_ZERO(&odd.cpus);
 	CPU_SET(j, &odd.cpus);
 	odd.me = 1;
-	stick_this_thread_to_core(i,j);
+
 	odd.buddy = 0;
     int stop_loops = 0;
     atomic_t* pingpong_mutex = (atomic_t*) malloc(sizeof(atomic_t));;
@@ -362,6 +362,7 @@ int measure_latency_pair(int i, int j)
 	//	}
 
 	//}
+	stick_this_thread_to_core(i,j);
 	usleep(5000);
 	stop_loops = 1;
 	pthread_join(t_odd, NULL);
