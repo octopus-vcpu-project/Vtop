@@ -343,14 +343,14 @@ int measure_latency_pair(int i, int j)
 	uint64_t last_stamp = now_nsec();
 	double best_sample = 1./0.;
 	int test = 0;
-	//for (test = 0; test < NR_SAMPLES; test++) {
+	for (test = 0; test < NR_SAMPLES; test++) {
 		
-	//	usleep(SAMPLE_US);
+		usleep(SAMPLE_US);
 	//	atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);;
 	//	quick_test = 1; 
-	//	uint64_t time_stamp = now_nsec();
+		uint64_t time_stamp = now_nsec();
 	//	double sample = (time_stamp - last_stamp) / (double)s;
-	//	last_stamp = time_stamp;
+		last_stamp = time_stamp;
 
 
 	//	if ((sample < best_sample && sample != 1.0/0.)||(best_sample==1.0/0.)){
@@ -360,8 +360,7 @@ int measure_latency_pair(int i, int j)
 	//		best_sample = sample;
 	//	}
 
-	//}
-	usleep(7000);
+	}
 	stop_loops = 1;
 	pthread_join(t_odd, NULL);
 	pthread_join(t_even, NULL);
