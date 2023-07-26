@@ -270,7 +270,7 @@ static void *thread_fn(void *data)
 		
 		if(me==0 && (*(args->new_test)) == 1){
 			__sync_lock_test_and_set(&(nr_pingpongs->x), 0);
-			args->quick_test = 0; 
+			args->new_test = 0; 
 		}
 		for (size_t i = 0; i < nr_relax; ++i)
 			asm volatile("rep; nop");
