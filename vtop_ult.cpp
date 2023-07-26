@@ -367,7 +367,7 @@ int measure_latency_pair(int i, int j)
 	pthread_join(t_even, NULL);
 	pingpong_mutex = NULL;
 	for(int z=0;z<even.timestamps.size() - 1;z++){
-		double sample = (even.timestamps[z+1] - even.timestamps[z]) / (double)1000;
+		double sample = (even.timestamps[z+1] - even.timestamps[z]) / (double)2000;
 		if (sample < best_sample){
 			best_sample = sample;
 		}
