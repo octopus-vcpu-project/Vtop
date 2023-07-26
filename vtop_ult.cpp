@@ -195,7 +195,7 @@ typedef union {
 	atomic_t x;
 	char pad[1024];
 } big_atomic_t __attribute__((aligned(1024)));
-
+                                                                  
 typedef struct {
 	cpu_set_t cpus;
 	atomic_t me;
@@ -618,6 +618,7 @@ static void *thread_fn2(void *data)
 
 void MT_find_topology(void){
 	nr_numa_groups =2;
+	apply_optimization();
 	pthread_cond_t cv = PTHREAD_COND_INITIALIZER;
 	std::vector<std::vector<int>> all_pairs_to_test(nr_numa_groups);
 	int amount = 0;
@@ -640,7 +641,7 @@ void MT_find_topology(void){
 	pthread_mutex_lock(&readiest_check);
 	while(ready_counter != nr_numa_groups){
 		sleep(0.5);
-		}
+	}
 	pthread_mutex_unlock(&readiest_check);
 	
 	std::cout<<"here"<<std::endl;
