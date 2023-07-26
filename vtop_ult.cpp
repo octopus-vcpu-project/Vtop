@@ -260,18 +260,20 @@ static void *thread_fn(void *data)
 		if (*stop_loops == 1){
 			pthread_exit(0);
 		}
-		if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
-			++nr;
-			if (nr == 1000 && me == 0) {
-				__sync_fetch_and_add(&(nr_pingpongs->x), 2 * nr);
-				nr = 0;
-			}
-		}
 		
 		if(me==0 && (*(args->new_test)) == 1){
 			__sync_lock_test_and_set(&(nr_pingpongs->x), 0);
 			args->new_test = 0; 
+		}else{
+			if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
+				++nr;
+				if (nr == 1000 && me == 0) {
+					__sync_fetch_and_add(&(nr_pingpongs->x), 2 * nr);
+					nr = 0;
+				}
+			}
 		}
+		
 		for (size_t i = 0; i < nr_relax; ++i)
 			asm volatile("rep; nop");
 		
@@ -344,6 +346,7 @@ int measure_latency_pair(int i, int j)
 	for (test = 0; test < NR_SAMPLES; test++) {
 		usleep(SAMPLE_US);
 		atomic_t s = nr_pingpongs.x;
+		quick_test = 1; 
 		uint64_t time_stamp = now_nsec();
 		double sample = (time_stamp - last_stamp) / (double)s;
 		last_stamp = time_stamp;
