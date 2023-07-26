@@ -369,6 +369,7 @@ int measure_latency_pair(int i, int j)
 		double sample = (even.timestamps[z+1] - even.timestamps[z]) / (double)2000;
 		if (sample < best_sample){
 			best_sample = sample;
+			std::cout << "time:"<<even.timestamps[z+1] - even.timestamps[z];
 		}
 	}
 	std::cout << "I:"<<i<<" J:"<<even.timestamps.size()<<" Sample passed " << (int)(best_sample*100) << " next.\n";
