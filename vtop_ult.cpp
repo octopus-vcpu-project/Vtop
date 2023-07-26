@@ -262,7 +262,7 @@ static void *thread_fn(void *data)
 		}
 		
 		if(me==0 && (*(args->new_test)) == 1){
-			args->new_test = 0; 
+			__sync_lock_test_and_set(&(nr_pingpongs->x), 0);
 		}else{
 			if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
 				++nr;
@@ -343,6 +343,7 @@ int measure_latency_pair(int i, int j)
 	double best_sample = 1./0.;
 	int test = 0;
 	for (test = 0; test < NR_SAMPLES; test++) {
+		quick_test = 0; 
 		usleep(SAMPLE_US);
 		atomic_t s = nr_pingpongs.x;
 		quick_test = 1; 
