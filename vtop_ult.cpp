@@ -207,7 +207,7 @@ typedef struct {
     pthread_cond_t* cond;
     int* flag;
 	int* new_test;
-	vector<uint64_t> timestamps;
+	std::vector<uint64_t> timestamps;
 } thread_args_t;
 
 static inline uint64_t now_nsec(void)
