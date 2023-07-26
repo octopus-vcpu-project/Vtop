@@ -290,7 +290,7 @@ int stick_this_thread_to_core(int core_id,int core_id2) {
    CPU_SET(core_id, &cpuset);
    CPU_SET(core_id2, &cpuset);
    pthread_t current_thread = pthread_self();    
-   return pthread_setaffinity_np(current_thread, sizeof(cpu_set_t), &cpuset);
+   return pthread_setaffinity_np(0, sizeof(cpu_set_t), &cpuset);
 }
 
 
