@@ -625,7 +625,7 @@ void MT_find_topology(void){
 	for(int i=0;i<LAST_CPU_ID;i++){
 		for(int j=i+1;j<LAST_CPU_ID;j++){
 			if(top_stack[i][j] == 0){
-				all_pairs_to_test[amount % nr_numa_groups].push_back(i * LAST_CPU_ID + j);
+				all_pairs_to_test[cpu_group_id[i]].push_back(i * LAST_CPU_ID + j);
 				amount++;
 			}
 		}
