@@ -262,7 +262,6 @@ static void *thread_fn(void *data)
 		}
 		
 		if(me==0 && (*(args->new_test)) == 1){
-			nr_pingpongs->x= 0;
 			*(args->new_test) = 0; 
 		}else{
 			if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
