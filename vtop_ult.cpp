@@ -293,7 +293,6 @@ int measure_latency_pair(int i, int j)
 	CPU_ZERO(&even.cpus);
 	CPU_SET(i, &even.cpus);
 	
-	stick_this_thread_to_core(i);
 	even.me = 0;
 	even.buddy = 1;
 	CPU_ZERO(&odd.cpus);
