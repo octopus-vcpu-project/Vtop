@@ -343,8 +343,7 @@ int measure_latency_pair(int i, int j)
 	int test = 0;
 	for (test = 0; test < NR_SAMPLES; test++) {
 		usleep(SAMPLE_US);
-		atomic_t s = 5;
-		quick_test = 1; 
+		atomic_t s = nr_pingpongs.x;
 		uint64_t time_stamp = now_nsec();
 		double sample = (time_stamp - last_stamp) / (double)s;
 		last_stamp = time_stamp;
