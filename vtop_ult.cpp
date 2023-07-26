@@ -617,7 +617,6 @@ static void *thread_fn2(void *data)
 
 
 void MT_find_topology(void){
-	nr_numa_groups =2;
 	apply_optimization();
 	pthread_cond_t cv = PTHREAD_COND_INITIALIZER;
 	std::vector<std::vector<int>> all_pairs_to_test(nr_numa_groups);
