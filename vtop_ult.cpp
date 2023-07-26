@@ -207,6 +207,7 @@ typedef struct {
     pthread_cond_t* cond;
     int* flag;
 	int* new_test;
+	vector<uint64_t> timestamps;
 } thread_args_t;
 
 static inline uint64_t now_nsec(void)
@@ -261,17 +262,15 @@ static void *thread_fn(void *data)
 			pthread_exit(0);
 		}
 		
-		if(me==0 && (*(args->new_test)) == 1){
-			*(args->new_test) = 0; 
-		}else{
-			if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
-				++nr;
-				if (nr == 1000 && me == 0) {
-					__sync_fetch_and_add(&(nr_pingpongs->x), 2 * nr);
-					nr = 0;
-				}
+
+		if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
+			++nr;
+			if (nr == 10000 && me == 0) {
+				(args->timestamps).push_back(now_nsec());
+				nr = 0;
 			}
 		}
+
 		
 		for (size_t i = 0; i < nr_relax; ++i)
 			asm volatile("rep; nop");
@@ -326,7 +325,7 @@ int measure_latency_pair(int i, int j)
     odd.flag = &wait_for_buddy;
 	even.new_test = &quick_test;
 	odd.new_test = &quick_test;
-
+	
 	__sync_lock_test_and_set(&nr_pingpongs.x, 0);
 
 	pthread_t t_odd, t_even;
@@ -342,24 +341,25 @@ int measure_latency_pair(int i, int j)
 	uint64_t last_stamp = now_nsec();
 	double best_sample = 1./0.;
 	int test = 0;
-	for (test = 0; test < NR_SAMPLES; test++) {
+	//for (test = 0; test < NR_SAMPLES; test++) {
 		
-		usleep(SAMPLE_US);
-		atomic_t s = 3;
-		quick_test = 1; 
-		uint64_t time_stamp = now_nsec();
-		double sample = (time_stamp - last_stamp) / (double)s;
-		last_stamp = time_stamp;
+	//	usleep(SAMPLE_US);
+	//	atomic_t s = 3;
+	//	quick_test = 1; 
+	//	uint64_t time_stamp = now_nsec();
+	//	double sample = (time_stamp - last_stamp) / (double)s;
+	//	last_stamp = time_stamp;
 
 
-		if ((sample < best_sample && sample != 1.0/0.)||(best_sample==1.0/0.)){
+	//	if ((sample < best_sample && sample != 1.0/0.)||(best_sample==1.0/0.)){
 			//if((!best_sample==1.0/0.)&&((best_sample-sample)/best_sample > 0.05)){
                          //       test = test - 10;
                         //}
-			best_sample = sample;
-		}
+	//		best_sample = sample;
+	//	}
 
-	}
+	//}
+	usleep(7000);
 	stop_loops = 1;
 	pthread_join(t_odd, NULL);
 	pthread_join(t_even, NULL);
