@@ -268,7 +268,7 @@ static void *thread_fn(void *data)
 			}
 		}
 		
-		if(me==0 && (&(args->new_test)) == 1){
+		if(me==0 && (*(args->new_test)) == 1){
 			__sync_lock_test_and_set(&(nr_pingpongs->x), 0);
 			args->quick_test = 0; 
 		}
