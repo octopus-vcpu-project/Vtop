@@ -266,7 +266,6 @@ static void *thread_fn(void *data)
 		if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
 			++nr;
 			if (nr == 40000 && me == 0) {
-				__sync_fetch_and_add(&(nr_pingpongs->x), 2 * nr);
 				(args->timestamps).push_back(now_nsec());
 				nr = 0;
 			}
@@ -366,7 +365,7 @@ int measure_latency_pair(int i, int j)
 	pthread_join(t_odd, NULL);
 	pthread_join(t_even, NULL);
 	stop_loops = 0;
-	odd.buddy = 0;
+	uint64_t 
 	pingpong_mutex = NULL;
 	for(int z=0;z<even.timestamps.size() - 1;z++){
 		double sample = (even.timestamps[z+1] - even.timestamps[z]) / (double)40000;
