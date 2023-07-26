@@ -206,6 +206,7 @@ typedef struct {
 	pthread_mutex_t* mutex;
     pthread_cond_t* cond;
     int* flag;
+	int* new_test;
 } thread_args_t;
 
 static inline uint64_t now_nsec(void)
@@ -256,7 +257,10 @@ static void *thread_fn(void *data)
 	int *stop_loops = args->stoploops;
 	atomic_t *cache_pingpong_mutex = *(args->pingpong_mutex);
 	while (1) {
-		
+		if(me==0 && args->new_test == 1){
+			__sync_lock_test_and_set(&nr_pingpongs.x, 0);
+			args->quick_test = 0; 
+		}
 		if (*stop_loops == 1){
 			pthread_exit(0);
 		}
@@ -311,13 +315,15 @@ int measure_latency_pair(int i, int j)
 	pthread_mutex_t wait_mutex = PTHREAD_MUTEX_INITIALIZER;
     pthread_cond_t wait_cond = PTHREAD_COND_INITIALIZER;
     int wait_for_buddy = 1;
-
+	int quick_test = 0;
     even.mutex = &wait_mutex;
     odd.mutex = &wait_mutex;
     even.cond = &wait_cond;
     odd.cond = &wait_cond;
     even.flag = &wait_for_buddy;
     odd.flag = &wait_for_buddy;
+	even.new_test = &quick_test;
+	odd.new_test = &quick_test;
 
 	__sync_lock_test_and_set(&nr_pingpongs.x, 0);
 
@@ -336,6 +342,8 @@ int measure_latency_pair(int i, int j)
 	int test = 0;
 	for (test = 0; test < NR_SAMPLES; test++) {
 		usleep(SAMPLE_US);
+		atomic_t s
+		quick_test = 1; 
 		atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
 		uint64_t time_stamp = now_nsec();
 		double sample = (time_stamp - last_stamp) / (double)s;
