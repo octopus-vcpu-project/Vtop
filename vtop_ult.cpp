@@ -343,36 +343,35 @@ int measure_latency_pair(int i, int j)
 	uint64_t last_stamp = now_nsec();
 	double best_sample = 1./0.;
 	int test = 0;
-	//for (test = 0; test < NR_SAMPLES; test++) {
+	for (test = 0; test < NR_SAMPLES; test++) {
 		
-	//	usleep(SAMPLE_US);
-	//	atomic_t s = 3;
+		usleep(SAMPLE_US);
+		atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);;
 	//	quick_test = 1; 
-	//	uint64_t time_stamp = now_nsec();
-	//	double sample = (time_stamp - last_stamp) / (double)s;
-	//	last_stamp = time_stamp;
+		uint64_t time_stamp = now_nsec();
+		double sample = (time_stamp - last_stamp) / (double)s;
+		last_stamp = time_stamp;
 
 
-	//	if ((sample < best_sample && sample != 1.0/0.)||(best_sample==1.0/0.)){
+		if ((sample < best_sample && sample != 1.0/0.)||(best_sample==1.0/0.)){
 			//if((!best_sample==1.0/0.)&&((best_sample-sample)/best_sample > 0.05)){
                          //       test = test - 10;
                         //}
-	//		best_sample = sample;
-	//	}
+			best_sample = sample;
+		}
 
-	//}
-	usleep(7000);
+	}
+	//usleep(7000);
 	stop_loops = 1;
 	pthread_join(t_odd, NULL);
 	pthread_join(t_even, NULL);
-	stop_loops = 0;
 	pingpong_mutex = NULL;
-	for(int z=0;z<even.timestamps.size() - 1;z++){
-		double sample = (even.timestamps[z+1] - even.timestamps[z]) / (double)10000;
-		if ((sample < best_sample && sample != 1.0/0.)||(best_sample==1.0/0.)){
-			best_sample = sample;
-		}
-	}
+	//for(int z=0;z<even.timestamps.size() - 1;z++){
+	//	double sample = (even.timestamps[z+1] - even.timestamps[z]) / (double)10000;
+	//	if ((sample < best_sample && sample != 1.0/0.)||(best_sample==1.0/0.)){
+	//		best_sample = sample;
+	//	}
+	//}
 	std::cout << "I:"<<i<<" J:"<<j<<" Sample passed " << (int)(best_sample*100) << " next.\n";
 	return (int)(best_sample*100);
 }
