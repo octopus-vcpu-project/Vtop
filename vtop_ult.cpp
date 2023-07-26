@@ -311,7 +311,7 @@ int measure_latency_pair(int i, int j)
 	even.nr_pingpongs = &nr_pingpongs;
 	odd.nr_pingpongs = &nr_pingpongs;
 	even.stoploops = &stop_loops;
-
+	even.timestamps = std::vector<uint64_t>();
 	odd.stoploops = &stop_loops;
 	even.pingpong_mutex = &pingpong_mutex;
 	odd.pingpong_mutex = &pingpong_mutex;
