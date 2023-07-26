@@ -265,7 +265,7 @@ static void *thread_fn(void *data)
 
 		if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
 			++nr;
-			if (nr == 2000 && me == 0) {
+			if (nr == 10000 && me == 0) {
 				__sync_fetch_and_add(&(nr_pingpongs->x), 2 * nr);
 
 				(args->timestamps).push_back(now_nsec());
@@ -367,7 +367,7 @@ int measure_latency_pair(int i, int j)
 	pingpong_mutex = NULL;
 	uint64_t stamp_stamp;
 	for(int z=0;z<even.timestamps.size() - 1;z++){
-		double sample = (even.timestamps[z+1] - even.timestamps[z]) / (double)2000;
+		double sample = (even.timestamps[z+1] - even.timestamps[z]) / (double)20000;
 		if (sample < best_sample){
 			best_sample = sample;
 			stamp_stamp = even.timestamps[z+1] - even.timestamps[z];
