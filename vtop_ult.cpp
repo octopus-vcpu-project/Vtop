@@ -340,7 +340,6 @@ int measure_latency_pair(int i, int j)
 		printf("ERROR creating even thread\n");
 		exit(1);
 	}
-	stick_this_thread_to_core(i,j);
 	uint64_t last_stamp = now_nsec();
 	double best_sample = 1./0.;
 	int test = 0;
