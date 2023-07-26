@@ -40,7 +40,7 @@ int verbose = 0;
 int NR_SAMPLES = 30;
 int SAMPLE_US = 10000;
 int cpu_group_id[MAX_CPUS];
-int nr_numa_groups;
+int nr_numa_groups = 0;
 int nr_pair_groups;
 int cpu_pair_id[MAX_CPUS];
 int cpu_tt_id[MAX_CPUS];
