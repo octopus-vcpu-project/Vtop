@@ -290,8 +290,6 @@ int stick_this_thread_to_core(int core_id) {
 int measure_latency_pair(int i, int j)
 {
 	thread_args_t even, odd;
-	stick_this_thread_to_core(i);
-
 	CPU_ZERO(&even.cpus);
 	CPU_SET(i, &even.cpus);
 	even.me = 0;
