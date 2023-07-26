@@ -257,10 +257,6 @@ static void *thread_fn(void *data)
 	int *stop_loops = args->stoploops;
 	atomic_t *cache_pingpong_mutex = *(args->pingpong_mutex);
 	while (1) {
-		if(me==0 && args->new_test == 1){
-			__sync_lock_test_and_set(&nr_pingpongs.x, 0);
-			args->quick_test = 0; 
-		}
 		if (*stop_loops == 1){
 			pthread_exit(0);
 		}
@@ -270,6 +266,11 @@ static void *thread_fn(void *data)
 				__sync_fetch_and_add(&(nr_pingpongs->x), 2 * nr);
 				nr = 0;
 			}
+		}
+		
+		if(me==0 && &(args->new_test) == 1){
+			__sync_lock_test_and_set(&(nr_pingpongs->x), 0);
+			args->quick_test = 0; 
 		}
 		for (size_t i = 0; i < nr_relax; ++i)
 			asm volatile("rep; nop");
