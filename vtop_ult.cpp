@@ -432,7 +432,7 @@ void ST_find_topology(std::vector<int> input){
 	for(int x=0;x<input.size();x++){
 		int j = input[x] % LAST_CPU_ID;
 		int i = (input[x]-(input[x]%LAST_CPU_ID))/LAST_CPU_ID;
-
+		std::cout<<"Ival:"<<i<<"JVAL"<<j<<std::endl;
 		if(top_stack[i][j] == 0){
 			int latency = measure_latency_pair(i,j);
 			pthread_mutex_lock(&top_stack_mutex);
@@ -533,7 +533,6 @@ std::vector<int> bitmap_to_task_stack(std::vector<int> input,int type){
 	for(int x=0;x<returnstack.size();x++){
 		int j = returnstack[x] % LAST_CPU_ID;
 		int i = (returnstack[x]-(returnstack[x]%LAST_CPU_ID))/LAST_CPU_ID;
-		std::cout<<"Ival:"<<i<<"JVAL"<<j<<std::endl;
 	}
 	return returnstack;
 }
