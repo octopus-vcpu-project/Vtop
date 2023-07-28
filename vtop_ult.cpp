@@ -185,7 +185,7 @@ static inline uint64_t now_nsec(void)
 	return ts.tv_sec * ((uint64_t)1000*1000*1000) + ts.tv_nsec;
 }
 
-static void common_setup(thread_args_t *args)
+static void common_setup(ThreadArgs *args)
 {
 	if (sched_setaffinity(0, sizeof(cpu_set_t), &args->cpus)) {
 		perror("sched_setaffinity");
