@@ -437,15 +437,16 @@ void ST_find_topology(std::vector<int> input){
 			failed_test = true;
 			return;
 		}
+		std::cout<<"Ival:"<<i<<"JVAL"<<j<<std::endl;
 		if(top_stack[i][j] == 0){
-			std::cout<<"Ival:"<<i<<"JVAL"<<j<<std::endl;
+			std::cout<<"we never get here?"<<j<<std::endl;
 			int latency = measure_latency_pair(i,j);
 			pthread_mutex_lock(&top_stack_mutex);
 			set_latency_pair(i,j,get_latency_class(latency));
 			apply_optimization();
 			pthread_mutex_unlock(&top_stack_mutex);
 		}
-		
+		std::cout<<"wssse never get here?"<<j<<std::endl;
 	}
 	return;	
 }
