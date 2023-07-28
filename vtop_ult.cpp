@@ -433,10 +433,7 @@ void ST_find_topology(std::vector<int> input){
 		int j = input[x] % LAST_CPU_ID;
 		int i = (input[x]-(input[x]%LAST_CPU_ID))/LAST_CPU_ID;
 		
-		if(failed_test || (latency_valid != -1 && latency_valid != top_stack[i][j])){
-			failed_test = true;
-			return;
-		}
+		
 		std::cout<<"Ival:"<<i<<"JVAL"<<j<<std::endl;
 		if(top_stack[i][j] == 0){
 			std::cout<<"we never get here?"<<j<<std::endl;
@@ -445,6 +442,10 @@ void ST_find_topology(std::vector<int> input){
 			set_latency_pair(i,j,get_latency_class(latency));
 			apply_optimization();
 			pthread_mutex_unlock(&top_stack_mutex);
+		}
+		if(failed_test || (latency_valid != -1 && latency_valid != top_stack[i][j])){
+			failed_test = true;
+			return;
 		}
 		
 	}
