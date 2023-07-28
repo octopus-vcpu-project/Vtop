@@ -157,7 +157,7 @@ typedef union {
 	char pad[1024];
 } big_atomic_t __attribute__((aligned(1024)));
                                                                   
-struct ThreadArgs {
+struct thread_args_t {
     cpu_set_t cpus;
     atomic_t me;
     atomic_t buddy;
@@ -169,7 +169,7 @@ struct ThreadArgs {
     pthread_cond_t* cond;
     int* flag;
 
-    ThreadArgs(int cpu_id, atomic_t me_value, atomic_t buddy_value, big_atomic_t* nr_pp, atomic_t** pp_mutex, int* stop_loops, pthread_mutex_t* mtx, pthread_cond_t* cond, int* flag)
+    thread_args_t(int cpu_id, atomic_t me_value, atomic_t buddy_value, big_atomic_t* nr_pp, atomic_t** pp_mutex, int* stop_loops, pthread_mutex_t* mtx, pthread_cond_t* cond, int* flag)
         : me(me_value), buddy(buddy_value), nr_pingpongs(nr_pp), pingpong_mutex(pp_mutex), stoploops(stop_loops), mutex(mtx), cond(cond), flag(flag) {
         CPU_ZERO(&cpus);
         CPU_SET(cpu_id, &cpus);
@@ -185,7 +185,7 @@ static inline uint64_t now_nsec(void)
 	return ts.tv_sec * ((uint64_t)1000*1000*1000) + ts.tv_nsec;
 }
 
-static void common_setup(ThreadArgs *args)
+static void common_setup(thread_args_t *args)
 {
 	if (sched_setaffinity(0, sizeof(cpu_set_t), &args->cpus)) {
 		perror("sched_setaffinity");
@@ -269,8 +269,8 @@ int measure_latency_pair(int i, int j)
 	big_atomic_t nr_pingpongs;
 	int stop_loops = 0;
     int wait_for_buddy = 1;
-	ThreadArgs even(i, 0, 1, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy);
-    ThreadArgs odd(j, 1, 0, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy);
+	thread_args_t even(i, 0, 1, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy);
+    thread_args_t odd(j, 1, 0, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy);
 
 	__sync_lock_test_and_set(&nr_pingpongs.x, 0);
 
