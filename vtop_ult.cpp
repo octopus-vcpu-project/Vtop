@@ -593,7 +593,7 @@ static void construct_vnuma_groups(void)
 		//	numa_to_pair_arr.push_back(cpu_bitmap_group);
 		//	numas_to_cpu.push_back(i);
 		//}
-		
+		printf("doy");
 		if (cpu_pair_id[i] == -1){
 			cpu_pair_id[i] = nr_pair_groups;
 			nr_pair_groups++;
