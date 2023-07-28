@@ -583,7 +583,7 @@ bool verify_pair_group(std::vector<int> input){
 }
 
 void nullify_changes(std::vector<std::vector<int>> input){
-	for (int z = 0; i < input.size(); z++) {
+	for (int z = 0; z < input.size(); z++) {
 		for (int x = 0; x < input[z].size();x++) {
 			int j = input[z][x] % LAST_CPU_ID;
 			int i = (input[z][x]-(input[z][x]%LAST_CPU_ID))/LAST_CPU_ID;
