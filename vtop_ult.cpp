@@ -622,7 +622,7 @@ bool verify_topology(void){
 	
 	std::cout<<"we failed here?"<<std::endl;
 	for(int i=0;i<pair_to_thread_arr.size();i++){
-		std::cout<<i<<std::endl;
+		std::cout<<pair_to_thread_arr.size()<<std::endl;
 		task_set_arr[i] = bitmap_to_task_stack(numa_to_pair_arr[i],PAIR_GROUP);
 	}
 	latency_valid = 2;
