@@ -149,9 +149,6 @@ void setArguments(const std::vector<std::string_view>& arguments) {
     
     set_option_value("-s", NR_SAMPLES);
     set_option_value("-u", SAMPLE_US);
-    set_option_value("-i",pair1);
-    set_option_value("-j",pair2);
-    set_option_value("-g",slow_mode);
 }
 
 
