@@ -169,7 +169,7 @@ struct thread_args_t {
     pthread_cond_t* cond;
     int* flag;
 
-    thread_args_t(int cpu_id, atomic_t me_value, atomic_t buddy_value, big_atomic_t* nr_pp, atomic_t** pp_mutex, int* stop_loops, pthread_mutex_t* mtx, pthread_cond_t* cond, int* flag)
+    thread_args_t(int cpu_id, atomic_t me_value, atomic_t buddy_value,atomic_t** pp_mutex, big_atomic_t* nr_pp, int* stop_loops, pthread_mutex_t* mtx, pthread_cond_t* cond, int* flag)
         : me(me_value), buddy(buddy_value), nr_pingpongs(nr_pp), pingpong_mutex(pp_mutex), stoploops(stop_loops), mutex(mtx), cond(cond), flag(flag) {
         CPU_ZERO(&cpus);
         CPU_SET(cpu_id, &cpus);
