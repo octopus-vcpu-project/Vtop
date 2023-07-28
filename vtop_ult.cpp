@@ -293,7 +293,6 @@ int measure_latency_pair(int i, int j)
 	pthread_join(t_even, NULL);
 	munmap(pingpong_mutex,getpagesize());
 
-	std::cout<<"time steps"<<even.timestamps.size()<<std::endl;
 	if(even.timestamps.size() < 2){
                 return -1;
     }
