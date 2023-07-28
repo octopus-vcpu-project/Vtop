@@ -407,7 +407,6 @@ void ST_find_topology(std::vector<int> input){
 		int j = input[x] % LAST_CPU_ID;
 		int i = (input[x]-(input[x]%LAST_CPU_ID))/LAST_CPU_ID;
 		
-		std::cout<<"here"<<input[x]<<"here"<<j<<std::endl;
 		
 		if(top_stack[i][j] == 0){
 			int latency = measure_latency_pair(i,j);
@@ -417,7 +416,6 @@ void ST_find_topology(std::vector<int> input){
 			pthread_mutex_unlock(&top_stack_mutex);
 		}
 	}
-	std::cout<<"fin"<<std::endl;
 	return;	
 }
 
