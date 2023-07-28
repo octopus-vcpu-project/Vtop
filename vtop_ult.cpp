@@ -578,7 +578,6 @@ static void construct_vnuma_groups(void)
 	nr_cpus = get_nprocs();
 
 	for (i = 0; i < LAST_CPU_ID; i++){
-		cpu_group_id[i] = -1;
 		cpu_pair_id[i] = -1;
 		cpu_tt_id[i] = -1;
 	}
