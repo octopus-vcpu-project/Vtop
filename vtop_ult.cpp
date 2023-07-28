@@ -40,15 +40,6 @@
 
 typedef unsigned atomic_t;
 
-struct sub_group_str{
-	int vcpu_rep;
-	int sub_group_id;
-	int sub_group_type;
-	sub_group_str(int vcpu_rep_val, int sub_group_id_val, int sub_group_type_val)
-        : vcpu_rep(vcpu_rep_val), sub_group_id(sub_group_id_val), sub_group_type(sub_group_type_val),  {
-    }
-}
-
 
 
 int nr_cpus;
@@ -612,11 +603,13 @@ bool verify_topology(void){
 	latency_valid = 3;
 	MT_find_topology(task_set_arr);
 	if(failed_test = true){
+		failed_test = false;
 		nullify_changes(task_set_arr);
 		return false;
 	}
 	task_set_arr(pair_to_thread_arr.size());
 	if(failed_test = true){
+		failed_test = false;
 		nullify_changes(task_set_arr);
 		return false;
 	}
@@ -633,6 +626,7 @@ bool verify_topology(void){
 	latency_valid = 1;
 	MT_find_topology(task_set_arr);
 	if(failed_test = true){
+		failed_test = false;
 		nullify_changes(task_set_arr);
 		return false;
 	}
