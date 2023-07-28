@@ -619,11 +619,12 @@ bool verify_topology(void){
 	}
 	
 	task_set_arr = std::vector<std::vector<int>>(pair_to_thread_arr.size());
+	
+	std::cout<<"we failed here?"<<std::endl;
 	for(int i=0;i<pair_to_thread_arr.size();i++){
 		task_set_arr[i] = bitmap_to_task_stack(numa_to_pair_arr[i],PAIR_GROUP);
 	}
 	latency_valid = 2;
-	std::cout<<"we failed here?"<<std::endl;
 	MT_find_topology(task_set_arr);
 	
 	if(failed_test == true){
