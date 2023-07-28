@@ -603,7 +603,7 @@ bool verify_topology(void){
 			}
 		}
 	}
-
+	failed_test = false;
 	for(int i=0;i<nr_numa_groups;i++){
         for(int j=i+1;j<nr_numa_groups;j++){
 			int latency = measure_latency_pair(numas_to_cpu[i],numas_to_cpu[i+1]);
