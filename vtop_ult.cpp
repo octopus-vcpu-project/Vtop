@@ -176,23 +176,6 @@ struct ThreadArgs {
     }
 };
 
-struct ThreadArgs {
-	cpu_set_t cpus;
-	atomic_t me;
-	atomic_t buddy;
-	big_atomic_t *nr_pingpongs;
-	atomic_t  **pingpong_mutex;
-	int *stoploops;
-	pthread_mutex_t* mutex;
-    pthread_cond_t* cond;
-    int* flag;
-
-	ThreadArgs(int cpu_id, int me_value, int buddy_value, atomic_t* pp_mutex, big_atomic_t* nr_pp, int* stop_loops, pthread_mutex_t* mtx, pthread_cond_t* cond, int* flag)
-        : me(me_value), buddy(buddy_value), pingpong_mutex(pp_mutex), nr_pingpongs(nr_pp), stoploops(stop_loops), mutex(mtx), cond(cond), flag(flag){
-        CPU_ZERO(&cpus);
-        CPU_SET(cpu_id, &cpus);
-    }
-};
 
 
 static inline uint64_t now_nsec(void)
