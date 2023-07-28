@@ -458,7 +458,7 @@ static void *thread_fn2(void *data)
 	worker_thread_args *args = (worker_thread_args *)data;
 	ST_find_topology(args->pairs_to_test);
 	alertMainThread();
-	std::cout<<"wssse never get here?"<<j<<std::endl;
+	std::cout<<"wssse never get here?"<<std::endl;
 	return NULL;
 }
 
