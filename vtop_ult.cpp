@@ -34,91 +34,48 @@
 #define min(a,b)	(a < b ? a : b)
 #define LAST_CPU_ID	(min(nr_cpus, MAX_CPUS))
 
+typedef unsigned atomic_t;
+
 int nr_cpus;
-int PTHREAD_TASK_AMOUNT=10;
 int verbose = 0;
 int NR_SAMPLES = 30;
 int SAMPLE_US = 10000;
-int cpu_group_id[MAX_CPUS];
+
+static size_t nr_relax = 0;
+
 int nr_numa_groups = 0;
 int nr_pair_groups;
+
+int cpu_group_id[MAX_CPUS];
 int cpu_pair_id[MAX_CPUS];
 int cpu_tt_id[MAX_CPUS];
-int ready_counter = 0;
-int active_cpu_bitmap[MAX_CPUS];
-int finished = 0;
-int pair1= 0;
-int pair2 = 0;
-int return_pair = 0;
-int slow_mode = 0;
-std::vector<int> task_stack;
+
+
 std::vector<std::vector<int>> top_stack;
+
+int ready_counter = 0;
+
+
+int slow_mode = 0;
 pthread_t worker_tasks[MAX_CPUS];
-static size_t nr_relax = 0;
-pthread_mutex_t ready_check = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t readier_check = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t readiest_check = PTHREAD_MUTEX_INITIALIZER;
-//static size_t nr_tested_cores = 0;
-pthread_cond_t cv = PTHREAD_COND_INITIALIZER;
-pthread_cond_t cv1 = PTHREAD_COND_INITIALIZER;
 
-std::random_device rd;
-std::default_random_engine e1(rd());
-typedef unsigned atomic_t;
 
-typedef std::vector<int> ind_thread;
-typedef std::vector<ind_thread> core_pair;
-typedef std::vector<core_pair> numa_gr;
+pthread_mutex_t top_stack_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t fin_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+pthread_cond_t fin_cv = PTHREAD_COND_INITIALIZER;
+
 
 std::vector<std::vector<int>> numa_to_pair_arr;
 std::vector<std::vector<int>> pair_to_thread_arr;
 std::vector<std::vector<int>> thread_to_cpu_arr;
+
 std::vector<int> numas_to_cpu;
 std::vector<int> pairs_to_cpu;
 std::vector<int> threads_to_cpu;
-std::vector<numa_gr> numa_array;
 
 
-int get_representative(const ind_thread& it) {
-    // Check for empty vector
-    if (it.empty()) {
-        throw std::runtime_error("ind_thread is empty");
-    }
-    return it[0];
-}
 
-int get_representative(const core_pair& cp) {
-    if (cp.empty()) {
-        throw std::runtime_error("core_pair is empty");
-    }
-    return get_representative(cp[0]); 
-}
-
-int get_representative(const numa_gr& ng) {
-    if (ng.empty()) {
-        throw std::runtime_error("numa_gr is empty");
-    }
-    return get_representative(ng[0]); 
-}
-
-
-void add_int_to_array(int n, ind_thread& arr) {
-    arr.push_back(n);
-}
-
-void add_int_to_array(int n, core_pair& arr) {
-    ind_thread it;
-    it.push_back(n);
-    arr.push_back(it);
-}
-
-void add_int_to_array(int n, numa_gr& arr) {
-    ind_thread it;
-    it.push_back(n);
-    core_pair cp;
-    cp.push_back(it);
-    arr.push_back(cp);
-}
 
 
 
@@ -190,7 +147,6 @@ void setArguments(const std::vector<std::string_view>& arguments) {
         }
     };
     
-    set_option_value("-p", PTHREAD_TASK_AMOUNT);
     set_option_value("-s", NR_SAMPLES);
     set_option_value("-u", SAMPLE_US);
     set_option_value("-i",pair1);
@@ -214,7 +170,6 @@ typedef struct {
 	pthread_mutex_t* mutex;
     pthread_cond_t* cond;
     int* flag;
-	int* new_test;
 	std::vector<uint64_t> timestamps;
 } thread_args_t;
 
@@ -270,12 +225,9 @@ static void *thread_fn(void *data)
 			pthread_exit(0);
 		}
 		
-
 		if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
 			++nr;
-			if (nr == 5000 && me == 0) {
-				__sync_fetch_and_add(&(nr_pingpongs->x), 2 * nr);
-
+			if (nr == 1000 && me == 0) {
 				(args->timestamps).push_back(now_nsec());
 				nr = 0;
 			}
@@ -304,43 +256,21 @@ int stick_this_thread_to_core(int core_id,int core_id2) {
 
 int measure_latency_pair(int i, int j)
 {
-	thread_args_t even, odd;
-	CPU_ZERO(&even.cpus);
-	CPU_SET(i, &even.cpus);
+	stick_this_thread_to_core(i,j);
 
-	even.me = 0;
-	even.buddy = 1;
-	CPU_ZERO(&odd.cpus);
-	CPU_SET(j, &odd.cpus);
-	odd.me = 1;
-
-	odd.buddy = 0;
-    int stop_loops = 0;
     atomic_t* pingpong_mutex = (atomic_t*) malloc(sizeof(atomic_t));;
-	big_atomic_t nr_pingpongs;
-	even.nr_pingpongs = &nr_pingpongs;
-	odd.nr_pingpongs = &nr_pingpongs;
-	even.stoploops = &stop_loops;
-	even.timestamps = std::vector<uint64_t>();
-	odd.stoploops = &stop_loops;
-	even.pingpong_mutex = &pingpong_mutex;
-	odd.pingpong_mutex = &pingpong_mutex;
 	pthread_mutex_t wait_mutex = PTHREAD_MUTEX_INITIALIZER;
     pthread_cond_t wait_cond = PTHREAD_COND_INITIALIZER;
+	big_atomic_t nr_pingpongs;
+	int stop_loops = 0;
     int wait_for_buddy = 1;
-	int quick_test = 0;
-    even.mutex = &wait_mutex;
-    odd.mutex = &wait_mutex;
-    even.cond = &wait_cond;
-    odd.cond = &wait_cond;
-    even.flag = &wait_for_buddy;
-    odd.flag = &wait_for_buddy;
-	even.new_test = &quick_test;
-	odd.new_test = &quick_test;
-	
+	ThreadArgs even(i, 0, 1, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy);
+    ThreadArgs odd(j, 1, 0, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy);
+
 	__sync_lock_test_and_set(&nr_pingpongs.x, 0);
 
 	pthread_t t_odd, t_even;
+
 	if (pthread_create(&t_odd, NULL, thread_fn, &odd)) {
 		printf("ERROR creating odd thread\n");
 		exit(1);
@@ -349,47 +279,23 @@ int measure_latency_pair(int i, int j)
 		printf("ERROR creating even thread\n");
 		exit(1);
 	}
-	uint64_t last_stamp = now_nsec();
+
 	double best_sample = 1./0.;
-	int test = 0;
-	//for (test = 0; test < NR_SAMPLES; test++) {
-		
-	//	usleep(SAMPLE_US);
-	//	atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);;
-	//	quick_test = 1; 
-	//	uint64_t time_stamp = now_nsec();
-	//	double sample = (time_stamp - last_stamp) / (double)s;
-	//	last_stamp = time_stamp;
 
-
-	//	if ((sample < best_sample && sample != 1.0/0.)||(best_sample==1.0/0.)){
-			//if((!best_sample==1.0/0.)&&((best_sample-sample)/best_sample > 0.05)){
-                         //       test = test - 10;
-                        //}
-	//		best_sample = sample;
-	//	}
-
-	//}
-        if(slow_mode){
-		moveThreadtoHighPrio(syscall(SYS_gettid));
-		stick_this_thread_to_core(i,j);
-	}
 	usleep(NR_SAMPLES*SAMPLE_US);
 	stop_loops = 1;
 	pthread_join(t_odd, NULL);
 	pthread_join(t_even, NULL);
-	pingpong_mutex = NULL;
-	uint64_t stamp_stamp;
+	free(pingpong_mutex);
+
 	std::cout<<"time steps"<<even.timestamps.size()<<std::endl;
-	if(even.timestamps.size() == 0){
-                std::cout<<"aaae"<<std::endl;
+	if(even.timestamps.size() < 2){
                 return -1;
-        }
+    }
 	for(int z=0;z<even.timestamps.size() - 1;z++){
-		double sample = (even.timestamps[z+1] - even.timestamps[z]) / (double)10000;
+		double sample = (even.timestamps[z+1] - even.timestamps[z]) / (double)2000;
 		if (sample < best_sample){
 			best_sample = sample;
-			stamp_stamp = even.timestamps[z+1] - even.timestamps[z];
 		}
 	}
 	std::cout << "I:"<<stamp_stamp<<" J:"<<even.timestamps.size()<<" Sample passed " << (int)(best_sample*100) << " next.\n";
@@ -399,36 +305,6 @@ int measure_latency_pair(int i, int j)
 
 
 
-
-
-int get_pair_to_test(){
-
-	bool valid_pair_exists = false;
-	int last_pair = -1;
-
-	for(int i=0;i<LAST_CPU_ID;i++){
-		if(active_cpu_bitmap[i]==1){
-			continue;
-		}
-		for(int j=0;j<LAST_CPU_ID;j++){
-			if(active_cpu_bitmap[j]==1){
-				continue;
-			}
-			if(top_stack[i][j] == 0){
-					top_stack[i][j] == -1;
-					return(i * LAST_CPU_ID + j);
-			}
-
-		}
-	}
-	
-	//We're testing 
-	if(valid_pair_exists){
-		return -1;
-	}
-
-	return -2;
-}
 
 int get_latency_class(int latency){
 	if(latency<0){
@@ -465,25 +341,6 @@ void apply_optimization(void){
 }
 
 
-void apply_optimization_recur(int cpu, int last_cpu,int latency_class,std::unordered_map<int,int>& tested_arr){
-	tested_arr[cpu] = 1;
-	int sub_rel = top_stack[cpu][last_cpu];
-	for(int x=0;x<LAST_CPU_ID;x++){
-		if(top_stack[last_cpu][x]!=0 && (top_stack[last_cpu][x] < sub_rel && top_stack[cpu][x]==0)){
-			set_latency_pair(cpu,x,sub_rel);
-		}
-	}
-	for(int x=0;x<LAST_CPU_ID;x++){
-		if((top_stack[cpu][x] != 0 && tested_arr[x] != 1)){
-			apply_optimization_recur(x,cpu,latency_class,tested_arr);
-		}
-
-	}
-
-}
-
-
-
 
 
 static void print_population_matrix(void)
@@ -497,92 +354,13 @@ static void print_population_matrix(void)
 	}
 }
 
-static double get_min_latency(int cpu, int group)
-{
-	int j;
-	double min = INT_MAX;
-
-	for (j = 0; j < LAST_CPU_ID; j++) {
-		if (top_stack[cpu][j] == 0)
-			continue;
-
-		/* global check */
-		if (group == GROUP_GLOBAL && top_stack[cpu][j] < min)
-			min = top_stack[cpu][j];
-
-		/* local check */
-		if (group == GROUP_LOCAL && cpu_group_id[cpu] == cpu_group_id[j]
-			&& top_stack[cpu][j] < min)
-			min = top_stack[cpu][j];
-
-		/* non-local check */
-		if (group == GROUP_NONLOCAL && cpu_group_id[cpu] != cpu_group_id[j]
-			&& top_stack[cpu][j] < min)
-			min = top_stack[cpu][j];
-	}
-
-	return min == INT_MAX ? 0 : min;
-}
 
 
-static double get_min2_latency(int cpu, int group, double val)
-{
-	int j;
-	double min = INT_MAX;
 
-	for (j = 0; j < LAST_CPU_ID; j++) {
-		if (top_stack[cpu][j] == 0)
-			continue;
-
-		/* global check */
-		if (group == GROUP_GLOBAL && top_stack[cpu][j] < min && top_stack[cpu][j] > val)
-			min = top_stack[cpu][j];
-
-		/* local check */
-		if (group == GROUP_LOCAL && cpu_group_id[cpu] == cpu_group_id[j]
-			&& top_stack[cpu][j] < min && top_stack[cpu][j] > val)
-			min = top_stack[cpu][j];
-
-		/* non-local check */
-		if (group == GROUP_NONLOCAL && cpu_group_id[cpu] != cpu_group_id[j]
-			&& top_stack[cpu][j] < min && top_stack[cpu][j] > val)
-			min = top_stack[cpu][j];
-	}
-
-	return min == INT_MAX ? 0 : min;
-}
-
-static double get_max_latency(int cpu, int group)
-{
-	int j;
-	double max = -1;
-
-	for (j = 0; j < LAST_CPU_ID; j++) {
-		if (top_stack[cpu][j] == 0)
-			continue;
-
-		/* global check */
-		if (group == GROUP_GLOBAL && top_stack[cpu][j] > max)
-			max = top_stack[cpu][j];
-
-		/* local check */
-		if (group == GROUP_LOCAL && cpu_group_id[cpu] == cpu_group_id[j]
-			&& top_stack[cpu][j] > max)
-			max = top_stack[cpu][j];
-
-		/* non-local check */
-		if (group == GROUP_NONLOCAL && cpu_group_id[cpu] != cpu_group_id[j]
-			&& top_stack[cpu][j] > max)
-			max = top_stack[cpu][j];
-	}
-
-	return max == -1 ? INT_MAX : max;
-}
 
 int find_numa_groups(void)
 {
 	nr_numa_groups = 0;
-	bool finished=false;
 	for(int i = 0;i<LAST_CPU_ID;i++){
 		cpu_group_id[i] = -1;
 	}
@@ -629,10 +407,10 @@ void ST_find_topology(std::vector<int> input){
 		
 		if(top_stack[i][j] == 0){
 			int latency = measure_latency_pair(i,j);
-			pthread_mutex_lock(&readier_check);
+			pthread_mutex_lock(&top_stack_mutex);
 			set_latency_pair(i,j,get_latency_class(latency));
 			apply_optimization();
-			pthread_mutex_unlock(&readier_check);
+			pthread_mutex_unlock(&top_stack_mutex);
 		}
 	}
 	std::cout<<"fin"<<std::endl;
@@ -640,18 +418,18 @@ void ST_find_topology(std::vector<int> input){
 }
 
 void alertMainThread(){
-  pthread_mutex_lock(&ready_check);
+  pthread_mutex_lock(&fin_mutex);
   ready_counter += 1;
-  pthread_mutex_unlock(&ready_check);
-  pthread_cond_signal(&cv1);
+  pthread_mutex_unlock(&fin_mutex);
+  pthread_cond_signal(&fin_cv);
 }
 
 void waitforWorkers(){
-  pthread_mutex_lock(&ready_check);
+  pthread_mutex_lock(&fin_mutex);
   while(ready_counter != nr_numa_groups){
-    pthread_cond_wait(&cv1, &ready_check);
+    pthread_cond_wait(&fin_cv, &fin_mutex);
   }
-  pthread_mutex_unlock(&ready_check);
+  pthread_mutex_unlock(&fin_mutex);
   ready_counter = 0;
 }
 

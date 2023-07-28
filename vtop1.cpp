@@ -32,7 +32,7 @@
 
 #define min(a,b)	(a < b ? a : b)
 #define LAST_CPU_ID	(min(nr_cpus, MAX_CPUS))
-pthread_cond_t cv = PTHREAD_COND_INITIALIZER;
+
 
 int nr_numa_groups;
 int nr_cpus;
@@ -149,6 +149,12 @@ typedef struct {
 	pthread_mutex_t* mutex;
     pthread_cond_t* cond;
     int* flag;
+
+	ThreadArgs(int cpu_id, int me_value, int buddy_value, atomic_t* pp_mutex, big_atomic_t* nr_pp, int* stop_loops, pthread_mutex_t* mtx, pthread_cond_t* cond, int* flag)
+        : me(me_value), buddy(buddy_value), pingpong_mutex(pp_mutex), nr_pingpongs(nr_pp), stoploops(stop_loops), mutex(mtx), cond(cond), flag(flag){
+        CPU_ZERO(&cpus);
+        CPU_SET(cpu_id, &cpus);
+    }
 } thread_args_t;
 
 
