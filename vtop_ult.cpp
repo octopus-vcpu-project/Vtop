@@ -89,9 +89,9 @@ void alertMainThread(){
   pthread_cond_signal(&fin_cv);
 }
 
-void waitforWorkers(){
+void waitforWorkers(int worker_amount){
   pthread_mutex_lock(&fin_mutex);
-  while(ready_counter != nr_numa_groups){
+  while(ready_counter != worker_amount){
     pthread_cond_wait(&fin_cv, &fin_mutex);
   }
   pthread_mutex_unlock(&fin_mutex);
@@ -472,7 +472,7 @@ void MT_find_topology(std::vector<std::vector<int>> all_pairs_to_test){
 		worker_args[i].pairs_to_test = all_pairs_to_test[i];
 		pthread_create(&worker_tasks[i], NULL, thread_fn2, &worker_args[i]);
 	}
-	waitforWorkers();
+	waitforWorkers(all_pairs_to_test.size());
 	for (int i = 0; i < all_pairs_to_test.size(); i++) {
     		pthread_join(worker_tasks[i], NULL);
   	}
