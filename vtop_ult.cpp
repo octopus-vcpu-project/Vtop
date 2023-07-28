@@ -604,7 +604,7 @@ bool verify_topology(void){
 		nullify_changes(task_set_arr);
 		return false;
 	}
-	task_set_arr(pair_to_thread_arr.size(),{});
+	task_set_arr = std::vector<std::vector<int>>(pair_to_thread_arr.size(),{});
 	for(int i=0;i<pair_to_thread_arr.size();i++){
 		task_set_arr[i] = bitmap_to_task_stack(numa_to_pair_arr[i],PAIR_GROUP);
 	}
@@ -614,7 +614,7 @@ bool verify_topology(void){
 		nullify_changes(task_set_arr);
 		return false;
 	}
-	task_set_arr(thread_to_cpu_arr.size(),{});
+	task_set_arr = std::vector<std::vector<int>>(thread_to_cpu_arr.size(),{});
 	for(int i=0;i<thread_to_cpu_arr.size();i++){
 		task_set_arr[i] = bitmap_to_task_stack(thread_to_cpu_arr[i],THREAD_GROUP);
 	}
