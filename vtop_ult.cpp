@@ -475,7 +475,6 @@ void MT_find_topology(std::vector<std::vector<int>> all_pairs_to_test){
 	for (int i = 0; i < all_pairs_to_test.size(); i++) {
     		pthread_join(worker_tasks[i], NULL);
   	}
-	std::cout<<"we kidna... finished"<<std::endl;
 	ready_counter = 0;
 }
 
@@ -626,7 +625,6 @@ bool verify_topology(void){
 	nullify_changes(task_set_arr);
 	task_set_arr = std::vector<std::vector<int>>(pair_to_thread_arr.size());
 	for(int i=0;i<pair_to_thread_arr.size();i++){
-		std::cout<<task_set_arr.size()<<std::endl;
 		task_set_arr[i] = bitmap_to_task_stack(pair_to_thread_arr[i],PAIR_GROUP);
 	}
 	latency_valid = 2;
