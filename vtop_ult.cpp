@@ -269,8 +269,8 @@ int measure_latency_pair(int i, int j)
 	big_atomic_t nr_pingpongs;
 	int stop_loops = 0;
     int wait_for_buddy = 1;
-	thread_args_t even(i, 0, 1, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy);
-    thread_args_t odd(j, 1, 0, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy);
+	thread_args_t even(i, (atomic_t)0, (atomic_t)1, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy);
+    thread_args_t odd(j, (atomic_t)1, (atomic_t)0, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy);
 
 	__sync_lock_test_and_set(&nr_pingpongs.x, 0);
 
