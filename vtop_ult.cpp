@@ -158,6 +158,25 @@ typedef union {
 } big_atomic_t __attribute__((aligned(1024)));
                                                                   
 struct ThreadArgs {
+    cpu_set_t cpus;
+    atomic_t me;
+    atomic_t buddy;
+    big_atomic_t* nr_pingpongs;
+    atomic_t** pingpong_mutex;
+    int* stoploops;
+    std::vector<uint64_t> timestamps;
+    pthread_mutex_t* mutex;
+    pthread_cond_t* cond;
+    int* flag;
+
+    ThreadArgs(int cpu_id, atomic_t me_value, atomic_t buddy_value, big_atomic_t* nr_pp, atomic_t** pp_mutex, int* stop_loops, pthread_mutex_t* mtx, pthread_cond_t* cond, int* flag)
+        : me(me_value), buddy(buddy_value), nr_pingpongs(nr_pp), pingpong_mutex(pp_mutex), stoploops(stop_loops), mutex(mtx), cond(cond), flag(flag) {
+        CPU_ZERO(&cpus);
+        CPU_SET(cpu_id, &cpus);
+    }
+};
+
+struct ThreadArgs {
 	cpu_set_t cpus;
 	atomic_t me;
 	atomic_t buddy;
@@ -174,6 +193,8 @@ struct ThreadArgs {
         CPU_SET(cpu_id, &cpus);
     }
 };
+
+
 static inline uint64_t now_nsec(void)
 {
 	struct timespec ts;
