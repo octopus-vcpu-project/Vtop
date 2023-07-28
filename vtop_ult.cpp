@@ -434,9 +434,7 @@ void ST_find_topology(std::vector<int> input){
 		int i = (input[x]-(input[x]%LAST_CPU_ID))/LAST_CPU_ID;
 		
 		
-		std::cout<<"Ival:"<<i<<"JVAL"<<j<<std::endl;
 		if(top_stack[i][j] == 0){
-			std::cout<<"we never get here?"<<j<<std::endl;
 			int latency = measure_latency_pair(i,j);
 			pthread_mutex_lock(&top_stack_mutex);
 			set_latency_pair(i,j,get_latency_class(latency));
@@ -620,14 +618,12 @@ bool verify_topology(void){
 	}
 	latency_valid = 3;
 	MT_find_topology(task_set_arr);
-	std::cout<<"here1"<<std::endl;
 	if(failed_test == true){
 		failed_test = false;
 		nullify_changes(task_set_arr);
 		return false;
 	}
 	nullify_changes(task_set_arr);
-	std::cout<<"here2"<<std::endl;
 	task_set_arr = std::vector<std::vector<int>>(pair_to_thread_arr.size());
 	for(int i=0;i<pair_to_thread_arr.size();i++){
 		std::cout<<task_set_arr.size()<<std::endl;
