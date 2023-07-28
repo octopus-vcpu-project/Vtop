@@ -303,7 +303,7 @@ int measure_latency_pair(int i, int j)
 			best_sample = sample;
 		}
 	}
-	std::cout << "I:"<<stamp_stamp<<" J:"<<even.timestamps.size()<<" Sample passed " << (int)(best_sample*100) << " next.\n";
+	std::cout <<" J:"<<even.timestamps.size()<<" Sample passed " << (int)(best_sample*100) << " next.\n";
 	return (int)(best_sample * 100);
 }
 
