@@ -47,7 +47,10 @@ int cpu_tt_id[MAX_CPUS];
 int ready_counter = 0;
 int active_cpu_bitmap[MAX_CPUS];
 int finished = 0;
+int pair1= 0;
+int pair2 = 0;
 int return_pair = 0;
+int slow_mode = 0;
 std::vector<int> task_stack;
 std::vector<std::vector<int>> top_stack;
 pthread_t worker_tasks[MAX_CPUS];
@@ -57,6 +60,8 @@ pthread_mutex_t readier_check = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t readiest_check = PTHREAD_MUTEX_INITIALIZER;
 //static size_t nr_tested_cores = 0;
 pthread_cond_t cv = PTHREAD_COND_INITIALIZER;
+pthread_cond_t cv1 = PTHREAD_COND_INITIALIZER;
+
 std::random_device rd;
 std::default_random_engine e1(rd());
 typedef unsigned atomic_t;
@@ -132,7 +137,7 @@ void moveThreadtoHighPrio(pid_t tid) {
 void moveCurrentThread() {
     pid_t tid;
     tid = syscall(SYS_gettid);
-    std::string path = "/sys/fs/cgroup//hi_prgroup/cgroup.procs";
+    std::string path = "/sys/fs/cgroup/hi_prgroup/cgroup.procs";
     std::ofstream ofs(path, std::ios_base::app);
     if (!ofs) {
         std::cerr << "Could not open the file\n";
@@ -188,6 +193,9 @@ void setArguments(const std::vector<std::string_view>& arguments) {
     set_option_value("-p", PTHREAD_TASK_AMOUNT);
     set_option_value("-s", NR_SAMPLES);
     set_option_value("-u", SAMPLE_US);
+    set_option_value("-i",pair1);
+    set_option_value("-j",pair2);
+    set_option_value("-g",slow_mode);
 }
 
 
@@ -362,14 +370,21 @@ int measure_latency_pair(int i, int j)
 	//	}
 
 	//}
-	stick_this_thread_to_core(i,j);
-	usleep(5000);
+        if(slow_mode){
+		moveThreadtoHighPrio(syscall(SYS_gettid));
+		stick_this_thread_to_core(i,j);
+	}
+	usleep(NR_SAMPLES*SAMPLE_US);
 	stop_loops = 1;
 	pthread_join(t_odd, NULL);
 	pthread_join(t_even, NULL);
 	pingpong_mutex = NULL;
 	uint64_t stamp_stamp;
-
+	std::cout<<"time steps"<<even.timestamps.size()<<std::endl;
+	if(even.timestamps.size() == 0){
+                std::cout<<"aaae"<<std::endl;
+                return -1;
+        }
 	for(int z=0;z<even.timestamps.size() - 1;z++){
 		double sample = (even.timestamps[z+1] - even.timestamps[z]) / (double)10000;
 		if (sample < best_sample){
@@ -377,9 +392,8 @@ int measure_latency_pair(int i, int j)
 			stamp_stamp = even.timestamps[z+1] - even.timestamps[z];
 		}
 	}
-
 	std::cout << "I:"<<stamp_stamp<<" J:"<<even.timestamps.size()<<" Sample passed " << (int)(best_sample*100) << " next.\n";
-	return (int)(best_sample*100);
+	return (int)(best_sample * 100);
 }
 
 
@@ -583,12 +597,12 @@ int find_numa_groups(void)
 			}
 			if(top_stack[i][j] == 0 ){
 				if(i==0 && j==1){
-					NR_SAMPLES = NR_SAMPLES*20;
+					NR_SAMPLES = NR_SAMPLES*5;
 				}
 				int latency = measure_latency_pair(i,j);
 				set_latency_pair(i,j,get_latency_class(latency));
 				if(i==0 && j==1){
-					NR_SAMPLES = NR_SAMPLES/20;
+					NR_SAMPLES = NR_SAMPLES/5;
 				}
 			}
 			if(top_stack[i][j] < 4){
@@ -613,7 +627,6 @@ void ST_find_topology(std::vector<int> input){
 		
 		std::cout<<"here"<<input[x]<<"here"<<j<<std::endl;
 		
-		
 		if(top_stack[i][j] == 0){
 			int latency = measure_latency_pair(i,j);
 			pthread_mutex_lock(&readier_check);
@@ -626,23 +639,36 @@ void ST_find_topology(std::vector<int> input){
 	return;	
 }
 
+void alertMainThread(){
+  pthread_mutex_lock(&ready_check);
+  ready_counter += 1;
+  pthread_mutex_unlock(&ready_check);
+  pthread_cond_signal(&cv1);
+}
+
+void waitforWorkers(){
+  pthread_mutex_lock(&ready_check);
+  while(ready_counter != nr_numa_groups){
+    pthread_cond_wait(&cv1, &ready_check);
+  }
+  pthread_mutex_unlock(&ready_check);
+  ready_counter = 0;
+}
+
+
+
 static void *thread_fn2(void *data)
 {
 	worker_thread_args *args = (worker_thread_args *)data;
 	ST_find_topology(args->pairs_to_test);
-
- 	ready_counter += 1;
-	pthread_mutex_lock(&readiest_check);
-	
-	pthread_cond_broadcast(&cv);
-	pthread_mutex_unlock(&readiest_check);
-
+	alertMainThread();
 	return NULL;
 }
 
 
 void MT_find_topology(void){
 	apply_optimization();
+	ready_counter = 0;
 	pthread_cond_t cv = PTHREAD_COND_INITIALIZER;
 	std::vector<std::vector<int>> all_pairs_to_test(nr_numa_groups);
 	for(int i=0;i<LAST_CPU_ID;i++){
@@ -660,13 +686,8 @@ void MT_find_topology(void){
 	}
 	std::cout<<"herssse"<<nr_numa_groups<<std::endl;
 
-	pthread_mutex_lock(&readiest_check);
-	while(ready_counter != nr_numa_groups){
-		sleep(0.5);
-	}
-	pthread_mutex_unlock(&readiest_check);
-	
-	std::cout<<"here"<<std::endl;
+	waitforWorkers();
+	std::cout<<"maa"<<std::endl;
 	for (int i = 0; i < nr_numa_groups; i++) {
     		pthread_join(worker_tasks[i], NULL);
   	}
@@ -694,6 +715,9 @@ bool verify_numa_group(std::vector<int> input){
 	}
 	return true;
 }
+
+
+
 
 bool verify_thread_group(std::vector<int> input){
         std::vector<int> nums;
@@ -755,8 +779,8 @@ bool verify_topology(void){
 			return false;
 		}
 	}
-	NR_SAMPLES = NR_SAMPLES*2;
-        SAMPLE_US = SAMPLE_US*2;
+	//NR_SAMPLES = NR_SAMPLES*2;
+        //SAMPLE_US = SAMPLE_US*2;
 
 
 
@@ -877,23 +901,24 @@ static void configure_os_numa_groups(int mode)
 int main(int argc, char *argv[])
 {
 	moveCurrentThread();
-	moveThreadtoHighPrio(syscall(SYS_gettid));
 	nr_cpus = get_nprocs();
+
 	for (int i = 0; i < LAST_CPU_ID; i++) {
 		std::vector<int> cpumap(LAST_CPU_ID);
 		top_stack.push_back(cpumap);
 	}
+
 	for(int p=0;p< LAST_CPU_ID;p++){
 		top_stack[p][p] = 1;
 	}
+
 	const std::vector<std::string_view> args(argv, argv + argc);
   	setArguments(args);
-	uint64_t popul_laten_last = now_nsec();
-	printf("Finding NUMA groups...\n");
+
+        uint64_t popul_laten_last = now_nsec();
+
 	int numa_groups = find_numa_groups();
 
-	NR_SAMPLES = NR_SAMPLES /2;
-	SAMPLE_US = SAMPLE_US/2;
 
 	std::cout<<"numa group"<<numa_groups<<std::endl;
 	uint64_t popul_laten_now = now_nsec();
@@ -920,5 +945,6 @@ int main(int argc, char *argv[])
 
 	configure_os_numa_groups(1);
 	printf("Done...\n");
+	
 }
 
