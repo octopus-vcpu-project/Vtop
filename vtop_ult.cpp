@@ -626,6 +626,7 @@ bool verify_topology(void){
 		nullify_changes(task_set_arr);
 		return false;
 	}
+	nullify_changes(task_set_arr);
 	std::cout<<"here2"<<std::endl;
 	task_set_arr = std::vector<std::vector<int>>(pair_to_thread_arr.size());
 	for(int i=0;i<pair_to_thread_arr.size();i++){
