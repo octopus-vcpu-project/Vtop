@@ -593,7 +593,7 @@ bool verify_topology(void){
 		}
     }
 
-	std::vector<std::vector<int>> task_set_arr((int)numa_to_pair_arr.size());
+	std::vector<std::vector<int>> task_set_arr((int)numa_to_pair_arr.size(),{});
 	for(int i=0;i<numa_to_pair_arr.size();i++){
 		task_set_arr[i] = bitmap_to_task_stack(numa_to_pair_arr[i],NUMA_GROUP);
 	}
@@ -604,11 +604,9 @@ bool verify_topology(void){
 		nullify_changes(task_set_arr);
 		return false;
 	}
-	task_set_arr((int)pair_to_thread_arr.size());
-	if(failed_test = true){
-		failed_test = false;
-		nullify_changes(task_set_arr);
-		return false;
+	task_set_arr((int)pair_to_thread_arr.size(),{});
+	for(int i=0;i<pair_to_thread_arr.size();i++){
+		task_set_arr[i] = bitmap_to_task_stack(numa_to_pair_arr[i],PAIR_GROUP);
 	}
 	latency_valid = 2;
 	MT_find_topology(task_set_arr);
@@ -616,7 +614,8 @@ bool verify_topology(void){
 		nullify_changes(task_set_arr);
 		return false;
 	}
-	task_set_arr((int)thread_to_cpu_arr.size());
+	task_set_arr((int)thread_to_cpu_arr.size(),{});
+	
 	for(int i=0;i<thread_to_cpu_arr.size();i++){
 		task_set_arr[i] = bitmap_to_task_stack(thread_to_cpu_arr[i],THREAD_GROUP);
 	}
