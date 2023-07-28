@@ -612,7 +612,7 @@ bool verify_topology(void){
 	latency_valid = 3;
 	MT_find_topology(task_set_arr);
 	std::cout<<"here?"<<std::endl;
-	if(failed_test = true){
+	if(failed_test == true){
 		failed_test = false;
 		nullify_changes(task_set_arr);
 		return false;
@@ -624,7 +624,7 @@ bool verify_topology(void){
 	}
 	latency_valid = 2;
 	MT_find_topology(task_set_arr);
-	if(failed_test = true){
+	if(failed_test == true){
 		nullify_changes(task_set_arr);
 		return false;
 	}
@@ -634,7 +634,7 @@ bool verify_topology(void){
 	}
 	latency_valid = 1;
 	MT_find_topology(task_set_arr);
-	if(failed_test = true){
+	if(failed_test == true){
 		failed_test = false;
 		nullify_changes(task_set_arr);
 		return false;
