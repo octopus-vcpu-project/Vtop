@@ -50,21 +50,14 @@ int cpu_group_id[MAX_CPUS];
 int cpu_pair_id[MAX_CPUS];
 int cpu_tt_id[MAX_CPUS];
 
-
 std::vector<std::vector<int>> top_stack;
-
 int ready_counter = 0;
-
-
-int slow_mode = 0;
 pthread_t worker_tasks[MAX_CPUS];
-
 
 pthread_mutex_t top_stack_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t fin_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 pthread_cond_t fin_cv = PTHREAD_COND_INITIALIZER;
-
 
 std::vector<std::vector<int>> numa_to_pair_arr;
 std::vector<std::vector<int>> pair_to_thread_arr;
@@ -392,7 +385,11 @@ int find_numa_groups(void)
 			}
 		}
 		nr_numa_groups++;
+		std::vector<int> cpu_bitmap_group(LAST_CPU_ID);
+		numa_to_pair_arr.push_back(cpu_bitmap_group);
+		numas_to_cpu.push_back(i);
 	}
+
 	apply_optimization();
 	return nr_numa_groups;
 }
@@ -554,19 +551,16 @@ bool verify_topology(void){
 			return false;
 		}
 	}
-	//NR_SAMPLES = NR_SAMPLES*2;
-        //SAMPLE_US = SAMPLE_US*2;
-
 
 
 	for(int i=0;i<nr_numa_groups;i++){
-                for(int j=i+1;j<nr_numa_groups;j++){
+        for(int j=i+1;j<nr_numa_groups;j++){
 			int latency = measure_latency_pair(numas_to_cpu[i],numas_to_cpu[i+1]);
                 	if(get_latency_class(latency) != 4){
                         	return false;
                 	}
 		}
-        }
+    }
 
 	return true;
 }
@@ -574,11 +568,10 @@ bool verify_topology(void){
 static void construct_vnuma_groups(void)
 {
 	int i, j, count = 0;
-	nr_numa_groups = 0;
 	nr_pair_groups = 0;
-	int nr_tt_groups = 0;
-	double min, min_2;
+	nr_tt_groups = 0;
 	nr_cpus = get_nprocs();
+
 	for (i = 0; i < LAST_CPU_ID; i++){
 		cpu_group_id[i] = -1;
 		cpu_pair_id[i] = -1;
@@ -587,28 +580,29 @@ static void construct_vnuma_groups(void)
 
 
 	for (i = 0; i < LAST_CPU_ID; i++) {
+
+		//if (cpu_group_id[i] == -1){
+		//	cpu_group_id[i] = nr_numa_groups;
+		//	nr_numa_groups++;
+		//	std::vector<int> cpu_bitmap_group(LAST_CPU_ID);
+		//	numa_to_pair_arr.push_back(cpu_bitmap_group);
+		//	numas_to_cpu.push_back(i);
+		//}
 		
-		if (cpu_group_id[i] == -1){
-			cpu_group_id[i] = nr_numa_groups;
-			nr_numa_groups++;
-			std::vector<int> new_thing(LAST_CPU_ID);
-			numa_to_pair_arr.push_back(new_thing);
-			numas_to_cpu.push_back(i);
-		}
 		if (cpu_pair_id[i] == -1){
 			cpu_pair_id[i] = nr_pair_groups;
 			nr_pair_groups++;
-			std::vector<int> newer_thing(LAST_CPU_ID);
-			pair_to_thread_arr.push_back(newer_thing);
+			std::vector<int> cpu_bitmap_pair(LAST_CPU_ID);
+			pair_to_thread_arr.push_back(cpu_bitmap_pair);
 			pairs_to_cpu.push_back(i);
 		}
+		
 		if (cpu_tt_id[i] == -1){
 			cpu_tt_id[i] = nr_tt_groups;
 			nr_tt_groups++;
+			std::vector<int> cpu_bitmap_tt(LAST_CPU_ID);
+            thread_to_cpu_arr.push_back(cpu_bitmap_tt);
 			threads_to_cpu.push_back(i);
-			std::vector<int> cpu_bitmap(LAST_CPU_ID);
-                        thread_to_cpu_arr.push_back(cpu_bitmap);
-
 		}
 
 		
