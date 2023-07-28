@@ -291,7 +291,7 @@ int measure_latency_pair(int i, int j)
 	stop_loops = 1;
 	pthread_join(t_odd, NULL);
 	pthread_join(t_even, NULL);
-	free(pingpong_mutex);
+	munmap(pingpong_mutex,getpagesize());
 
 	std::cout<<"time steps"<<even.timestamps.size()<<std::endl;
 	if(even.timestamps.size() < 2){
