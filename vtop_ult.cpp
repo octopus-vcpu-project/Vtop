@@ -468,7 +468,7 @@ void MT_find_topology(std::vector<std::vector<int>> all_pairs_to_test){
 		pthread_create(&worker_tasks[i], NULL, thread_fn2, &worker_args[i]);
 	}
 	waitforWorkers();
-	for (int i = 0; i < nr_numa_groups; i++) {
+	for (int i = 0; i < all_pairs_to_test.size(); i++) {
     		pthread_join(worker_tasks[i], NULL);
   	}
 	ready_counter = 0;
