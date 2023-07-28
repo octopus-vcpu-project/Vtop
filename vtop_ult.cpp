@@ -595,6 +595,15 @@ void nullify_changes(std::vector<std::vector<int>> input){
 
 
 bool verify_topology(void){
+	for(int i=0;i<LAST_CPU_ID;i++){
+		for(int j=0;j<LAST_CPU_ID;j++){
+			if(i==j){
+				top_stack[i][j] = 1;
+			}else{
+				top_stack[i][j] = 0;
+			}
+		}
+	}
 	for(int i=0;i<nr_numa_groups;i++){
         for(int j=i+1;j<nr_numa_groups;j++){
 			int latency = measure_latency_pair(numas_to_cpu[i],numas_to_cpu[i+1]);
@@ -608,7 +617,6 @@ bool verify_topology(void){
 	for(int i=0;i<numa_to_pair_arr.size();i++){
 		task_set_arr[i] = bitmap_to_task_stack(numa_to_pair_arr[i],NUMA_GROUP);
 	}
-	std::cout<<"here's fine"<<std::endl;
 	latency_valid = 3;
 	MT_find_topology(task_set_arr);
 	
@@ -619,8 +627,6 @@ bool verify_topology(void){
 	}
 	
 	task_set_arr = std::vector<std::vector<int>>(pair_to_thread_arr.size());
-	
-	std::cout<<"we failed here?"<<std::endl;
 	for(int i=0;i<pair_to_thread_arr.size();i++){
 		std::cout<<task_set_arr.size()<<std::endl;
 		task_set_arr[i] = bitmap_to_task_stack(pair_to_thread_arr[i],PAIR_GROUP);
