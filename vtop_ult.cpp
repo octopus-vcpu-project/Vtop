@@ -593,7 +593,7 @@ bool verify_topology(void){
 		}
     }
 
-	std::vector<std::vector<int>> task_set_arr(numa_to_pair_arr.size(),{});
+	std::vector<std::vector<int>> task_set_arr(numa_to_pair_arr.size());
 	for(int i=0;i<numa_to_pair_arr.size();i++){
 		task_set_arr[i] = bitmap_to_task_stack(numa_to_pair_arr[i],NUMA_GROUP);
 	}
