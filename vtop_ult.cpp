@@ -597,6 +597,7 @@ bool verify_topology(void){
 	for(int i=0;i<numa_to_pair_arr.size();i++){
 		task_set_arr[i] = bitmap_to_task_stack(numa_to_pair_arr[i],NUMA_GROUP);
 	}
+	std::cout<<"here's fine"<<std::endl;
 	latency_valid = 3;
 	MT_find_topology(task_set_arr);
 	if(failed_test = true){
