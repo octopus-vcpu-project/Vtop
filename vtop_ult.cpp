@@ -30,11 +30,26 @@
 #define GROUP_NONLOCAL	(1)
 #define GROUP_GLOBAL	(2)
 
+#define NUMA_GROUP	(0)
+#define PAIR_GROUP	(1)
+#define THREAD_GROUP	(2)
+
 
 #define min(a,b)	(a < b ? a : b)
 #define LAST_CPU_ID	(min(nr_cpus, MAX_CPUS))
 
 typedef unsigned atomic_t;
+
+struct sub_group_str{
+	int vcpu_rep;
+	int sub_group_id;
+	int sub_group_type;
+	sub_group_str(int vcpu_rep_val, int sub_group_id_val, int sub_group_type_val)
+        : vcpu_rep(vcpu_rep_val), sub_group_id(sub_group_id_val), sub_group_type(sub_group_type_val),  {
+    }
+}
+
+
 
 int nr_cpus;
 int verbose = 0;
@@ -50,7 +65,8 @@ int nr_tt_groups = 0;
 int cpu_group_id[MAX_CPUS];
 int cpu_pair_id[MAX_CPUS];
 int cpu_tt_id[MAX_CPUS];
-
+bool failed_test = false; 
+int latency_valid = -1;
 
 std::vector<std::vector<int>> numa_to_pair_arr;
 std::vector<std::vector<int>> pair_to_thread_arr;
@@ -70,8 +86,6 @@ pthread_mutex_t top_stack_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t fin_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 pthread_cond_t fin_cv = PTHREAD_COND_INITIALIZER;
-
-
 
 
 
@@ -434,6 +448,10 @@ void ST_find_topology(std::vector<int> input){
 			apply_optimization();
 			pthread_mutex_unlock(&top_stack_mutex);
 		}
+		if(failed_test || (latency_valid != -1 && latency_valid != top_stack[i][j])){
+			failed_test = true;
+			return;
+		}
 	}
 	return;	
 }
@@ -500,14 +518,30 @@ bool verify_numa_group(std::vector<int> input){
 
 
 
-std::vector<int> bitmap_to_stack(std::vector<int> input){
+std::vector<int> bitmap_to_task_stack(std::vector<int> input,int type){
 	std::vector<int> stack;
+	std::vector<int> returnstack;
 	for(int i=0;i<input.size();i++){
 		if(input[i] == 1){
-			stack.push_back(i);
+			if(type == NUMA_GROUP){
+				stack.push_back(pairs_to_cpu[i]);
+			}else if(type == PAIR_GROUP){
+				stack.push_back(threads_to_cpu[i]);
+			}else{
+				stack.push_back(i);
+			}
 		}
 	}
-	return stack;
+	for(int i=0;i<stack.size();i++){
+		for(int j=i+1;j<stack.size();j++){
+			returnstack.push_back(stack[i]*LAST_CPU_ID+stack[j]);
+		}
+	}
+	return returnstack;
+}
+
+bool validate_task_stack(){
+
 }
 
 bool verify_thread_group(std::vector<int> input){
@@ -549,6 +583,16 @@ bool verify_pair_group(std::vector<int> input){
         return true;
 }
 
+void nullify_changes(std::vector<std::vector<int>> input){
+	for (int i = 0; i < input.size(); i++) {
+		for (int x = 0; x < input[i].size();x++) {
+			int j = input[x] % LAST_CPU_ID;
+			int i = (input[x]-(input[x]%LAST_CPU_ID))/LAST_CPU_ID;
+			set_latency_pair(i,j,0);
+		}
+	}
+
+}
 
 
 bool verify_topology(void){
@@ -560,29 +604,39 @@ bool verify_topology(void){
                 	}
 		}
     }
+
 	std::vector<std::vector<int>> task_set_arr(numa_to_pair_arr.size());
 	for(int i=0;i<numa_to_pair_arr.size();i++){
-		task_set_arr[i] = bitmap_to_stack(numa_to_pair_arr[i]);
+		task_set_arr[i] = bitmap_to_task_stack(numa_to_pair_arr[i],NUMA_GROUP);
 	}
-
-	for(int i = 0; i< thread_to_cpu_arr.size();i++) {
-		if(!verify_thread_group(thread_to_cpu_arr[i])){
-			return false;
-		}
+	latency_valid = 3;
+	MT_find_topology(task_set_arr);
+	if(failed_test = true){
+		nullify_changes(task_set_arr);
+		return false;
 	}
-
-	for (int i = 0; i < pair_to_thread_arr.size(); i+=1) {
-                if(!verify_pair_group(pair_to_thread_arr[i])){
-                        return false;
-                }
-        }
-
-	for (int i = 0; i < numa_to_pair_arr.size(); i+=1) {
-		if(!verify_numa_group(numa_to_pair_arr[i])){
-			return false;
-		}
+	task_set_arr(pair_to_thread_arr.size());
+	if(failed_test = true){
+		nullify_changes(task_set_arr);
+		return false;
 	}
-
+	latency_valid = 2;
+	MT_find_topology(task_set_arr);
+	if(failed_test = true){
+		nullify_changes(task_set_arr);
+		return false;
+	}
+	task_set_arr(thread_to_cpu_arr.size());
+	for(int i=0;i<thread_to_cpu_arr.size();i++){
+		task_set_arr[i] = bitmap_to_task_stack(thread_to_cpu_arr[i],THREAD_GROUP);
+	}
+	latency_valid = 1;
+	MT_find_topology(task_set_arr);
+	if(failed_test = true){
+		nullify_changes(task_set_arr);
+		return false;
+	}
+	latency_valid = -1;
 	return true;
 }
 
