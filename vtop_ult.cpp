@@ -427,6 +427,8 @@ typedef struct {
 
 //TODO convert to something more parallel
 void ST_find_topology(std::vector<int> input){
+	
+	std::cout<<"here's fine"<<std::endl;
 	for(int x=0;x<input.size();x++){
 		int j = input[x] % LAST_CPU_ID;
 		int i = (input[x]-(input[x]%LAST_CPU_ID))/LAST_CPU_ID;
@@ -465,7 +467,6 @@ void MT_find_topology(std::vector<std::vector<int>> all_pairs_to_test){
 	pthread_t worker_tasks[all_pairs_to_test.size()];
 	
 	for (int i = 0; i < all_pairs_to_test.size(); i++) {
-		std::cout<<"here's fine"<<std::endl;
 		worker_args[i].pairs_to_test = all_pairs_to_test[i];
 		pthread_create(&worker_tasks[i], NULL, thread_fn2, &worker_args[i]);
 	}
