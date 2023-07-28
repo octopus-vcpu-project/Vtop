@@ -77,6 +77,23 @@ pthread_cond_t fin_cv = PTHREAD_COND_INITIALIZER;
 
 
 
+void alertMainThread(){
+  pthread_mutex_lock(&fin_mutex);
+  ready_counter += 1;
+  pthread_mutex_unlock(&fin_mutex);
+  pthread_cond_signal(&fin_cv);
+}
+
+void waitforWorkers(){
+  pthread_mutex_lock(&fin_mutex);
+  while(ready_counter != nr_numa_groups){
+    pthread_cond_wait(&fin_cv, &fin_mutex);
+  }
+  pthread_mutex_unlock(&fin_mutex);
+  ready_counter = 0;
+}
+
+
 void moveThreadtoHighPrio(pid_t tid) {
 
     std::string path = "/sys/fs/cgroup/hi_prgroup/cgroup.threads";
@@ -421,22 +438,6 @@ void ST_find_topology(std::vector<int> input){
 	return;	
 }
 
-void alertMainThread(){
-  pthread_mutex_lock(&fin_mutex);
-  ready_counter += 1;
-  pthread_mutex_unlock(&fin_mutex);
-  pthread_cond_signal(&fin_cv);
-}
-
-void waitforWorkers(){
-  pthread_mutex_lock(&fin_mutex);
-  while(ready_counter != nr_numa_groups){
-    pthread_cond_wait(&fin_cv, &fin_mutex);
-  }
-  pthread_mutex_unlock(&fin_mutex);
-  ready_counter = 0;
-}
-
 
 
 static void *thread_fn2(void *data)
@@ -448,20 +449,12 @@ static void *thread_fn2(void *data)
 }
 
 
-void MT_find_topology(void){ 
-	apply_optimization();
+void MT_find_topology(std::vector<std::vector<int>> all_pairs_to_test){ 
+
 	ready_counter = 0;
-	std::vector<std::vector<int>> all_pairs_to_test(nr_numa_groups);
-	for(int i=0;i<LAST_CPU_ID;i++){
-		for(int j=i+1;j<LAST_CPU_ID;j++){
-			if(top_stack[i][j] == 0){
-				all_pairs_to_test[cpu_group_id[i]].push_back(i * LAST_CPU_ID + j);
-			}
-		}
-	}
-	worker_thread_args worker_args[nr_numa_groups];
-	pthread_t worker_tasks[nr_numa_groups];
-	for (int i = 0; i < nr_numa_groups; i++) {
+	worker_thread_args worker_args[all_pairs_to_test.size()];
+	pthread_t worker_tasks[all_pairs_to_test.size()];
+	for (int i = 0; i < all_pairs_to_test.size(); i++) {
 		worker_args[i].pairs_to_test = all_pairs_to_test[i];
 		pthread_create(&worker_tasks[i], NULL, thread_fn2, &worker_args[i]);
 	}
@@ -472,6 +465,18 @@ void MT_find_topology(void){
 	ready_counter = 0;
 }
 
+void performProbing(){
+	apply_optimization();
+	std::vector<std::vector<int>> all_pairs_to_test(nr_numa_groups);
+	for(int i=0;i<LAST_CPU_ID;i++){
+		for(int j=i+1;j<LAST_CPU_ID;j++){
+			if(top_stack[i][j] == 0){
+				all_pairs_to_test[cpu_group_id[i]].push_back(i * LAST_CPU_ID + j);
+			}
+		}
+	}
+	MT_find_topology(all_pairs_to_test);
+}
 
 
 
@@ -538,6 +543,14 @@ bool verify_pair_group(std::vector<int> input){
 
 
 bool verify_topology(void){
+	for(int i=0;i<nr_numa_groups;i++){
+        for(int j=i+1;j<nr_numa_groups;j++){
+			int latency = measure_latency_pair(numas_to_cpu[i],numas_to_cpu[i+1]);
+                	if(get_latency_class(latency) != 4){
+                        	return false;
+                	}
+		}
+    }
 	
 	for(int i = 0; i< thread_to_cpu_arr.size();i++) {
 		if(!verify_thread_group(thread_to_cpu_arr[i])){
@@ -558,14 +571,7 @@ bool verify_topology(void){
 	}
 
 
-	for(int i=0;i<nr_numa_groups;i++){
-        for(int j=i+1;j<nr_numa_groups;j++){
-			int latency = measure_latency_pair(numas_to_cpu[i],numas_to_cpu[i+1]);
-                	if(get_latency_class(latency) != 4){
-                        	return false;
-                	}
-		}
-    }
+	
 
 	return true;
 }
@@ -592,7 +598,6 @@ static void construct_vnuma_groups(void)
 		//	numa_to_pair_arr.push_back(cpu_bitmap_group);
 		//	numas_to_cpu.push_back(i);
 		//}
-		printf("doy");
 		if (cpu_pair_id[i] == -1){
 			cpu_pair_id[i] = nr_pair_groups;
 			nr_pair_groups++;
@@ -609,7 +614,6 @@ static void construct_vnuma_groups(void)
 			threads_to_cpu.push_back(i);
 		}
 
-		printf("doy");
 		for (j = 0 ; j < LAST_CPU_ID; j++) {
 				if (top_stack[i][j]<4 && cpu_group_id[i] != -1){
 					cpu_group_id[j] = cpu_group_id[i];
@@ -698,7 +702,7 @@ int main(int argc, char *argv[])
 	printf("This time it took to find NUMA Groups%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 	popul_laten_last = now_nsec();
 	printf("Consturcting overall topology...\n");
-	MT_find_topology();
+	performProbing();
 	popul_laten_now = now_nsec();
 	printf("This time it took to find all topology%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 	
