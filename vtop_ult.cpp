@@ -575,7 +575,7 @@ void nullify_changes(std::vector<std::vector<int>> input){
 	for (int i = 0; i < input.size(); i++) {
 		for (int x = 0; x < input[i].size();x++) {
 			int j = input[i][x] % LAST_CPU_ID;
-			int i = (input[i][x]-(input[x]%LAST_CPU_ID))/LAST_CPU_ID;
+			int i = (input[i][x]-(input[i][x]%LAST_CPU_ID))/LAST_CPU_ID;
 			set_latency_pair(i,j,0);
 		}
 	}
