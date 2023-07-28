@@ -458,7 +458,6 @@ static void *thread_fn2(void *data)
 	worker_thread_args *args = (worker_thread_args *)data;
 	ST_find_topology(args->pairs_to_test);
 	alertMainThread();
-	std::cout<<"wssse never get here?"<<std::endl;
 	return NULL;
 }
 
@@ -620,13 +619,13 @@ bool verify_topology(void){
 	}
 	latency_valid = 3;
 	MT_find_topology(task_set_arr);
-	
+	std::cout<<"here1"<<std::endl;
 	if(failed_test == true){
 		failed_test = false;
 		nullify_changes(task_set_arr);
 		return false;
 	}
-	
+	std::cout<<"here2"<<std::endl;
 	task_set_arr = std::vector<std::vector<int>>(pair_to_thread_arr.size());
 	for(int i=0;i<pair_to_thread_arr.size();i++){
 		std::cout<<task_set_arr.size()<<std::endl;
