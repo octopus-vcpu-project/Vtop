@@ -446,10 +446,9 @@ static void *thread_fn2(void *data)
 }
 
 
-void MT_find_topology(void){
+void MT_find_topology(void){ 
 	apply_optimization();
 	ready_counter = 0;
-	pthread_cond_t cv = PTHREAD_COND_INITIALIZER;
 	std::vector<std::vector<int>> all_pairs_to_test(nr_numa_groups);
 	for(int i=0;i<LAST_CPU_ID;i++){
 		for(int j=i+1;j<LAST_CPU_ID;j++){
@@ -464,14 +463,10 @@ void MT_find_topology(void){
 		worker_args[i].pairs_to_test = all_pairs_to_test[i];
 		pthread_create(&worker_tasks[i], NULL, thread_fn2, &worker_args[i]);
 	}
-	std::cout<<"herssse"<<nr_numa_groups<<std::endl;
-
 	waitforWorkers();
-	std::cout<<"maa"<<std::endl;
 	for (int i = 0; i < nr_numa_groups; i++) {
     		pthread_join(worker_tasks[i], NULL);
   	}
-	std::cout<<"finished"<<std::endl;
 	ready_counter = 0;
 }
 
