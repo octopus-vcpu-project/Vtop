@@ -44,11 +44,23 @@ int SAMPLE_US = 10000;
 static size_t nr_relax = 0;
 
 int nr_numa_groups = 0;
-int nr_pair_groups;
+int nr_pair_groups = 0;
+int nr_tt_groups = 0;
 
 int cpu_group_id[MAX_CPUS];
 int cpu_pair_id[MAX_CPUS];
 int cpu_tt_id[MAX_CPUS];
+
+
+std::vector<std::vector<int>> numa_to_pair_arr;
+std::vector<std::vector<int>> pair_to_thread_arr;
+std::vector<std::vector<int>> thread_to_cpu_arr;
+
+std::vector<int> numas_to_cpu;
+std::vector<int> pairs_to_cpu;
+std::vector<int> threads_to_cpu;
+
+
 
 std::vector<std::vector<int>> top_stack;
 int ready_counter = 0;
@@ -59,13 +71,6 @@ pthread_mutex_t fin_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 pthread_cond_t fin_cv = PTHREAD_COND_INITIALIZER;
 
-std::vector<std::vector<int>> numa_to_pair_arr;
-std::vector<std::vector<int>> pair_to_thread_arr;
-std::vector<std::vector<int>> thread_to_cpu_arr;
-
-std::vector<int> numas_to_cpu;
-std::vector<int> pairs_to_cpu;
-std::vector<int> threads_to_cpu;
 
 
 
