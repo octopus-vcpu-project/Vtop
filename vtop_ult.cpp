@@ -394,12 +394,12 @@ int find_numa_groups(void)
 			}
 			if(top_stack[i][j] == 0 ){
 				if(i==0 && j==1){
-					NR_SAMPLES = NR_SAMPLES*5;
+					NR_SAMPLES = NR_SAMPLES*10;
 				}
 				int latency = measure_latency_pair(i,j);
 				set_latency_pair(i,j,get_latency_class(latency));
 				if(i==0 && j==1){
-					NR_SAMPLES = NR_SAMPLES/5;
+					NR_SAMPLES = NR_SAMPLES/10;
 				}
 			}
 			if(top_stack[i][j] < 4){
@@ -500,6 +500,15 @@ bool verify_numa_group(std::vector<int> input){
 
 
 
+std::vector<int> bitmap_to_stack(std::vector<int> input){
+	std::vector<int> stack;
+	for(int i=0;i<input.size();i++){
+		if(input[i] == 1){
+			stack.push_back(i);
+		}
+	}
+	return stack;
+}
 
 bool verify_thread_group(std::vector<int> input){
         std::vector<int> nums;
@@ -551,7 +560,11 @@ bool verify_topology(void){
                 	}
 		}
     }
-	
+	std::vector<std::vector<int>> task_set_arr(numa_to_pair_arr.size());
+	for(int i=0;i<numa_to_pair_arr.size();i++){
+		task_set_arr[i] = bitmap_to_stack(numa_to_pair_arr[i]);
+	}
+
 	for(int i = 0; i< thread_to_cpu_arr.size();i++) {
 		if(!verify_thread_group(thread_to_cpu_arr[i])){
 			return false;
@@ -569,9 +582,6 @@ bool verify_topology(void){
 			return false;
 		}
 	}
-
-
-	
 
 	return true;
 }
