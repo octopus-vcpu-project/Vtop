@@ -530,7 +530,7 @@ std::vector<int> bitmap_to_task_stack(std::vector<int> input,int type){
 			returnstack.push_back(stack[i]*LAST_CPU_ID+stack[j]);
 		}
 	}
-	for(int i=0;i<returnstack.size();i++){
+	for(int x=0;x<returnstack.size();x++){
 		int j = returnstack[x] % LAST_CPU_ID;
 		int i = (returnstack[x]-(returnstack[x]%LAST_CPU_ID))/LAST_CPU_ID;
 		std::cout<<"Ival:"<<i<<"JVAL"<<j<<std::endl;
