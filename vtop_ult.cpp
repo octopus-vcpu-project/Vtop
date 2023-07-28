@@ -531,9 +531,6 @@ std::vector<int> bitmap_to_task_stack(std::vector<int> input,int type){
 	return returnstack;
 }
 
-bool validate_task_stack(){
-
-}
 
 bool verify_thread_group(std::vector<int> input){
         std::vector<int> nums;
