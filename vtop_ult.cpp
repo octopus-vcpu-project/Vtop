@@ -428,12 +428,12 @@ typedef struct {
 //TODO convert to something more parallel
 void ST_find_topology(std::vector<int> input){
 	
-	std::cout<<"here's fine"<<std::endl;
+	
 	for(int x=0;x<input.size();x++){
 		int j = input[x] % LAST_CPU_ID;
 		int i = (input[x]-(input[x]%LAST_CPU_ID))/LAST_CPU_ID;
-		
-		
+		std::cout<<j<<std::endl;
+		std::cout<<i<<std::endl;
 		if(top_stack[i][j] == 0){
 			int latency = measure_latency_pair(i,j);
 			pthread_mutex_lock(&top_stack_mutex);
