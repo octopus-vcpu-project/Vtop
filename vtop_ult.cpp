@@ -610,7 +610,7 @@ static void construct_vnuma_groups(void)
 			threads_to_cpu.push_back(i);
 		}
 
-		
+		printf("doy");
 		for (j = 0 ; j < LAST_CPU_ID; j++) {
 				if (top_stack[i][j]<4 && cpu_group_id[i] != -1){
 					cpu_group_id[j] = cpu_group_id[i];
