@@ -594,6 +594,7 @@ bool verify_topology(void){
 		}
 	}
 	failed_test = false;
+	NR_SAMPLES = NR_SAMPLES*2;
 	for(int i=0;i<nr_numa_groups;i++){
         	for(int j=i+1;j<nr_numa_groups;j++){
 			int latency = measure_latency_pair(numas_to_cpu[i],numas_to_cpu[i+1]);
@@ -601,7 +602,7 @@ bool verify_topology(void){
                         	return false;
                 	}
 		}
-        }
+    }
 
 	std::vector<std::vector<int>> task_set_arr(numa_to_pair_arr.size());
 	for(int i=0;i<numa_to_pair_arr.size();i++){
@@ -609,6 +610,7 @@ bool verify_topology(void){
 	}
 	latency_valid = 3;
 	MT_find_topology(task_set_arr);
+	NR_SAMPLES = NR_SAMPLES/2;
 	if(failed_test == true){
 		failed_test = false;
 		latency_valid = -1;
