@@ -819,9 +819,6 @@ int main(int argc, char *argv[])
 	
 	const std::vector<std::string_view> args(argv, argv + argc);
   	setArguments(args);
-	find_numa_groups();
-	performProbing();
-	construct_vnuma_groups();
 	while(1){
         	uint64_t popul_laten_last = now_nsec();
 		//int numa_groups = find_numa_groups();
@@ -834,6 +831,9 @@ int main(int argc, char *argv[])
 		//popul_laten_now = now_nsec();
 		//printf("This time it took to find all topology%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 		
+		int numa_groups = find_numa_groups();
+		performProbing();
+		construct_vnuma_groups();
 		if(verbose){
 			print_population_matrix();
 		}
@@ -841,16 +841,10 @@ int main(int argc, char *argv[])
 
 		if (verify_topology()){
 			printf("TOPOLOGY IS VERIFIED...\n");
-			find_numa_groups();
-			performProbing();
-			construct_vnuma_groups();
 			
 		}else{
 			printf("FAILED VERIFICATION \n");
 			
-			find_numa_groups();
-			performProbing();
-			construct_vnuma_groups();
 		}
 		latency_valid = -1;
 		failed_test = false;
