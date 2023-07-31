@@ -417,12 +417,12 @@ int find_numa_groups(void)
 			}
 			if(top_stack[i][j] == 0 ){
 				if(i==0 && j==1){
-					NR_SAMPLES = NR_SAMPLES*10;
+					NR_SAMPLES = NR_SAMPLES*5;
 				}
 				int latency = measure_latency_pair(i,j);
 				set_latency_pair(i,j,get_latency_class(latency));
 				if(i==0 && j==1){
-					NR_SAMPLES = NR_SAMPLES/10;
+					NR_SAMPLES = NR_SAMPLES/5;
 				}
 			}
 			if(top_stack[i][j] < 4){
@@ -822,12 +822,13 @@ int main(int argc, char *argv[])
 	for(int p=0;p< LAST_CPU_ID;p++){
 		top_stack[p][p] = 1;
 	}
-	int sd = find_numa_groups();
-	performProbing();
-	construct_vnuma_groups();
 	
 	const std::vector<std::string_view> args(argv, argv + argc);
   	setArguments(args);
+	
+	int sd = find_numa_groups();
+	performProbing();
+	construct_vnuma_groups();
 	while(1){
         	uint64_t popul_laten_last = now_nsec();
 		//int numa_groups = find_numa_groups();
