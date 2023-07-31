@@ -84,6 +84,18 @@ pthread_cond_t fin_cv = PTHREAD_COND_INITIALIZER;
 
 
 
+void moveThreadtoHighPrio(pid_t tid) {
+
+    std::string path = "/sys/fs/cgroup/hi_prgroup/cgroup.threads";
+    std::ofstream ofs(path, std::ios_base::app);
+    if (!ofs) {
+        std::cerr << "Could not open the file\n";
+        return;
+    }
+    ofs << tid << "\n";
+    ofs.close();
+}
+
 
 void alertMainThread(){
   pthread_mutex_lock(&fin_mutex);
