@@ -391,6 +391,15 @@ static void print_population_matrix(void)
 
 int find_numa_groups(void)
 {
+	for(int i=0;i<LAST_CPU_ID;i++){
+		for(int j=0;j<LAST_CPU_ID;j++){
+			if(i==j){
+				top_stack[i][j] = 1;
+			}else{
+				top_stack[i][j] = 0;
+			}
+		}
+	}
 	nr_numa_groups = 0;
 	for(int i = 0;i<LAST_CPU_ID;i++){
 		cpu_group_id[i] = -1;
@@ -832,13 +841,16 @@ int main(int argc, char *argv[])
 
 		if (verify_topology()){
 			printf("TOPOLOGY IS VERIFIED...\n");
+			
+			find_numa_groups();
+			performProbing();
+			construct_vnuma_groups();
 		}else{
 			printf("FAILED VERIFICATION \n");
 			
 			find_numa_groups();
 			performProbing();
 			construct_vnuma_groups();
-			verify_topology()
 		}
 		latency_valid = -1;
 		failed_test = false;
