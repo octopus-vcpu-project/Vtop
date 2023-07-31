@@ -842,9 +842,6 @@ int main(int argc, char *argv[])
 		if (verify_topology()){
 			printf("TOPOLOGY IS VERIFIED...\n");
 			
-			find_numa_groups();
-			performProbing();
-			construct_vnuma_groups();
 		}else{
 			printf("FAILED VERIFICATION \n");
 			
