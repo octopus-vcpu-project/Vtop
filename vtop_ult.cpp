@@ -817,6 +817,9 @@ int main(int argc, char *argv[])
 	for(int p=0;p< LAST_CPU_ID;p++){
 		top_stack[p][p] = 1;
 	}
+	find_numa_groups();
+			performProbing();
+			construct_vnuma_groups();
 	
 	const std::vector<std::string_view> args(argv, argv + argc);
   	setArguments(args);
