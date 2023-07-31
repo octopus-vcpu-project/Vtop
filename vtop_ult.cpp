@@ -242,8 +242,6 @@ static void common_setup(thread_args_t *args)
 
 static void *thread_fn(void *data)
 {
-	moveCurrentThread();
-	moveThreadtoHighPrio(syscall(SYS_gettid));
 	thread_args_t *args = (thread_args_t *)data;
 	common_setup(args);
 	big_atomic_t *nr_pingpongs = args->nr_pingpongs;
@@ -489,7 +487,6 @@ void ST_find_topology(std::vector<int> input){
 
 static void *thread_fn2(void *data)
 {
-	moveCurrentThread();
 	
 	worker_thread_args *args = (worker_thread_args *)data;
 	ST_find_topology(args->pairs_to_test);
