@@ -611,6 +611,7 @@ bool verify_topology(void){
 	MT_find_topology(task_set_arr);
 	if(failed_test == true){
 		failed_test = false;
+		latency_valid = -1;
 		nullify_changes(task_set_arr);
 		return false;
 	}
@@ -623,6 +624,7 @@ bool verify_topology(void){
 	
 	if(failed_test == true){
 		failed_test = false;
+		latency_valid = -1;
 		nullify_changes(task_set_arr);
 		return false;
 	}
@@ -643,6 +645,7 @@ bool verify_topology(void){
 	MT_find_topology(task_set_arr);
 	if(failed_test == true){
 		failed_test = false;
+		latency_valid = -1;
 		nullify_changes(task_set_arr);
 		return false;
 	}
