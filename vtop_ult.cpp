@@ -848,6 +848,7 @@ int main(int argc, char *argv[])
 			find_numa_groups();
 			performProbing();
 			construct_vnuma_groups();
+			verify_topology();
 		}
 		latency_valid = -1;
 		failed_test = false;
