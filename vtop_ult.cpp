@@ -321,8 +321,8 @@ int measure_latency_pair(int i, int j)
 	pthread_join(t_even, NULL);
 	munmap(pingpong_mutex,getpagesize());
 
-	if(even.timestamps.size() < 3){
-		if(amount_of_times<1){
+	if(even.timestamps.size() < 2){
+		if(amount_of_times<2){
 			amount_of_times++;
 			continue;
 		}else{
