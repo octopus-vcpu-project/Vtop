@@ -52,9 +52,7 @@ static size_t nr_relax = 0;
 int nr_numa_groups = 0;
 int nr_pair_groups = 0;
 int nr_tt_groups = 0;
-int minimum_latency_4 = 0;
-int max_latency_3 = 0;
-double threefour_latency_class = 8000;
+
 int cpu_group_id[MAX_CPUS];
 int cpu_pair_id[MAX_CPUS];
 int cpu_tt_id[MAX_CPUS];
@@ -242,8 +240,7 @@ static void *thread_fn(void *data)
 		if (*stop_loops == 1){
 			pthread_exit(0);
 		}
-		//consider special case(for stacking)(when stacking is detected, redo measurement for usleep average active time+ average inactive time)
-
+		
 		if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
 			++nr;
 			if (nr == nr_param && me == 0) {
@@ -251,8 +248,11 @@ static void *thread_fn(void *data)
 				nr = 0;
 			}
 		}
+
+		
 		for (size_t i = 0; i < nr_relax; ++i)
 			asm volatile("rep; nop");
+		
 	}
 	return NULL;
 }
@@ -269,36 +269,19 @@ int stick_this_thread_to_core(int core_id,int core_id2) {
    return pthread_setaffinity_np(current_thread, sizeof(cpu_set_t), &cpuset);
 }
 
-int get_latency_class(int latency){
-        if(latency<0 || latency>50000){
-                return 1;
-        }
-
-        if(latency< 1000){
-                return 2;
-        }
-        if(latency< threefour_latency_class){
-                return 3;
-        }
-
-        return 4;
-}
-
-
 
 int measure_latency_pair(int i, int j)
 {
-	int amount_of_times=0;
-	while(1){
 	stick_this_thread_to_core(i,j);
-    atomic_t* pingpong_mutex = (atomic_t*) malloc(sizeof(atomic_t));;
+
+   	atomic_t* pingpong_mutex = (atomic_t*) malloc(sizeof(atomic_t));
 	pthread_mutex_t wait_mutex = PTHREAD_MUTEX_INITIALIZER;
-    pthread_cond_t wait_cond = PTHREAD_COND_INITIALIZER;
+    	pthread_cond_t wait_cond = PTHREAD_COND_INITIALIZER;
 	big_atomic_t nr_pingpongs;
 	int stop_loops = 0;
-    int wait_for_buddy = 1;
+    	int wait_for_buddy = 1;
 	thread_args_t even(i, (atomic_t)0, (atomic_t)1, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy);
-    thread_args_t odd(j, (atomic_t)1, (atomic_t)0, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy);
+    	thread_args_t odd(j, (atomic_t)1, (atomic_t)0, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy);
 
 	__sync_lock_test_and_set(&nr_pingpongs.x, 0);
 
@@ -314,7 +297,6 @@ int measure_latency_pair(int i, int j)
 	}
 
 	double best_sample = 1./0.;
-
 	usleep(NR_SAMPLES*SAMPLE_US);
 	stop_loops = 1;
 	pthread_join(t_odd, NULL);
@@ -322,35 +304,37 @@ int measure_latency_pair(int i, int j)
 	munmap(pingpong_mutex,getpagesize());
 
 	if(even.timestamps.size() < 2){
-		if(amount_of_times<1){
-			amount_of_times++;
-			continue;
-		}else{
-			return -1;
-		}
+                std::cout<<"staccking"<<even.timestamps.size()<<std::endl;
+		return -1;
     	}
-	if(amount_of_times>0){
-		std::cout<<"success! doubel check.ITS HAPPPENNNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<std::endl;
-	}
 	for(int z=0;z<even.timestamps.size() - 1;z++){
 		double sample = (even.timestamps[z+1] - even.timestamps[z]) / (double)(nr_param*2);
 		if (sample < best_sample){
 			best_sample = sample;
 		}
 	}
-	if(abs(threefour_latency_class - (best_sample * 100)) < 400){
-		std::cout<<"threshold adjusted"<<std::endl;
-		threefour_latency_class = threefour_latency_class*1;
-	}
-	std::cout <<"Threshhold:"<<threefour_latency_class<<"I"<<i<<" J:"<<j<<" Sample passed " << (int)(best_sample*100) << " next.\n";
+	std::cout <<" J:"<<even.timestamps.size()<<" Sample passed " << (int)(best_sample*100) << " next.\n";
 	return (int)(best_sample * 100);
-	}
 }
 
 
 
 
 
+int get_latency_class(int latency){
+	if(latency<0){
+		return 1;
+	}
+
+	if(latency< 1000){
+		return 2;
+	}
+	if(latency< 8000){
+		return 3;
+	}
+	
+	return 4;
+}
 
 void set_latency_pair(int x,int y,int latency_class){
 	top_stack[x][y] = latency_class;
@@ -395,8 +379,6 @@ int find_numa_groups(void)
 	for(int i = 0;i<LAST_CPU_ID;i++){
 		cpu_group_id[i] = -1;
 	}
-	numa_to_pair_arr = {};
-	numas_to_cpu = {};
 	for (int i = 0; i < LAST_CPU_ID; i++) {
 		if(cpu_group_id[i] != -1){
 			continue;
@@ -447,9 +429,7 @@ void ST_find_topology(std::vector<int> input){
 			int latency = measure_latency_pair(i,j);
 			pthread_mutex_lock(&top_stack_mutex);
 			set_latency_pair(i,j,get_latency_class(latency));
-			if(latency_valid == -1){
-				apply_optimization();
-			}
+			apply_optimization();
 			pthread_mutex_unlock(&top_stack_mutex);
 		}
 		if(failed_test || (latency_valid != -1 && latency_valid != top_stack[i][j])){
@@ -467,14 +447,14 @@ static void *thread_fn2(void *data)
 {
 	worker_thread_args *args = (worker_thread_args *)data;
 	ST_find_topology(args->pairs_to_test);
-//	alertMainThread();
+	alertMainThread();
 	return NULL;
 }
 
 
 void MT_find_topology(std::vector<std::vector<int>> all_pairs_to_test){ 
 
-//	ready_counter = 0;
+	ready_counter = 0;
 	worker_thread_args worker_args[all_pairs_to_test.size()];
 	pthread_t worker_tasks[all_pairs_to_test.size()];
 	
@@ -482,11 +462,11 @@ void MT_find_topology(std::vector<std::vector<int>> all_pairs_to_test){
 		worker_args[i].pairs_to_test = all_pairs_to_test[i];
 		pthread_create(&worker_tasks[i], NULL, thread_fn2, &worker_args[i]);
 	}
-//	waitforWorkers(all_pairs_to_test.size());
+	waitforWorkers(all_pairs_to_test.size());
 	for (int i = 0; i < all_pairs_to_test.size(); i++) {
     		pthread_join(worker_tasks[i], NULL);
   	}
-//	ready_counter = 0;
+	ready_counter = 0;
 }
 
 void performProbing(){
@@ -495,9 +475,7 @@ void performProbing(){
 	for(int i=0;i<LAST_CPU_ID;i++){
 		for(int j=i+1;j<LAST_CPU_ID;j++){
 			if(top_stack[i][j] == 0){
-				if(cpu_group_id[i] == cpu_group_id[j]){
-					all_pairs_to_test[cpu_group_id[i]].push_back(i * LAST_CPU_ID + j);
-				}
+				all_pairs_to_test[cpu_group_id[i]].push_back(i * LAST_CPU_ID + j);
 			}
 		}
 	}
@@ -555,6 +533,10 @@ std::vector<int> bitmap_to_task_stack(std::vector<int> input,int type){
 			returnstack.push_back(stack[i]*LAST_CPU_ID+stack[j]);
 		}
 	}
+	for(int x=0;x<returnstack.size();x++){
+		int j = returnstack[x] % LAST_CPU_ID;
+		int i = (returnstack[x]-(returnstack[x]%LAST_CPU_ID))/LAST_CPU_ID;
+	}
 	return returnstack;
 }
 
@@ -586,13 +568,13 @@ bool verify_topology(void){
 	}
 	failed_test = false;
 	for(int i=0;i<nr_numa_groups;i++){
-        	for(int j=i+1;j<nr_numa_groups;j++){
+        for(int j=i+1;j<nr_numa_groups;j++){
 			int latency = measure_latency_pair(numas_to_cpu[i],numas_to_cpu[i+1]);
                 	if(get_latency_class(latency) != 4){
                         	return false;
                 	}
 		}
-        }
+    }
 
 	std::vector<std::vector<int>> task_set_arr(numa_to_pair_arr.size());
 	for(int i=0;i<numa_to_pair_arr.size();i++){
@@ -605,6 +587,7 @@ bool verify_topology(void){
 		nullify_changes(task_set_arr);
 		return false;
 	}
+	nullify_changes(task_set_arr);
 	task_set_arr = std::vector<std::vector<int>>(pair_to_thread_arr.size());
 	for(int i=0;i<pair_to_thread_arr.size();i++){
 		task_set_arr[i] = bitmap_to_task_stack(pair_to_thread_arr[i],PAIR_GROUP);
@@ -617,18 +600,9 @@ bool verify_topology(void){
 		nullify_changes(task_set_arr);
 		return false;
 	}
-	task_set_arr = std::vector<std::vector<int>>(pair_to_thread_arr.size()); 
-	for(int i=0;i<pair_to_thread_arr.size();i++){
-		std::vector<int> threads_in_pair = bitmap_to_ord_vector(pair_to_thread_arr[i]);
-		for(int g=0;g<threads_in_pair.size();g++){
-			int thread = threads_in_pair[g];
-			std::vector<int> cpus_in_thread = bitmap_to_ord_vector(thread_to_cpu_arr[thread]);
-			for(int f=0;f<cpus_in_thread.size()-1;f++){
-				int i_value =  cpus_in_thread[f];
-				int j_value = cpus_in_thread[f+1];
-				task_set_arr[i].push_back(i_value*LAST_CPU_ID+j_value);
-			}
-		}
+	task_set_arr = std::vector<std::vector<int>>(thread_to_cpu_arr.size());
+	for(int i=0;i<thread_to_cpu_arr.size();i++){
+		task_set_arr[i] = bitmap_to_task_stack(thread_to_cpu_arr[i],THREAD_GROUP);
 	}
 	latency_valid = 1;
 	MT_find_topology(task_set_arr);
@@ -640,7 +614,7 @@ bool verify_topology(void){
 	latency_valid = -1;
 	return true;
 }
-//TODO rename, parse matrix
+
 static void construct_vnuma_groups(void)
 {
 	int i, j, count = 0;
@@ -652,10 +626,6 @@ static void construct_vnuma_groups(void)
 		cpu_pair_id[i] = -1;
 		cpu_tt_id[i] = -1;
 	}
-	pair_to_thread_arr={};
-	thread_to_cpu_arr={};
-	pairs_to_cpu={};
-	threads_to_cpu={};
 
 
 	for (i = 0; i < LAST_CPU_ID; i++) {
@@ -679,11 +649,14 @@ static void construct_vnuma_groups(void)
 			cpu_tt_id[i] = nr_tt_groups;
 			nr_tt_groups++;
 			std::vector<int> cpu_bitmap_tt(LAST_CPU_ID);
-            		thread_to_cpu_arr.push_back(cpu_bitmap_tt);
+            thread_to_cpu_arr.push_back(cpu_bitmap_tt);
 			threads_to_cpu.push_back(i);
 		}
 
 		for (j = 0 ; j < LAST_CPU_ID; j++) {
+				if (top_stack[i][j]<4 && cpu_group_id[i] != -1){
+					cpu_group_id[j] = cpu_group_id[i];
+				}
 				if (top_stack[i][j]<3 && cpu_pair_id[i] != -1){
 					cpu_pair_id[j] = cpu_pair_id[i];
 				}
@@ -810,42 +783,35 @@ int main(int argc, char *argv[])
 	
 	const std::vector<std::string_view> args(argv, argv + argc);
   	setArguments(args);
-	find_numa_groups();
-	performProbing();
-	construct_vnuma_groups();
 	while(1){
         	uint64_t popul_laten_last = now_nsec();
-		//int numa_groups = find_numa_groups();
-		//std::cout<<"numa group"<<numa_groups<<std::endl;
-		//uint64_t popul_laten_now = now_nsec();
-		//printf("This time it took to find NUMA Groups%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
-		//popul_laten_last = now_nsec();
-		//printf("Consturcting overall topology...\n");
-		//performProbing();
-		//popul_laten_now = now_nsec();
-		//printf("This time it took to find all topology%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
+		int numa_groups = find_numa_groups();
+		std::cout<<"numa group"<<numa_groups<<std::endl;
+		uint64_t popul_laten_now = now_nsec();
+		printf("This time it took to find NUMA Groups%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
+		popul_laten_last = now_nsec();
+		printf("Consturcting overall topology...\n");
+		performProbing();
+		popul_laten_now = now_nsec();
+		printf("This time it took to find all topology%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 		
+		construct_vnuma_groups();
 		if(verbose){
 			print_population_matrix();
 		}
-		//popul_laten_last = now_nsec();
+		popul_laten_last = now_nsec();
 
 		if (verify_topology()){
 			printf("TOPOLOGY IS VERIFIED...\n");
 		}else{
 			printf("FAILED VERIFICATION \n");
-			find_numa_groups();
-			performProbing();
-			construct_vnuma_groups();
-			
 		}
-		latency_valid = -1;
-		failed_test = false;
-		//popul_laten_now = now_nsec();
-		//printf("This time it took to verify%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
-		//configure_os_numa_groups(1);
+		popul_laten_now = now_nsec();
+		printf("This time it took to verify%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
+
+		configure_os_numa_groups(1);
 		printf("Done...\n");
-		sleep(1);
+		sleep(10);
 	}
 }
 
