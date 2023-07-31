@@ -54,7 +54,7 @@ int nr_pair_groups = 0;
 int nr_tt_groups = 0;
 int minimum_latency_4 = 0;
 int max_latency_3 = 0;
-double threefour_latency_class = 8000;
+double threefour_latency_class = 9000;
 int cpu_group_id[MAX_CPUS];
 int cpu_pair_id[MAX_CPUS];
 int cpu_tt_id[MAX_CPUS];
