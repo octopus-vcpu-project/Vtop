@@ -326,6 +326,7 @@ int measure_latency_pair(int i, int j)
 			amount_of_times++;
 			continue;
 		}else{
+			std::cout <<"Threshhold:"<<threefour_latency_class<<"I"<<i<<" J:"<<j<<" Sample passed " << -1 << " next.\n";
 			return -1;
 		}
     	}
