@@ -647,6 +647,7 @@ bool verify_topology(void){
 		return false;
 	}
 	latency_valid = -1;
+	failed_test = false;
 	return true;
 }
 //TODO rename, parse matrix
@@ -831,7 +832,7 @@ int main(int argc, char *argv[])
 		//popul_laten_now = now_nsec();
 		//printf("This time it took to find all topology%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 		
-		int numa_groups = find_numa_groups();
+		find_numa_groups();
 		performProbing();
 		construct_vnuma_groups();
 		if(verbose){
@@ -845,9 +846,11 @@ int main(int argc, char *argv[])
 		}else{
 			printf("FAILED VERIFICATION \n");
 			
+			find_numa_groups();
+			performProbing();
+			construct_vnuma_groups();
+			
 		}
-		latency_valid = -1;
-		failed_test = false;
 		//popul_laten_now = now_nsec();
 		//printf("This time it took to verify%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 		//configure_os_numa_groups(1);
