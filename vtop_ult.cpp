@@ -391,6 +391,16 @@ static void print_population_matrix(void)
 
 int find_numa_groups(void)
 {
+	
+	for(int i=0;i<LAST_CPU_ID;i++){
+		for(int j=0;j<LAST_CPU_ID;j++){
+			if(i==j){
+				top_stack[i][j] = 1;
+			}else{
+				top_stack[i][j] = 0;
+			}
+		}
+	}
 	nr_numa_groups = 0;
 	for(int i = 0;i<LAST_CPU_ID;i++){
 		cpu_group_id[i] = -1;
@@ -841,9 +851,6 @@ int main(int argc, char *argv[])
 		}
 		latency_valid = -1;
 		failed_test = false;
-		//popul_laten_now = now_nsec();
-		//printf("This time it took to verify%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
-		//configure_os_numa_groups(1);
 		printf("Done...\n");
 		sleep(1);
 	}
