@@ -326,12 +326,6 @@ int measure_latency_pair(int i, int j)
 
 	double best_sample = 1./0.;
 
-	usleep(NR_SAMPLES*SAMPLE_US);
-	stop_loops = 1;
-	pthread_join(t_odd, NULL);
-	pthread_join(t_even, NULL);
-	munmap(pingpong_mutex,getpagesize());
-	double best_sample = 1./0.;
 	uint64_t last_stamp = now_nsec();
 	for (size_t sample_no = 0; sample_no < NR_SAMPLES; ++sample_no) {
 		usleep(SAMPLE_US);
@@ -349,6 +343,10 @@ int measure_latency_pair(int i, int j)
 
 	}
 	
+	stop_loops = 1;
+	pthread_join(t_odd, NULL);
+	pthread_join(t_even, NULL);
+	munmap(pingpong_mutex,getpagesize());
 	std::cout <<"I"<<i<<" J:"<<j<<" Sample passed " << (int)(best_sample*100) << " next.\n";
 	return (int)(best_sample * 100);
 	}
