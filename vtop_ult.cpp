@@ -639,12 +639,16 @@ bool verify_topology(void){
 		nullify_changes(task_set_arr);
 		return false;
 	}
-	task_set_arr = std::vector<std::vector<int>>(pair_to_thread_arr.size());
+	task_set_arr = std::vector<std::vector<int>>(1);
+	std::vector<int> insertvec;
+	std::vector<int> insertier_vec;
 	for(int i=0;i<pair_to_thread_arr.size();i++){
-		task_set_arr[i] = bitmap_to_task_stack(pair_to_thread_arr[i],PAIR_GROUP);
+		insertier_vec = bitmap_to_task_stack(pair_to_thread_arr[i],PAIR_GROUP);
+		insertvec.insert( insertvec.end(), insertier_vec.begin(), insertier_vec.end() );
+
 	}
 	latency_valid = 2;
-	MT_find_topology(task_set_arr);
+	MT_find_topology(insertvec);
 	
 	if(failed_test == true){
 		failed_test = false;
