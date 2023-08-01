@@ -344,7 +344,7 @@ int measure_latency_pair(int i, int j)
 			continue;
 		}else{
 			atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
-			std::cout <<"PingPongs:"<<(int)s<<"I"<<i<<" J:"<<j<<" Sample passed " << -1 << " next.\n";
+			std::cout <<"PingPongs:"<<(int)s<<amount_of_times<<"I"<<i<<" J:"<<j<<" Sample passed " << -1 << " next.\n";
 			return -1;
 		}
     	}
