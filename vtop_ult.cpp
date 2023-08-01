@@ -648,7 +648,8 @@ bool verify_topology(void){
 
 	}
 	latency_valid = 2;
-	MT_find_topology(insertvec);
+	task_set_arr[0] = insertvec;
+	MT_find_topology(task_set_arr);
 	
 	if(failed_test == true){
 		failed_test = false;
