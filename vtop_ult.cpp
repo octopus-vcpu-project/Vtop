@@ -193,10 +193,10 @@ struct thread_args_t {
     pthread_mutex_t* mutex;
     pthread_cond_t* cond;
     int* flag;
-	int* nrs;
+	bool* prepared;
 
-    thread_args_t(int cpu_id, atomic_t me_value, atomic_t buddy_value,atomic_t** pp_mutex, big_atomic_t* nr_pp, int* stop_loops, pthread_mutex_t* mtx, pthread_cond_t* cond, int* flag)
-        : me(me_value), buddy(buddy_value), nr_pingpongs(nr_pp), pingpong_mutex(pp_mutex), stoploops(stop_loops), mutex(mtx), cond(cond), flag(flag) {
+    thread_args_t(int cpu_id, atomic_t me_value, atomic_t buddy_value,atomic_t** pp_mutex, big_atomic_t* nr_pp, int* stop_loops, pthread_mutex_t* mtx, pthread_cond_t* cond, int* flag,bool* prep)
+        : me(me_value), buddy(buddy_value), nr_pingpongs(nr_pp), pingpong_mutex(pp_mutex), stoploops(stop_loops), mutex(mtx), cond(cond), flag(flag), prepared(prep) {
         CPU_ZERO(&cpus);
         CPU_SET(cpu_id, &cpus);
     }
@@ -238,7 +238,7 @@ static void common_setup(thread_args_t *args)
         pthread_cond_broadcast(args->cond);
     }
     pthread_mutex_unlock(args->mutex);
-	
+	*(args->prepared) = true;
 }
 
 static void *thread_fn(void *data)
@@ -311,9 +311,10 @@ int measure_latency_pair(int i, int j)
     pthread_cond_t wait_cond = PTHREAD_COND_INITIALIZER;
 	big_atomic_t nr_pingpongs;
 	int stop_loops = 0;
+	bool prepared = false;
     int wait_for_buddy = 1;
-	thread_args_t even(i, (atomic_t)0, (atomic_t)1, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy);
-    thread_args_t odd(j, (atomic_t)1, (atomic_t)0, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy);
+	thread_args_t even(i, (atomic_t)0, (atomic_t)1, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy,&prepared);
+    thread_args_t odd(j, (atomic_t)1, (atomic_t)0, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy,&prepared);
 
 	__sync_lock_test_and_set(&nr_pingpongs.x, 0);
 
@@ -329,7 +330,9 @@ int measure_latency_pair(int i, int j)
 	}
 
 	double best_sample = 1./0.;
-
+	while(!prepared){
+		usleep(100);
+	}
 	usleep(NR_SAMPLES*SAMPLE_US);
 	stop_loops = 1;
 	pthread_join(t_odd, NULL);
