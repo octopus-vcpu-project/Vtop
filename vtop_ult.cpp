@@ -393,7 +393,11 @@ int measure_latency_pair(int i, int j)
 	while(!prepared){
 		usleep(100);
 	}
-	usleep(NR_SAMPLES*SAMPLE_US);
+	
+	if(amount_of_times>0){
+		SAMPLE_US = 8000;
+	}
+	usleep(SAMPLE_US);
 	stop_loops = 1;
 	pthread_join(t_odd, NULL);
 	pthread_join(t_even, NULL);
@@ -412,9 +416,6 @@ int measure_latency_pair(int i, int j)
 		}
     	}
 	
-	if(amount_of_times>0){
-		std::cout<<"success! doubel check.ITS HAPPPENNNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<std::endl;
-	}
 	for(int z=0;z<even.timestamps.size() - 1;z++){
 		double sample = (even.timestamps[z+1] - even.timestamps[z]) / (double)(nr_param*2);
 		if (sample < best_sample){
@@ -501,12 +502,12 @@ int find_numa_groups(void)
 			}
 			if(top_stack[i][j] == 0 ){
 				if(i==0 && j==1){
-					NR_SAMPLES = NR_SAMPLES*5;
+					SAMPLE_US = SAMPLE_US*5;
 				}
 				int latency = measure_latency_pair(i,j);
 				set_latency_pair(i,j,get_latency_class(latency));
 				if(i==0 && j==1){
-					NR_SAMPLES = NR_SAMPLES/5;
+					SAMPLE_US = SAMPLE_US/5;
 				}
 			}
 			if(top_stack[i][j] < 4){
