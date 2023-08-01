@@ -951,7 +951,7 @@ int main(int argc, char *argv[])
 		//printf("This time it took to verify%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 		//configure_os_numa_groups(1);
 		printf("Done...\n");
-		usleep(1000000);
+		sleep(1);
 	}
 }
 
