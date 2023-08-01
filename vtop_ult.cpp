@@ -126,9 +126,9 @@ void moveCurrentThread() {
     }
     ofs << tid << "\n";
     ofs.close();
-    struct sched_param params;
-    params.sched_priority = sched_get_priority_max(SCHED_RR);
-    sched_setscheduler(tid,SCHED_RR,&params);
+    //struct sched_param params;
+    //params.sched_priority = sched_get_priority_max(SCHED_RR);
+    //sched_setscheduler(tid,SCHED_RR,&params);
 }
 
 std::string_view get_option(
@@ -620,7 +620,6 @@ bool verify_topology(void){
 		}
 	}
 	failed_test = false;
-	NR_SAMPLES = NR_SAMPLES*2;
 	for(int i=0;i<nr_numa_groups;i++){
         	for(int j=i+1;j<nr_numa_groups;j++){
 			int latency = measure_latency_pair(numas_to_cpu[i],numas_to_cpu[i+1]);
@@ -636,7 +635,6 @@ bool verify_topology(void){
 	}
 	latency_valid = 3;
 	MT_find_topology(task_set_arr);
-	NR_SAMPLES = NR_SAMPLES/2;
 	if(failed_test == true){
 		failed_test = false;
 		latency_valid = -1;
