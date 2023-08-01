@@ -349,7 +349,7 @@ int measure_latency_pair(int i, int j)
 
 	}
 	
-	std::cout <<"Pingpongs:"<<nr_pingpongs<<"I"<<i<<" J:"<<j<<" Sample passed " << (int)(best_sample*100) << " next.\n";
+	std::cout <<"I"<<i<<" J:"<<j<<" Sample passed " << (int)(best_sample*100) << " next.\n";
 	return (int)(best_sample * 100);
 	}
 }
