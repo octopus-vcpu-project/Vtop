@@ -253,13 +253,15 @@ static void *thread_fn(void *data)
 	atomic_t *cache_pingpong_mutex = *(args->pingpong_mutex);
 	while (1) {
 		if (*stop_loops == 1){
+			__sync_fetch_and_add(&(nr_pingpongs->x), 2 * nr);
 			pthread_exit(0);
 		}
+		//consider special case(for stacking)(when stacking is detected, redo measurement for usleep average active time+ average inactive time)
+
 		if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
 			++nr;
-			if (nr == 500 && me == 0) {
-				__sync_fetch_and_add(&(nr_pingpongs->x), 2 * nr);
-				nr = 0;
+			if ((nr % nr_param ==0) && me == 0) {
+				(args->timestamps).push_back(now_nsec());
 			}
 		}
 		for (size_t i = 0; i < nr_relax; ++i)
@@ -326,28 +328,38 @@ int measure_latency_pair(int i, int j)
 
 	double best_sample = 1./0.;
 
-	uint64_t last_stamp = now_nsec();
-	for (size_t sample_no = 0; sample_no < NR_SAMPLES; ++sample_no) {
-		usleep(SAMPLE_US);
-		atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
-		uint64_t time_stamp = now_nsec();
-		double sample = (time_stamp - last_stamp) / (double)s;
-		uint64_t newtest = time_stamp - last_stamp;
-		last_stamp = time_stamp;
-
-	
-		
-		if ((sample < best_sample && sample != 1.0/0.)||(best_sample==1.0/0.)){
-			best_sample = sample;
-		}
-
-	}
-	
+	usleep(NR_SAMPLES*SAMPLE_US);
 	stop_loops = 1;
 	pthread_join(t_odd, NULL);
 	pthread_join(t_even, NULL);
 	munmap(pingpong_mutex,getpagesize());
-	std::cout <<"I"<<i<<" J:"<<j<<" Sample passed " << (int)(best_sample*100) << " next.\n";
+	if(even.timestamps.size() == 1){
+		continue;
+	}
+	if(even.timestamps.size() < 1){
+		if(amount_of_times<2){
+			amount_of_times++;
+			continue;
+		}else{
+			std::cout <<"Threshhold:"<<threefour_latency_class<<"I"<<i<<" J:"<<j<<" Sample passed " << -1 << " next.\n";
+			return -1;
+		}
+    	}
+	
+	if(amount_of_times>0){
+		std::cout<<"success! doubel check.ITS HAPPPENNNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<std::endl;
+	}
+	for(int z=0;z<even.timestamps.size() - 1;z++){
+		double sample = (even.timestamps[z+1] - even.timestamps[z]) / (double)(nr_param*2);
+		if (sample < best_sample){
+			best_sample = sample;
+		}
+	}
+	if(abs(threefour_latency_class - (best_sample * 100)) < 400){
+		std::cout<<"threshold adjusted"<<std::endl;
+		threefour_latency_class = threefour_latency_class*1;
+	}
+	std::cout <<"Pingpongs:"<<threefour_latency_class<<"I"<<i<<" J:"<<j<<" Sample passed " << (int)(best_sample*100) << " next.\n";
 	return (int)(best_sample * 100);
 	}
 }
