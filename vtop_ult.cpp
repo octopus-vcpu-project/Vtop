@@ -297,7 +297,6 @@ static void common_setup(thread_args_t *args)
         pthread_cond_broadcast(args->cond);
     }
     pthread_mutex_unlock(args->mutex);
-	*(args->prepared) = true;
 }
 
 static void *thread_fn(void *data)
@@ -398,10 +397,7 @@ int measure_latency_pair(int i, int j)
 	pthread_join(t_odd, NULL);
 	pthread_join(t_even, NULL);
 	munmap(pingpong_mutex,getpagesize());
-	if(even.timestamps.size() == 1){
-		continue;
-	}
-	if(even.timestamps.size() < 1){
+	if(even.timestamps.size() < 2){
 		if(amount_of_times<1){
 			amount_of_times++;
 			continue;
