@@ -126,9 +126,9 @@ void moveCurrentThread() {
     }
     ofs << tid << "\n";
     ofs.close();
-    //struct sched_param params;
-    //params.sched_priority = sched_get_priority_max(SCHED_RR);
-    //sched_setscheduler(tid,SCHED_RR,&params);
+    struct sched_param params;
+    params.sched_priority = sched_get_priority_max(SCHED_RR);
+    sched_setscheduler(tid,SCHED_RR,&params);
 }
 
 std::string_view get_option(
