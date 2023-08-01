@@ -339,7 +339,7 @@ int measure_latency_pair(int i, int j)
 		continue;
 	}
 	if(even.timestamps.size() < 1){
-		if(amount_of_times<5){
+		if(amount_of_times<10){
 			amount_of_times++;
 			continue;
 		}else{
