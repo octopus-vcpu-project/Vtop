@@ -19,6 +19,8 @@
 #include <random>
 #include <vector>
 #include <fstream>
+#include <dirent.h>
+#include <signal.h>
 #include <sstream>
 #include <sys/syscall.h>
 #include <unordered_map>
