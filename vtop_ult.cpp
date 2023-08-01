@@ -926,7 +926,6 @@ int main(int argc, char *argv[])
 		//performProbing();
 		//popul_laten_now = now_nsec();
 		//printf("This time it took to find all topology%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
-		stop_user_processes();
 		if(verbose){
 			print_population_matrix();
 		}
@@ -946,7 +945,6 @@ int main(int argc, char *argv[])
 			printf("TOPOLOGY FAILED.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 			
 		}
-		resume_stopped_processes();
 		//popul_laten_now = now_nsec();
 		//printf("This time it took to verify%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 		//configure_os_numa_groups(1);
