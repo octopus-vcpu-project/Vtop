@@ -185,9 +185,9 @@ void moveCurrentThread() {
     }
     ofs << tid << "\n";
     ofs.close();
-    //struct sched_param params;
-    //params.sched_priority = sched_get_priority_max(SCHED_RR);
-    //sched_setscheduler(tid,SCHED_RR,&params);
+    struct sched_param params;
+    params.sched_priority = sched_get_priority_max(SCHED_RR);
+    sched_setscheduler(tid,SCHED_RR,&params);
 }
 
 std::string_view get_option(
@@ -302,7 +302,6 @@ static void common_setup(thread_args_t *args)
 
 static void *thread_fn(void *data)
 {
-	moveCurrentThread();
 	thread_args_t *args = (thread_args_t *)data;
 	common_setup(args);
 	big_atomic_t *nr_pingpongs = args->nr_pingpongs;
