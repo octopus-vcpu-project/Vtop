@@ -390,9 +390,6 @@ int measure_latency_pair(int i, int j)
 	}
 
 	double best_sample = 1./0.;
-	while(!prepared){
-		usleep(100);
-	}
 	
 	if(amount_of_times>0){
 		SAMPLE_US = 8000;
