@@ -341,7 +341,8 @@ int measure_latency_pair(int i, int j)
 			amount_of_times++;
 			continue;
 		}else{
-			std::cout <<"Threshhold:"<<threefour_latency_class<<"I"<<i<<" J:"<<j<<" Sample passed " << -1 << " next.\n";
+			atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
+			std::cout <<"PingPongs:"<<s<<"I"<<i<<" J:"<<j<<" Sample passed " << -1 << " next.\n";
 			return -1;
 		}
     	}
@@ -359,7 +360,7 @@ int measure_latency_pair(int i, int j)
 		std::cout<<"threshold adjusted"<<std::endl;
 		threefour_latency_class = threefour_latency_class*1;
 	}
-	atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
+	
 	std::cout <<"Pingpongs:"<<(int) s<<"I"<<i<<" J:"<<j<<" Sample passed " << (int)(best_sample*100) << " next.\n";
 	return (int)(best_sample * 100);
 	}
