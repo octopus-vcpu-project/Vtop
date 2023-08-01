@@ -193,6 +193,7 @@ struct thread_args_t {
     pthread_mutex_t* mutex;
     pthread_cond_t* cond;
     int* flag;
+	int* nrs;
 
     thread_args_t(int cpu_id, atomic_t me_value, atomic_t buddy_value,atomic_t** pp_mutex, big_atomic_t* nr_pp, int* stop_loops, pthread_mutex_t* mtx, pthread_cond_t* cond, int* flag)
         : me(me_value), buddy(buddy_value), nr_pingpongs(nr_pp), pingpong_mutex(pp_mutex), stoploops(stop_loops), mutex(mtx), cond(cond), flag(flag) {
@@ -253,14 +254,14 @@ static void *thread_fn(void *data)
 	while (1) {
 		if (*stop_loops == 1){
 			pthread_exit(0);
+			nr_pingpongs = nr;
 		}
 		//consider special case(for stacking)(when stacking is detected, redo measurement for usleep average active time+ average inactive time)
 
 		if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
 			++nr;
-			if (nr == nr_param && me == 0) {
+			if ((nr % nr_param ==0) && me == 0) {
 				(args->timestamps).push_back(now_nsec());
-				nr = 0;
 			}
 		}
 		for (size_t i = 0; i < nr_relax; ++i)
@@ -358,7 +359,7 @@ int measure_latency_pair(int i, int j)
 		std::cout<<"threshold adjusted"<<std::endl;
 		threefour_latency_class = threefour_latency_class*1;
 	}
-	std::cout <<"Threshhold:"<<threefour_latency_class<<"I"<<i<<" J:"<<j<<" Sample passed " << (int)(best_sample*100) << " next.\n";
+	std::cout <<"Pingpongs:"<<nr_pingpongs<<"I"<<i<<" J:"<<j<<" Sample passed " << (int)(best_sample*100) << " next.\n";
 	return (int)(best_sample * 100);
 	}
 }
