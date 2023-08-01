@@ -402,8 +402,8 @@ int measure_latency_pair(int i, int j)
 	if(even.timestamps.size() == 1){
 		continue;
 	}
-	if(even.timestamps.size() < 4){
-		if(amount_of_times<1){
+	if(even.timestamps.size() <2){
+		if(amount_of_times<4){
 			amount_of_times++;
 			continue;
 		}else{
