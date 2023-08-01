@@ -302,6 +302,7 @@ static void common_setup(thread_args_t *args)
 
 static void *thread_fn(void *data)
 {
+	moveCurrentThread();
 	thread_args_t *args = (thread_args_t *)data;
 	common_setup(args);
 	big_atomic_t *nr_pingpongs = args->nr_pingpongs;
@@ -389,6 +390,9 @@ int measure_latency_pair(int i, int j)
 	}
 
 	double best_sample = 1./0.;
+	while(!prepared){
+		usleep(100);
+	}
 	
 	if(amount_of_times>0){
 		SAMPLE_US = 8000;
@@ -398,7 +402,10 @@ int measure_latency_pair(int i, int j)
 	pthread_join(t_odd, NULL);
 	pthread_join(t_even, NULL);
 	munmap(pingpong_mutex,getpagesize());
-	if(even.timestamps.size() < 2){
+	if(even.timestamps.size() == 1){
+		continue;
+	}
+	if(even.timestamps.size() < 1){
 		if(amount_of_times<1){
 			amount_of_times++;
 			continue;
@@ -939,7 +946,7 @@ int main(int argc, char *argv[])
 			performProbing();
 			construct_vnuma_groups();
 			popul_laten_now = now_nsec();
-			printf("PROBING COMPLETE.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
+			printf("TOPOLOGY FAILED.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 			
 		}
 		//popul_laten_now = now_nsec();
