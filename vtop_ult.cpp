@@ -254,7 +254,7 @@ static void *thread_fn(void *data)
 	while (1) {
 		if (*stop_loops == 1){
 			pthread_exit(0);
-			nr_pingpongs = nr;
+			nr_pingpongs = (big_atomic_t)nr;
 		}
 		//consider special case(for stacking)(when stacking is detected, redo measurement for usleep average active time+ average inactive time)
 
