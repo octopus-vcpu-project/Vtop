@@ -394,9 +394,6 @@ int measure_latency_pair(int i, int j)
 		usleep(100);
 	}
 	
-	if(amount_of_times>0){
-		SAMPLE_US = 8000;
-	}
 	std::cout<<'\n'<<"Sample time:"<<SAMPLE_US<<'\n'<<std::endl;
 	usleep(SAMPLE_US);
 	stop_loops = 1;
