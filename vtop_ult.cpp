@@ -48,7 +48,6 @@ int NR_SAMPLES = 30;
 int SAMPLE_US = 10000;
 
 static size_t nr_relax = 0;
-
 int nr_numa_groups = 0;
 int nr_pair_groups = 0;
 int nr_tt_groups = 0;
@@ -81,6 +80,64 @@ pthread_mutex_t fin_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 pthread_cond_t fin_cv = PTHREAD_COND_INITIALIZER;
 
+std::vector<pid_t> stopped_processes;
+
+// Function to get UID of a process from /proc/[pid]/status
+uid_t get_uid(pid_t pid) {
+    std::string path = "/proc/" + std::to_string(pid) + "/status";
+    std::ifstream status_file(path);
+
+    std::string line;
+    while (std::getline(status_file, line)) {
+        if (line.rfind("Uid:", 0) == 0) {
+            std::istringstream iss(line);
+            std::string uid_label;
+            uid_t uid;
+            iss >> uid_label >> uid;
+            return uid;
+        }
+    }
+    return -1; // Return -1 if Uid line is not found
+}
+
+void stop_user_processes() {
+    // Open the /proc directory
+    DIR* proc_dir = opendir("/proc");
+
+    // The PID of this process
+    pid_t my_pid = getpid();
+
+    struct dirent* proc_entry;
+
+    // Clear the global list of stopped processes
+    stopped_processes.clear();
+
+    while ((proc_entry = readdir(proc_dir)) != nullptr) {
+        // Every directory in /proc with a numeric name is a process directory
+        int pid = atoi(proc_entry->d_name);
+        if (pid > 0 && pid != my_pid) {  // Exclude PID 0 and this process
+            uid_t uid = get_uid(pid);
+            if (uid > 0) {  // Only stop user processes (non-root)
+                // Try to send a SIGSTOP signal to each process other than this one
+                if(kill(pid, SIGSTOP) == 0) {
+                    stopped_processes.push_back(pid);
+                }
+            }
+        }
+    }
+
+    closedir(proc_dir);
+}
+
+void resume_stopped_processes() {
+    for (pid_t pid : stopped_processes) {
+        // Send a SIGCONT signal to each stopped process
+        kill(pid, SIGCONT);
+    }
+
+    // Clear the list of stopped processes
+    stopped_processes.clear();
+}
 
 
 
@@ -874,7 +931,7 @@ int main(int argc, char *argv[])
 			print_population_matrix();
 		}
 		//popul_laten_last = now_nsec();
-
+		stop_user_processes();
 		if (verify_topology()){
 			printf("TOPOLOGY IS VERIFIED...\n");
 			
@@ -886,6 +943,7 @@ int main(int argc, char *argv[])
 			construct_vnuma_groups();
 			
 		}
+		start_user_processes();
 		//popul_laten_now = now_nsec();
 		//printf("This time it took to verify%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 		//configure_os_numa_groups(1);
