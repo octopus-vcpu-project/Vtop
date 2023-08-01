@@ -394,7 +394,6 @@ int measure_latency_pair(int i, int j)
 		usleep(100);
 	}
 	
-	std::cout<<'\n'<<"Sample time:"<<SAMPLE_US<<'\n'<<std::endl;
 	usleep(SAMPLE_US);
 	stop_loops = 1;
 	pthread_join(t_odd, NULL);
