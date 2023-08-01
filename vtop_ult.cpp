@@ -332,8 +332,10 @@ int measure_latency_pair(int i, int j)
 	pthread_join(t_odd, NULL);
 	pthread_join(t_even, NULL);
 	munmap(pingpong_mutex,getpagesize());
-
-	if(even.timestamps.size() < 2){
+	if(even.timestamps.size() == 1){
+		continue;
+	}
+	if(even.timestamps.size() < 1){
 		if(amount_of_times<2){
 			amount_of_times++;
 			continue;
@@ -342,6 +344,7 @@ int measure_latency_pair(int i, int j)
 			return -1;
 		}
     	}
+	
 	if(amount_of_times>0){
 		std::cout<<"success! doubel check.ITS HAPPPENNNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<std::endl;
 	}
