@@ -933,7 +933,6 @@ int main(int argc, char *argv[])
 			print_population_matrix();
 		}
 		//popul_laten_last = now_nsec();
-		stop_user_processes();
 		if (verify_topology()){
 			printf("TOPOLOGY IS VERIFIED...\n");
 			
@@ -945,7 +944,6 @@ int main(int argc, char *argv[])
 			construct_vnuma_groups();
 			
 		}
-		resume_stopped_processes();
 		//popul_laten_now = now_nsec();
 		//printf("This time it took to verify%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 		//configure_os_numa_groups(1);
