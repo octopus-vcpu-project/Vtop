@@ -914,12 +914,12 @@ int main(int argc, char *argv[])
 	
 	const std::vector<std::string_view> args(argv, argv + argc);
   	setArguments(args);
-	
+	uint64_t popul_laten_last = now_nsec();
+	uint64_t popul_laten_now = now_nsec();
 	int sd = find_numa_groups();
 	performProbing();
 	construct_vnuma_groups();
 	while(1){
-        	uint64_t popul_laten_last = now_nsec();
 		//int numa_groups = find_numa_groups();
 		//std::cout<<"numa group"<<numa_groups<<std::endl;
 		//uint64_t popul_laten_now = now_nsec();
@@ -933,16 +933,20 @@ int main(int argc, char *argv[])
 		if(verbose){
 			print_population_matrix();
 		}
-		//popul_laten_last = now_nsec();
+		popul_laten_last = now_nsec();
 		if (verify_topology()){
-			printf("TOPOLOGY IS VERIFIED...\n");
+			popul_laten_now = now_nsec();
+			printf("TOPOLOGY VERIFIED.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 			
 		}else{
-			printf("FAILED VERIFICATION \n");
-			
+			popul_laten_now = now_nsec();
+			printf("TOPOLOGY FAILED.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
+			popul_laten_last = now_nsec();
 			int xd = find_numa_groups();
 			performProbing();
 			construct_vnuma_groups();
+			popul_laten_now = now_nsec();
+			printf("PROBING COMPLETE.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 			
 		}
 		//popul_laten_now = now_nsec();
