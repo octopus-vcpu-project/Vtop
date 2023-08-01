@@ -253,15 +253,17 @@ static void *thread_fn(void *data)
 	atomic_t *cache_pingpong_mutex = *(args->pingpong_mutex);
 	while (1) {
 		if (*stop_loops == 1){
-			__sync_fetch_and_add(&(nr_pingpongs->x), 2 * nr);
+			
 			pthread_exit(0);
 		}
 		//consider special case(for stacking)(when stacking is detected, redo measurement for usleep average active time+ average inactive time)
 
 		if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
 			++nr;
-			if ((nr % nr_param ==0) && me == 0) {
+			if ((nr==nr_param) && me == 0) {
+				__sync_fetch_and_add(&(nr_pingpongs->x), 2 * nr);
 				(args->timestamps).push_back(now_nsec());
+				nr = 0;
 			}
 		}
 		for (size_t i = 0; i < nr_relax; ++i)
