@@ -243,6 +243,7 @@ static void common_setup(thread_args_t *args)
 
 static void *thread_fn(void *data)
 {
+	moveCurrentThread();
 	thread_args_t *args = (thread_args_t *)data;
 	common_setup(args);
 	big_atomic_t *nr_pingpongs = args->nr_pingpongs;
