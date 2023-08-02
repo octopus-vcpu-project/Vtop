@@ -434,7 +434,6 @@ int measure_latency_pair(int i, int j)
 			amount_of_times++;
 			continue;
 		}else{
-			unshieldCores();
 			atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
 			std::cout <<"Times around:"<<amount_of_times<<"I"<<i<<" J:"<<j<<" Sample passed " << -1 << " next.\n";
 			return -1;
