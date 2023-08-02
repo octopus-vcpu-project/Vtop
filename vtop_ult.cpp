@@ -325,9 +325,10 @@ static void *thread_fn(void *data)
 				(args->timestamps).push_back(now_nsec());
 				nr = 0;
 			}
-		}
+		}else{
 		for (size_t i = 0; i < nr_relax; ++i)
 			asm volatile("rep; nop");
+		}
 	}
 	return NULL;
 }
