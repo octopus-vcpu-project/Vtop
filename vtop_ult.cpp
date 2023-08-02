@@ -49,7 +49,7 @@ int verbose = 0;
 int NR_SAMPLES = 30;
 int SAMPLE_US = 10000;
 
-static size_t nr_relax = 10;
+static size_t nr_relax = 1;
 int nr_numa_groups = 0;
 int nr_pair_groups = 0;
 int nr_tt_groups = 0;
