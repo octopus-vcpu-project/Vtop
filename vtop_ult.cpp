@@ -185,9 +185,9 @@ void moveCurrentThread() {
     }
     ofs << tid << "\n";
     ofs.close();
-    struct sched_param params;
-    params.sched_priority = sched_get_priority_max(SCHED_FIFO);
-    sched_setscheduler(tid,SCHED_FIFO,&params);
+    //struct sched_param params;
+    //params.sched_priority = sched_get_priority_max(SCHED_FIFO);
+    //sched_setscheduler(tid,SCHED_FIFO,&params);
 }
 
 std::string_view get_option(
@@ -394,7 +394,16 @@ int measure_latency_pair(int i, int j)
 		usleep(100);
 	}
 	
-	usleep(SAMPLE_US);
+	struct timespec sleep_duration;
+    sleep_duration.tv_sec = 0;
+    sleep_duration.tv_nsec = SAMPLE_US * 1000; // 5000 microseconds
+
+    struct timespec remaining_time;
+
+    // Sleep using CLOCK_PROCESS_CPUTIME_ID
+    int result = clock_nanosleep(CLOCK_PROCESS_CPUTIME_ID, 0, &sleep_duration, &remaining_time);
+
+
 	stop_loops = 1;
 	pthread_join(t_odd, NULL);
 	pthread_join(t_even, NULL);
