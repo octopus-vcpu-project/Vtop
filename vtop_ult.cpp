@@ -456,7 +456,7 @@ int measure_latency_pair(int i, int j)
 		threefour_latency_class = threefour_latency_class*1;
 	}
 	if(amount_of_times>0){
-		un
+		unshieldCores();
 	}
 	atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
 	std::cout<<"Times around:"<<amount_of_times<<"I"<<i<<" J:"<<j<<" Sample passed " << (int)(best_sample*100) << " next.\n";
