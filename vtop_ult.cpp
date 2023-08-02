@@ -359,6 +359,25 @@ int get_latency_class(int latency){
         return 4;
 }
 
+bool shieldCPUs() {
+    // Shield all CPUs except one (CPU core 0) using cset
+    int cset_result = system("cset shield --cpu 1-$(($(nproc)-1)) --kthread=on");
+    return (cset_result == 0);
+}
+
+bool moveToShieldedCores() {
+    // Move the current process and threads to the user shielded cores using cset
+    int pid = getpid();
+    int proc_result = system(("cset proc --move --pid=" + std::to_string(pid) + " --threads --toset=user").c_str());
+    return (proc_result == 0);
+}
+
+bool unshieldCores() {
+    // Undo the CPU shield
+    int pid = getpid();
+    int proc_result = system(("cset shield --reset").c_str());
+    return (proc_result == 0);
+}
 
 
 int measure_latency_pair(int i, int j)
@@ -412,10 +431,15 @@ int measure_latency_pair(int i, int j)
 		continue;
 	}
 	if(even.timestamps.size() <2){
-		if(amount_of_times<4){
+		if(amount_of_times<2){
+			if(amount_of_times==0){
+				shieldCPUs();
+				moveToShieldedCores();
+			}
 			amount_of_times++;
 			continue;
 		}else{
+			unshieldCores();
 			atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
 			std::cout <<"Times around:"<<amount_of_times<<"I"<<i<<" J:"<<j<<" Sample passed " << -1 << " next.\n";
 			return -1;
@@ -431,6 +455,9 @@ int measure_latency_pair(int i, int j)
 	if(abs(threefour_latency_class - (best_sample * 100)) < 400){
 		std::cout<<"threshold adjusted"<<std::endl;
 		threefour_latency_class = threefour_latency_class*1;
+	}
+	if(amount_of_times>0){
+		un
 	}
 	atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
 	std::cout<<"Times around:"<<amount_of_times<<"I"<<i<<" J:"<<j<<" Sample passed " << (int)(best_sample*100) << " next.\n";
