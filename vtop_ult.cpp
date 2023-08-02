@@ -431,10 +431,6 @@ int measure_latency_pair(int i, int j)
 	}
 	if(even.timestamps.size() <2){
 		if(amount_of_times<2){
-			if(amount_of_times==0){
-				shieldCPUs();
-				moveToShieldedCores();
-			}
 			amount_of_times++;
 			continue;
 		}else{
@@ -454,9 +450,6 @@ int measure_latency_pair(int i, int j)
 	if(abs(threefour_latency_class - (best_sample * 100)) < 400){
 		std::cout<<"threshold adjusted"<<std::endl;
 		threefour_latency_class = threefour_latency_class*1;
-	}
-	if(amount_of_times>0){
-		unshieldCores();
 	}
 	atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
 	std::cout<<"Times around:"<<amount_of_times<<"I"<<i<<" J:"<<j<<" Sample passed " << (int)(best_sample*100) << " next.\n";
