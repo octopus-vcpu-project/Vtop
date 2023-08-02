@@ -374,7 +374,7 @@ bool moveToShieldedCores() {
 
 bool unshieldCores() {
     // Undo the CPU shield
-    int proc_result = system('cset --reset');
+    int proc_result = system("cset --reset");
     return (proc_result == 0);
 }
 
