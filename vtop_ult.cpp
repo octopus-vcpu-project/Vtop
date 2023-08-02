@@ -410,7 +410,7 @@ int measure_latency_pair(int i, int j)
 
 	double best_sample = 1./0.;
 	while(!prepared){
-		usleep(100);
+		usleep(50);
 	}
 	
 	struct timespec sleep_duration;
