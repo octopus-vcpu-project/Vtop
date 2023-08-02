@@ -368,7 +368,7 @@ bool shieldCPUs() {
 bool moveToShieldedCores() {
     // Move the current process and threads to the user shielded cores using cset
     int pid = getpid();
-    int proc_result = system(("cset proc --move --pid=" + std::to_string(pid) + " --threads --toset=user").c_str());
+    int proc_result = system(("cset shield --shield --pid " + std::to_string(pid)).c_str());
     return (proc_result == 0);
 }
 
