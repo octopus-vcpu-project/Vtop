@@ -739,6 +739,7 @@ bool verify_topology(void){
         	for(int j=i+1;j<nr_numa_groups;j++){
 			int latency = measure_latency_pair(numas_to_cpu[i],numas_to_cpu[i+1]);
                 	if(get_latency_class(latency) != 4){
+							latency_valid = -1;
                         	return false;
                 	}
 		}
