@@ -72,109 +72,12 @@ std::vector<int> numas_to_cpu;
 std::vector<int> pairs_to_cpu;
 std::vector<int> threads_to_cpu;
 
-
-
 std::vector<std::vector<int>> top_stack;
-int ready_counter = 0;
 pthread_t worker_tasks[MAX_CPUS];
-
 pthread_mutex_t top_stack_mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t fin_mutex = PTHREAD_MUTEX_INITIALIZER;
-
-pthread_cond_t fin_cv = PTHREAD_COND_INITIALIZER;
 
 std::vector<pid_t> stopped_processes;
 
-// Function to get UID of a process from /proc/[pid]/status
-uid_t get_uid(pid_t pid) {
-    std::string path = "/proc/" + std::to_string(pid) + "/status";
-    std::ifstream status_file(path);
-
-    std::string line;
-    while (std::getline(status_file, line)) {
-        if (line.rfind("Uid:", 0) == 0) {
-            std::istringstream iss(line);
-            std::string uid_label;
-            uid_t uid;
-            iss >> uid_label >> uid;
-            return uid;
-        }
-    }
-    return -1; // Return -1 if Uid line is not found
-}
-
-void stop_user_processes() {
-    // Open the /proc directory
-    DIR* proc_dir = opendir("/proc");
-
-    // The PID of this process
-    pid_t my_pid = getpid();
-
-    struct dirent* proc_entry;
-
-    // Clear the global list of stopped processes
-    stopped_processes.clear();
-
-    while ((proc_entry = readdir(proc_dir)) != nullptr) {
-        // Every directory in /proc with a numeric name is a process directory
-        int pid = atoi(proc_entry->d_name);
-        if (pid > 0 && pid != my_pid) {  // Exclude PID 0 and this process
-            uid_t uid = get_uid(pid);
-            if (uid > 0) {  // Only stop user processes (non-root)
-                // Try to send a SIGSTOP signal to each process other than this one
-                if(kill(pid, SIGSTOP) == 0) {
-                    stopped_processes.push_back(pid);
-                }
-            }
-        }
-    }
-
-    closedir(proc_dir);
-}
-
-void resume_stopped_processes() {
-    for (pid_t pid : stopped_processes) {
-        // Send a SIGCONT signal to each stopped process
-        kill(pid, SIGCONT);
-    }
-
-    // Clear the list of stopped processes
-    stopped_processes.clear();
-}
-
-
-
-void moveThreadtoHighPrio(pid_t tid) {
-
-    std::string path = "/sys/fs/cgroup/hi_prgroup/cgroup.threads";
-    std::ofstream ofs(path, std::ios_base::app);
-    if (!ofs) {
-        std::cerr << "Could not open the file\n";
-        return;
-    }
-    ofs << tid << "\n";
-    ofs.close();
-}
-
-
-void alertMainThread(){
-  pthread_mutex_lock(&fin_mutex);
-  ready_counter += 1;
-  pthread_mutex_unlock(&fin_mutex);
-  pthread_cond_signal(&fin_cv);
-}
-
-void waitforWorkers(int worker_amount){
-  pthread_mutex_lock(&fin_mutex);
-  while(ready_counter != worker_amount){
-    pthread_cond_wait(&fin_cv, &fin_mutex);
-  }
-  pthread_mutex_unlock(&fin_mutex);
-  ready_counter = 0;
-}
-
-
-//rename this
 void moveCurrentThread() {
     pid_t tid;
     tid = syscall(SYS_gettid);
@@ -740,6 +643,7 @@ bool verify_topology(void){
 			int latency = measure_latency_pair(numas_to_cpu[i],numas_to_cpu[i+1]);
                 	if(get_latency_class(latency) != 4){
 							latency_valid = -1;
+							failed_test = false;
                         	return false;
                 	}
 		}
