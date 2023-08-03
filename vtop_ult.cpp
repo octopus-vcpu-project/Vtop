@@ -1,4 +1,5 @@
 
+
 /*
  * Copyright (C) 2018-2019 VMware, Inc.
  * SPDX-License-Identifier: GPL-2.0
@@ -302,22 +303,34 @@ static void common_setup(thread_args_t *args)
 
 static void *thread_fn(void *data)
 {
-	moveCurrentThread();
+//	moveCurrentThread();
+	int amount_of_loops = 0;
 	thread_args_t *args = (thread_args_t *)data;
 	common_setup(args);
 	big_atomic_t *nr_pingpongs = args->nr_pingpongs;
 	atomic_t nr = 0;
+	bool done = false;
 	atomic_t me = args->me;
 	atomic_t buddy = args->buddy;
 	int *stop_loops = args->stoploops;
 	atomic_t *cache_pingpong_mutex = *(args->pingpong_mutex);
 	while (1) {
-		if (*stop_loops == 1){
-			
+		if(amount_of_loops++ == SAMPLE_US){
+			if(*stop_loops == 1){
+				*stop_loops +=3;
+				pthread_exit(0);
+			}else{
+			   *stop_loops += 1;
+			}
+		}
+		if (*stop_loops>2){
 			pthread_exit(0);
 		}
 		//consider special case(for stacking)(when stacking is detected, redo measurement for usleep average active time+ average inactive time)
-
+//		if(nr_pingpongs->x > 500000){
+//			pthread_exit(0);
+//		}
+		
 		if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
 			++nr;
 			if ((nr==nr_param) && me == 0) {
@@ -325,10 +338,10 @@ static void *thread_fn(void *data)
 				(args->timestamps).push_back(now_nsec());
 				nr = 0;
 			}
-		}else{
-		for (size_t i = 0; i < nr_relax; ++i)
-			asm volatile("rep; nop");
 		}
+		//for (size_t i = 0; i < nr_relax; ++i)
+		//	asm volatile("rep; nop");
+		//}
 	}
 	return NULL;
 }
@@ -382,7 +395,19 @@ bool unshieldCores() {
 
 int measure_latency_pair(int i, int j)
 {
+	int sleeping_time = SAMPLE_US;
 	int amount_of_times=0;
+	if(latency_valid != -1 && latency_valid != 1){
+                        amount_of_times = -6;
+      }
+	if(latency_valid == 1){
+		amount_of_times = 3;
+	}
+	if(latency_valid == 4){
+		amount_of_times = -15;
+	}
+	pthread_t t_odd[12], t_even[12];
+	
 	while(1){
 	stick_this_thread_to_core(i,j);
     atomic_t* pingpong_mutex = (atomic_t*) malloc(sizeof(atomic_t));;
@@ -394,44 +419,48 @@ int measure_latency_pair(int i, int j)
     int wait_for_buddy = 1;
 	thread_args_t even(i, (atomic_t)0, (atomic_t)1, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy,&prepared);
     thread_args_t odd(j, (atomic_t)1, (atomic_t)0, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy,&prepared);
-
+	
 	__sync_lock_test_and_set(&nr_pingpongs.x, 0);
 
-	pthread_t t_odd, t_even;
 
-	if (pthread_create(&t_odd, NULL, thread_fn, &odd)) {
+	if (pthread_create(&t_odd[(amount_of_times + 6)%12], NULL, thread_fn, &odd)) {
 		printf("ERROR creating odd thread\n");
 		exit(1);
 	}
-	if (pthread_create(&t_even, NULL, thread_fn, &even)) {
+	if (pthread_create(&t_even[(amount_of_times + 6)%12], NULL, thread_fn, &even)) {
 		printf("ERROR creating even thread\n");
 		exit(1);
 	}
 
 	double best_sample = 1./0.;
-	while(!prepared){
-		usleep(50);
-	}
 	
 	struct timespec sleep_duration;
     sleep_duration.tv_sec = 0;
-    sleep_duration.tv_nsec = SAMPLE_US * 1000; // 5000 microseconds
-
+    sleep_duration.tv_nsec = sleeping_time * 1000;
     struct timespec remaining_time;
+    remaining_time.tv_sec = 0;
+    remaining_time.tv_nsec = 0;
 
     // Sleep using CLOCK_PROCESS_CPUTIME_ID
-    int result = clock_nanosleep(CLOCK_PROCESS_CPUTIME_ID, 0, &sleep_duration, &remaining_time);
+//    int result = clock_nanosleep(CLOCK_PROCESS_CPUTIME_ID, 0, &sleep_duration, &remaining_time);
+//	std::cout<<"this is sleeping time"<<SAMPLE_US<<std::endl;
+//	uint64_t popul_laten_last = now_nsec();
+//	usleep(SAMPLE_US);
+//	uint64_t popul_laten_now = now_nsec();
 
-
-	stop_loops = 1;
-	pthread_join(t_odd, NULL);
-	pthread_join(t_even, NULL);
-	munmap(pingpong_mutex,getpagesize());
+//	printf("one test took:%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
+//	stop_loops = 1;
+	//pthread_cancel(t_even[(amount_of_times + 6)%12]);
+	//pthread_cancel(t_odd[(amount_of_times + 6)%12]);
+	pthread_join(t_odd[(amount_of_times + 6)%12],NULL);
+	pthread_join(t_even[(amount_of_times + 6)%12],NULL);
 	if(even.timestamps.size() == 1){
-		continue;
-	}
+                continue;
+        }
+	munmap(pingpong_mutex,getpagesize());
+
 	if(even.timestamps.size() <2){
-		if(amount_of_times<2){
+		if(amount_of_times<6){
 			amount_of_times++;
 			continue;
 		}else{
@@ -726,16 +755,16 @@ bool verify_topology(void){
 		nullify_changes(task_set_arr);
 		return false;
 	}
-	task_set_arr = std::vector<std::vector<int>>(1);
-	std::vector<int> insertvec;
-	std::vector<int> insertier_vec;
+	task_set_arr = std::vector<std::vector<int>>(pair_to_thread_arr.size());
+	//std::vector<int> insertvec;
+	//std::vector<int> insertier_vec;
 	for(int i=0;i<pair_to_thread_arr.size();i++){
-		insertier_vec = bitmap_to_task_stack(pair_to_thread_arr[i],PAIR_GROUP);
-		insertvec.insert( insertvec.end(), insertier_vec.begin(), insertier_vec.end() );
-
+		//insertier_vec = bitmap_to_task_stack(pair_to_thread_arr[i],PAIR_GROUP);
+		//insertvec.insert( insertvec.end(), insertier_vec.begin(), insertier_vec.end() );
+		task_set_arr[i] = bitmap_to_task_stack(pair_to_thread_arr[i],PAIR_GROUP);
 	}
 	latency_valid = 2;
-	task_set_arr[0] = insertvec;
+	//task_set_arr[0] = insertvec;
 	MT_find_topology(task_set_arr);
 	
 	if(failed_test == true){
@@ -970,7 +999,7 @@ int main(int argc, char *argv[])
 			performProbing();
 			construct_vnuma_groups();
 			popul_laten_now = now_nsec();
-			printf("TOPOLOGY FAILED.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
+			printf("REPROBING.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 			
 		}
 		//popul_laten_now = now_nsec();
