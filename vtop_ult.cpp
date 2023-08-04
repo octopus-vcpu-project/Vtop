@@ -836,23 +836,32 @@ int main(int argc, char *argv[])
 			print_population_matrix();
 		}
 		popul_laten_last = now_nsec();
-		if (verify_topology()){
-			popul_laten_now = now_nsec();
-			printf("TOPOLOGY VERIFIED.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
-			
+		if(!failed_test){
+			if (verify_topology()){
+				popul_laten_now = now_nsec();
+				printf("TOPOLOGY VERIFIED.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
+				
+			}else{
+				popul_laten_now = now_nsec();
+				printf("TOPOLOGY FAILED.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
+				popul_laten_last = now_nsec();
+				performProbing();
+				if(!failed_test){
+					parseTopology();
+				}else{
+					printf("Probing failed, waiting until next session\n");
+				}
+				popul_laten_now = now_nsec();
+				printf("REPROBING.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
+			}
 		}else{
-			popul_laten_now = now_nsec();
-			printf("TOPOLOGY FAILED.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
-			popul_laten_last = now_nsec();
+			failed_test = false;
 			performProbing();
 			if(!failed_test){
-				parseTopology();
+					parseTopology();
 			}else{
 				printf("Probing failed, waiting until next session\n");
 			}
-			popul_laten_now = now_nsec();
-			printf("REPROBING.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
-			
 		}
 		printf("Done...\n");
 		sleep(1);
