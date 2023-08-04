@@ -217,9 +217,10 @@ static void *thread_fn(void *data)
 	atomic_t me = args->me;
 	atomic_t buddy = args->buddy;
 	int *stop_loops = args->stoploops;
+	int *max_loops = args->max_loops;
 	atomic_t *cache_pingpong_mutex = *(args->pingpong_mutex);
 	while (1) {
-		if(amount_of_loops++ == SAMPLE_US){
+		if(amount_of_loops++ == *max_loops){
 			if(*stop_loops == 1){
 				*stop_loops +=3;
 				pthread_exit(0);
