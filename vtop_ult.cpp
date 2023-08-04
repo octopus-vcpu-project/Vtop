@@ -46,9 +46,12 @@ typedef unsigned atomic_t;
 
 
 int nr_cpus;
+//parameters
 int verbose = 0;
-int NR_SAMPLES = 30;
+int NR_SAMPLES = 4;
 int SAMPLE_US = 350000;
+
+
 bool first_measurement = false;
 static size_t nr_relax = 1;
 int nr_numa_groups = 0;
@@ -326,7 +329,7 @@ int measure_latency_pair(int i, int j)
 		munmap(pingpong_mutex,getpagesize());
 
 		if(even.timestamps.size() <2){
-			if(amount_of_times<4){
+			if(amount_of_times<NR_SAMPLES){
 				amount_of_times++;
 				max_loops = SAMPLE_US * 2;
 				continue;
@@ -411,6 +414,7 @@ int find_numa_groups(void)
 	}
 	numa_to_pair_arr = {};
 	numas_to_cpu = {};
+	first_measurement = true;
 	for (int i = 0; i < LAST_CPU_ID; i++) {
 		if(cpu_group_id[i] != -1){
 			continue;
@@ -421,14 +425,9 @@ int find_numa_groups(void)
 				continue;
 			}
 			if(top_stack[i][j] == 0 ){
-				if(i==0 && j==1){
-					SAMPLE_US = SAMPLE_US*5;
-				}
+				
 				int latency = measure_latency_pair(i,j);
 				set_latency_pair(i,j,get_latency_class(latency));
-				if(i==0 && j==1){
-					SAMPLE_US = SAMPLE_US/5;
-				}
 			}
 			if(top_stack[i][j] < 4){
 				cpu_group_id[j] = nr_numa_groups;
