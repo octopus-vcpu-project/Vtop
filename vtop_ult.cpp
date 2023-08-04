@@ -327,9 +327,9 @@ int measure_latency_pair(int i, int j)
 		munmap(pingpong_mutex,getpagesize());
 
 		if(even.timestamps.size() <2){
-			if(amount_of_times<4){
+			if(amount_of_times<12){
 				amount_of_times++;
-				max_loops = SAMPLE_US * 2;
+				max_loops = SAMPLE_US / 2;
 				continue;
 			}else{
 				atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
