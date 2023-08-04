@@ -594,13 +594,11 @@ bool verify_topology(void){
 			}
 		}
 	}
-	failed_test = false;
 	first_measurement = true;
 	for(int i=0;i<nr_numa_groups;i++){
         	for(int j=i+1;j<nr_numa_groups;j++){
 			int latency = measure_latency_pair(numas_to_cpu[i],numas_to_cpu[i+1]);
                 	if(get_latency_class(latency) != 4){
-							failed_test = false;
                         	return false;
                 	}
 		}
@@ -613,8 +611,6 @@ bool verify_topology(void){
 	latency_valid = 3;
 	MT_find_topology(task_set_arr);
 	if(failed_test == true){
-		failed_test = false;
-		latency_valid = -1;
 		nullify_changes(task_set_arr);
 		return false;
 	}
@@ -626,8 +622,6 @@ bool verify_topology(void){
 	MT_find_topology(task_set_arr);
 	
 	if(failed_test == true){
-		failed_test = false;
-		latency_valid = -1;
 		nullify_changes(task_set_arr);
 		return false;
 	}
@@ -647,13 +641,9 @@ bool verify_topology(void){
 	latency_valid = 1;
 	MT_find_topology(task_set_arr);
 	if(failed_test == true){
-		failed_test = false;
-		latency_valid = -1;
 		nullify_changes(task_set_arr);
 		return false;
 	}
-	latency_valid = -1;
-	failed_test = false;
 	return true;
 }
 
@@ -847,7 +837,10 @@ int main(int argc, char *argv[])
 		}
 		popul_laten_last = now_nsec();
 		if(!failed_test){
-			if (verify_topology()){
+			bool topology_passed = verify_topology();
+			failed_test = false;
+			latency_valid = -1;
+			if (topology_passed){
 				popul_laten_now = now_nsec();
 				printf("TOPOLOGY VERIFIED.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 				
