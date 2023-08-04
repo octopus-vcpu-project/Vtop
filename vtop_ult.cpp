@@ -307,7 +307,7 @@ int measure_latency_pair(int i, int j)
 		amount_of_times = 3;
 	}
 	if(first_measurement){
-		amount_of_times = -3;
+		amount_of_times = -6;
 		first_measurement = false;
 	}
 	
@@ -365,7 +365,7 @@ int measure_latency_pair(int i, int j)
 	munmap(pingpong_mutex,getpagesize());
 
 	if(even.timestamps.size() <2){
-		if(amount_of_times<6){
+		if(amount_of_times<7){
 			amount_of_times++;
 			continue;
 		}else{
