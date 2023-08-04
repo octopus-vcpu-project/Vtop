@@ -802,6 +802,16 @@ static void configure_os_numa_groups(int mode)
 	}
 }
 
+void resetTopologyMatrix(){
+	for (int i = 0; i < LAST_CPU_ID; i++) {
+		for(int p=0;p< LAST_CPU_ID;p++){
+			if(p!=i){
+				top_stack[i][p] = 0;
+			}
+		}
+	}
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -849,32 +859,21 @@ int main(int argc, char *argv[])
 				if(!failed_test){
 					parseTopology();
 				}else{
-					for (int i = 0; i < LAST_CPU_ID; i++) {
-						std::vector<int> cpumap(LAST_CPU_ID);
-						top_stack.push_back(cpumap);
-					}
-					for(int p=0;p< LAST_CPU_ID;p++){
-						top_stack[p][p] = 1;
-					}
 					printf("Probing failed, waiting until next session\n");
+					resetTopologyMatrix();
 				}
 				popul_laten_now = now_nsec();
 				printf("REPROBING.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 			}
 		}else{
 			failed_test = false;
-			for (int i = 0; i < LAST_CPU_ID; i++) {
-						std::vector<int> cpumap(LAST_CPU_ID);
-						top_stack.push_back(cpumap);
-				}
-				for(int p=0;p< LAST_CPU_ID;p++){
-					top_stack[p][p] = 1;
-				}
+			
 			performProbing();
 			if(!failed_test){
 				parseTopology();
 			}else{
 				printf("Probing failed, waiting until next session\n");
+				resetTopologyMatrix();
 			}
 		}
 		printf("Done...\n");
