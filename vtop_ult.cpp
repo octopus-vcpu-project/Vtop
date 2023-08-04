@@ -49,7 +49,7 @@ int nr_cpus;
 int verbose = 0;
 int NR_SAMPLES = 30;
 int SAMPLE_US = 10000;
-
+bool first_measurement = false;
 static size_t nr_relax = 1;
 int nr_numa_groups = 0;
 int nr_pair_groups = 0;
@@ -306,8 +306,9 @@ int measure_latency_pair(int i, int j)
 	if(latency_valid == 1){
 		amount_of_times = 3;
 	}
-	if(latency_valid == 4){
+	if(first_measurement){
 		amount_of_times = -15;
+		first_measurement = false;
 	}
 	pthread_t t_odd[12], t_even[12];
 	
@@ -637,12 +638,11 @@ bool verify_topology(void){
 		}
 	}
 	failed_test = false;
-	latency_valid = 4;
+	first_measurement = true;
 	for(int i=0;i<nr_numa_groups;i++){
         	for(int j=i+1;j<nr_numa_groups;j++){
 			int latency = measure_latency_pair(numas_to_cpu[i],numas_to_cpu[i+1]);
                 	if(get_latency_class(latency) != 4){
-							latency_valid = -1;
 							failed_test = false;
                         	return false;
                 	}
