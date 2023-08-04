@@ -310,7 +310,7 @@ int measure_latency_pair(int i, int j)
 		amount_of_times = -3;
 		first_measurement = false;
 	}
-	pthread_t t_odd[12], t_even[12];
+	
 	
 	while(1){
 	stick_this_thread_to_core(i,j);
@@ -323,15 +323,16 @@ int measure_latency_pair(int i, int j)
     int wait_for_buddy = 1;
 	thread_args_t even(i, (atomic_t)0, (atomic_t)1, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy,&prepared);
     thread_args_t odd(j, (atomic_t)1, (atomic_t)0, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy,&prepared);
-	
+	pthread_t t_odd;
+	pthread_t t_even;
 	__sync_lock_test_and_set(&nr_pingpongs.x, 0);
 
 
-	if (pthread_create(&t_odd[(amount_of_times + 6)%12], NULL, thread_fn, &odd)) {
+	if (pthread_create(&t_odd, NULL, thread_fn, &odd)) {
 		printf("ERROR creating odd thread\n");
 		exit(1);
 	}
-	if (pthread_create(&t_even[(amount_of_times + 6)%12], NULL, thread_fn, &even)) {
+	if (pthread_create(&t_even, NULL, thread_fn, &even)) {
 		printf("ERROR creating even thread\n");
 		exit(1);
 	}
