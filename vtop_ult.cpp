@@ -156,10 +156,11 @@ struct thread_args_t {
     pthread_mutex_t* mutex;
     pthread_cond_t* cond;
     int* flag;
+	int* max_loops;
 	bool* prepared;
 
-    thread_args_t(int cpu_id, atomic_t me_value, atomic_t buddy_value,atomic_t** pp_mutex, big_atomic_t* nr_pp, int* stop_loops, pthread_mutex_t* mtx, pthread_cond_t* cond, int* flag,bool* prep)
-        : me(me_value), buddy(buddy_value), nr_pingpongs(nr_pp), pingpong_mutex(pp_mutex), stoploops(stop_loops), mutex(mtx), cond(cond), flag(flag), prepared(prep) {
+    thread_args_t(int cpu_id, atomic_t me_value, atomic_t buddy_value,atomic_t** pp_mutex, big_atomic_t* nr_pp, int* stop_loops, pthread_mutex_t* mtx, pthread_cond_t* cond, int* flag,bool* prep, int* max_loops)
+        : me(me_value), buddy(buddy_value), nr_pingpongs(nr_pp), pingpong_mutex(pp_mutex), stoploops(stop_loops), mutex(mtx), cond(cond), flag(flag), prepared(prep), max_loops(max_loops) {
         CPU_ZERO(&cpus);
         CPU_SET(cpu_id, &cpus);
     }
@@ -288,7 +289,7 @@ int measure_latency_pair(int i, int j)
 		amount_of_times = -6;
 		first_measurement = false;
 	}
-	
+	int max_loops = SAMPLE_US;
 	
 	while(1){
 		stick_this_thread_to_core(i,j);
@@ -299,8 +300,8 @@ int measure_latency_pair(int i, int j)
 		int stop_loops = 0;
 		bool prepared = false;
 		int wait_for_buddy = 1;
-		thread_args_t even(i, (atomic_t)0, (atomic_t)1, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy,&prepared);
-		thread_args_t odd(j, (atomic_t)1, (atomic_t)0, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy,&prepared);
+		thread_args_t even(i, (atomic_t)0, (atomic_t)1, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy,&prepared,&max_loops);
+		thread_args_t odd(j, (atomic_t)1, (atomic_t)0, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy,&prepared,&max_loops);
 		pthread_t t_odd;
 		pthread_t t_even;
 		__sync_lock_test_and_set(&nr_pingpongs.x, 0);
@@ -327,6 +328,7 @@ int measure_latency_pair(int i, int j)
 		if(even.timestamps.size() <2){
 			if(amount_of_times<6){
 				amount_of_times++;
+				max_loops = SAMPLE_US * 2;
 				continue;
 			}else{
 				atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
