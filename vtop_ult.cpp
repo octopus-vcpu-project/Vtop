@@ -55,7 +55,6 @@ int nr_numa_groups = 0;
 int nr_pair_groups = 0;
 int nr_tt_groups = 0;
 int minimum_latency_4 = 0;
-int max_latency_3 = 0;
 double threefour_latency_class = 9000;
 int cpu_group_id[MAX_CPUS];
 int cpu_pair_id[MAX_CPUS];
@@ -290,7 +289,7 @@ int measure_latency_pair(int i, int j)
 		amount_of_times = -6;
 		first_measurement = false;
 	}
-	int max_loops = SAMPLE_US;
+	int max_loops = SAMPLE_US;1
 	
 	while(1){
 		stick_this_thread_to_core(i,j);
@@ -370,8 +369,16 @@ void apply_optimization(void){
 		for(int y=0;y<LAST_CPU_ID;y++){
 			sub_rel = top_stack[y][x];
 			for(int z=0;z<LAST_CPU_ID;z++){
-				if((top_stack[y][z]<sub_rel && top_stack[y][z]!=0) && top_stack[x][z] == 0){
-					set_latency_pair(x,z,sub_rel);
+				if((top_stack[y][z]<sub_rel && top_stack[y][z]!=0)){
+					if(top_stack[x][z] != sub_rel){
+						failed_test = true;
+						return;
+					}
+
+					if(top_stack[x][z] == 0){
+						set_latency_pair(x,z,sub_rel);
+					}
+					
 				}
 			}
 		}
@@ -492,6 +499,7 @@ void MT_find_topology(std::vector<std::vector<int>> all_pairs_to_test){
 }
 
 void performProbing(){
+	find_numa_groups();
 	apply_optimization();
 	std::vector<std::vector<int>> all_pairs_to_test(nr_numa_groups);
 	for(int i=0;i<LAST_CPU_ID;i++){
@@ -815,9 +823,14 @@ int main(int argc, char *argv[])
 	
 	const std::vector<std::string_view> args(argv, argv + argc);
   	setArguments(args);
-	int sd = find_numa_groups();
+	//first time probing
+	
 	performProbing();
-	parseTopology();
+	if(!failed_test){
+		parseTopology();
+	}else{
+		printf("Probing failed, waiting until next session\n");
+	}
 	while(1){
 		if(verbose){
 			print_population_matrix();
@@ -831,9 +844,12 @@ int main(int argc, char *argv[])
 			popul_laten_now = now_nsec();
 			printf("TOPOLOGY FAILED.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 			popul_laten_last = now_nsec();
-			int xd = find_numa_groups();
 			performProbing();
-			parseTopology();
+			if(!failed_test){
+				parseTopology();
+			}else{
+				printf("Probing failed, waiting until next session\n");
+			}
 			popul_laten_now = now_nsec();
 			printf("REPROBING.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 			
