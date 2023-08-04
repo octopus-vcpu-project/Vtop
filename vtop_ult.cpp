@@ -289,7 +289,7 @@ int measure_latency_pair(int i, int j)
 		amount_of_times = -6;
 		first_measurement = false;
 	}
-	int max_loops = SAMPLE_US;1
+	int max_loops = SAMPLE_US;
 	
 	while(1){
 		stick_this_thread_to_core(i,j);
