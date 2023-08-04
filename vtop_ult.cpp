@@ -229,30 +229,25 @@ static void *thread_fn(void *data)
 		if (*stop_loops>2){
 			pthread_exit(0);
 		}
-		//consider special case(for stacking)(when stacking is detected, redo measurement for usleep average active time+ average inactive time)
-//		if(nr_pingpongs->x > 500000){
-//			pthread_exit(0);
-//		}
+
 		
 		if (__sync_bool_compare_and_swap(cache_pingpong_mutex, me, buddy)) {
 			++nr;
 			if ((nr==nr_param) && me == 0) {
-				__sync_fetch_and_add(&(nr_pingpongs->x), 2 * nr);
 				(args->timestamps).push_back(now_nsec());
 				nr = 0;
 			}
 		}
-		//for (size_t i = 0; i < nr_relax; ++i)
-		//	asm volatile("rep; nop");
-		//}
+
 	}
 	return NULL;
 }
+
+//pins calling thread to two cores
 int stick_this_thread_to_core(int core_id,int core_id2) {
    int num_cores = sysconf(_SC_NPROCESSORS_ONLN);
    if (core_id < 0 || core_id >= num_cores)
       return EINVAL;
-
    cpu_set_t cpuset;
    CPU_ZERO(&cpuset);
    CPU_SET(core_id, &cpuset);
@@ -276,24 +271,7 @@ int get_latency_class(int latency){
         return 4;
 }
 
-bool shieldCPUs() {
-    // Shield all CPUs except one (CPU core 0) using cset
-    int cset_result = system("cset shield --cpu 1-$(($(nproc)-1)) --kthread=on");
-    return (cset_result == 0);
-}
 
-bool moveToShieldedCores() {
-    // Move the current process and threads to the user shielded cores using cset
-    int pid = getpid();
-    int proc_result = system(("cset shield --shield --pid " + std::to_string(pid)).c_str());
-    return (proc_result == 0);
-}
-
-bool unshieldCores() {
-    // Undo the CPU shield
-    int proc_result = system("cset --reset");
-    return (proc_result == 0);
-}
 
 
 int measure_latency_pair(int i, int j)
@@ -302,7 +280,7 @@ int measure_latency_pair(int i, int j)
 	int amount_of_times=0;
 	if(latency_valid != -1 && latency_valid != 1){
                         amount_of_times = -6;
-      }
+    }
 	if(latency_valid == 1){
 		amount_of_times = 3;
 	}
@@ -313,81 +291,63 @@ int measure_latency_pair(int i, int j)
 	
 	
 	while(1){
-	stick_this_thread_to_core(i,j);
-    atomic_t* pingpong_mutex = (atomic_t*) malloc(sizeof(atomic_t));;
-	pthread_mutex_t wait_mutex = PTHREAD_MUTEX_INITIALIZER;
-    pthread_cond_t wait_cond = PTHREAD_COND_INITIALIZER;
-	big_atomic_t nr_pingpongs;
-	int stop_loops = 0;
-	bool prepared = false;
-    int wait_for_buddy = 1;
-	thread_args_t even(i, (atomic_t)0, (atomic_t)1, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy,&prepared);
-    thread_args_t odd(j, (atomic_t)1, (atomic_t)0, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy,&prepared);
-	pthread_t t_odd;
-	pthread_t t_even;
-	__sync_lock_test_and_set(&nr_pingpongs.x, 0);
+		stick_this_thread_to_core(i,j);
+		atomic_t* pingpong_mutex = (atomic_t*) malloc(sizeof(atomic_t));;
+		pthread_mutex_t wait_mutex = PTHREAD_MUTEX_INITIALIZER;
+		pthread_cond_t wait_cond = PTHREAD_COND_INITIALIZER;
+		big_atomic_t nr_pingpongs;
+		int stop_loops = 0;
+		bool prepared = false;
+		int wait_for_buddy = 1;
+		thread_args_t even(i, (atomic_t)0, (atomic_t)1, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy,&prepared);
+		thread_args_t odd(j, (atomic_t)1, (atomic_t)0, &pingpong_mutex, &nr_pingpongs, &stop_loops, &wait_mutex, &wait_cond, &wait_for_buddy,&prepared);
+		pthread_t t_odd;
+		pthread_t t_even;
+		__sync_lock_test_and_set(&nr_pingpongs.x, 0);
 
 
-	if (pthread_create(&t_odd, NULL, thread_fn, &odd)) {
-		printf("ERROR creating odd thread\n");
-		exit(1);
-	}
-	if (pthread_create(&t_even, NULL, thread_fn, &even)) {
-		printf("ERROR creating even thread\n");
-		exit(1);
-	}
-
-	double best_sample = 1./0.;
-	
-	struct timespec sleep_duration;
-    sleep_duration.tv_sec = 0;
-    sleep_duration.tv_nsec = sleeping_time * 1000;
-    struct timespec remaining_time;
-    remaining_time.tv_sec = 0;
-    remaining_time.tv_nsec = 0;
-
-    // Sleep using CLOCK_PROCESS_CPUTIME_ID
-//    int result = clock_nanosleep(CLOCK_PROCESS_CPUTIME_ID, 0, &sleep_duration, &remaining_time);
-//	std::cout<<"this is sleeping time"<<SAMPLE_US<<std::endl;
-//	uint64_t popul_laten_last = now_nsec();
-//	usleep(SAMPLE_US);
-//	uint64_t popul_laten_now = now_nsec();
-
-//	printf("one test took:%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
-//	stop_loops = 1;
-	//pthread_cancel(t_even[(amount_of_times + 6)%12]);
-	//pthread_cancel(t_odd[(amount_of_times + 6)%12]);
-	pthread_join(t_odd,NULL);
-	pthread_join(t_even,NULL);
-	if(even.timestamps.size() == 1){
-                continue;
-        }
-	munmap(pingpong_mutex,getpagesize());
-
-	if(even.timestamps.size() <2){
-		if(amount_of_times<6){
-			amount_of_times++;
-			continue;
-		}else{
-			atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
-			std::cout <<"Times around:"<<amount_of_times<<"I"<<i<<" J:"<<j<<" Sample passed " << -1 << " next.\n";
-			return -1;
+		if (pthread_create(&t_odd, NULL, thread_fn, &odd)) {
+			printf("ERROR creating odd thread\n");
+			exit(1);
 		}
-    	}
-	
-	for(int z=0;z<even.timestamps.size() - 1;z++){
-		double sample = (even.timestamps[z+1] - even.timestamps[z]) / (double)(nr_param*2);
-		if (sample < best_sample){
-			best_sample = sample;
+		if (pthread_create(&t_even, NULL, thread_fn, &even)) {
+			printf("ERROR creating even thread\n");
+			exit(1);
 		}
-	}
-	if(abs(threefour_latency_class - (best_sample * 100)) < 400){
-		std::cout<<"threshold adjusted"<<std::endl;
-		threefour_latency_class = threefour_latency_class*1;
-	}
-	atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
-	std::cout<<"Times around:"<<amount_of_times<<"I"<<i<<" J:"<<j<<" Sample passed " << (int)(best_sample*100) << " next.\n";
-	return (int)(best_sample * 100);
+
+		double best_sample = 1./0.;
+		
+		pthread_join(t_odd,NULL);
+		pthread_join(t_even,NULL);
+		if(even.timestamps.size() == 1){
+					continue;
+		}
+		munmap(pingpong_mutex,getpagesize());
+
+		if(even.timestamps.size() <2){
+			if(amount_of_times<6){
+				amount_of_times++;
+				continue;
+			}else{
+				atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
+				std::cout <<"Times around:"<<amount_of_times<<"I"<<i<<" J:"<<j<<" Sample passed " << -1 << " next.\n";
+				return -1;
+			}
+		}
+		
+		for(int z=0;z<even.timestamps.size() - 1;z++){
+			double sample = (even.timestamps[z+1] - even.timestamps[z]) / (double)(nr_param*2);
+			if (sample < best_sample){
+				best_sample = sample;
+			}
+		}
+
+//	if(abs(threefour_latency_class - (best_sample * 100)) < 400){
+//		std::cout<<"threshold adjusted"<<std::endl;
+//		threefour_latency_class = threefour_latency_class*1;
+//	}
+		std::cout<<"Times around:"<<amount_of_times<<"I"<<i<<" J:"<<j<<" Sample passed " << (int)(best_sample*100) << " next.\n";
+		return (int)(best_sample * 100);
 	}
 }
 
