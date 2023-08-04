@@ -370,13 +370,13 @@ void apply_optimization(void){
 			sub_rel = top_stack[y][x];
 			for(int z=0;z<LAST_CPU_ID;z++){
 				if((top_stack[y][z]<sub_rel && top_stack[y][z]!=0)){
-					if(top_stack[x][z] != sub_rel){
-						failed_test = true;
-						return;
-					}
+					
 
 					if(top_stack[x][z] == 0){
 						set_latency_pair(x,z,sub_rel);
+					}else if(top_stack[x][z] != sub_rel){
+						failed_test = true;
+						return;
 					}
 					
 				}
