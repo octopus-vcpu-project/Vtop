@@ -357,8 +357,8 @@ int measure_latency_pair(int i, int j)
 //	stop_loops = 1;
 	//pthread_cancel(t_even[(amount_of_times + 6)%12]);
 	//pthread_cancel(t_odd[(amount_of_times + 6)%12]);
-	pthread_join(t_odd[(amount_of_times + 6)%12],NULL);
-	pthread_join(t_even[(amount_of_times + 6)%12],NULL);
+	pthread_join(t_odd,NULL);
+	pthread_join(t_even,NULL);
 	if(even.timestamps.size() == 1){
                 continue;
         }
