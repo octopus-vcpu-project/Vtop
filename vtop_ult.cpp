@@ -395,15 +395,6 @@ static void print_population_matrix(void)
 
 int find_numa_groups(void)
 {
-	for(int i=0;i<LAST_CPU_ID;i++){
-		for(int j=0;j<LAST_CPU_ID;j++){
-			if(i==j){
-				top_stack[i][j] = 1;
-			}else{
-				top_stack[i][j] = 0;
-			}
-		}
-	}
 	nr_numa_groups = 0;
 	for(int i = 0;i<LAST_CPU_ID;i++){
 		cpu_group_id[i] = -1;
@@ -447,10 +438,8 @@ typedef struct {
 	std::vector<int> pairs_to_test;
 } worker_thread_args;
 
-//TODO convert to something more parallel
+
 void ST_find_topology(std::vector<int> input){
-	
-	
 	for(int x=0;x<input.size();x++){
 		int j = input[x] % LAST_CPU_ID;
 		int i = (input[x]-(input[x]%LAST_CPU_ID))/LAST_CPU_ID;
@@ -481,14 +470,12 @@ static void *thread_fn2(void *data)
 	
 	worker_thread_args *args = (worker_thread_args *)data;
 	ST_find_topology(args->pairs_to_test);
-//	alertMainThread();
 	return NULL;
 }
 
 
 void MT_find_topology(std::vector<std::vector<int>> all_pairs_to_test){ 
 
-//	ready_counter = 0;
 	worker_thread_args worker_args[all_pairs_to_test.size()];
 	pthread_t worker_tasks[all_pairs_to_test.size()];
 	
@@ -496,11 +483,9 @@ void MT_find_topology(std::vector<std::vector<int>> all_pairs_to_test){
 		worker_args[i].pairs_to_test = all_pairs_to_test[i];
 		pthread_create(&worker_tasks[i], NULL, thread_fn2, &worker_args[i]);
 	}
-//	waitforWorkers(all_pairs_to_test.size());
 	for (int i = 0; i < all_pairs_to_test.size(); i++) {
     		pthread_join(worker_tasks[i], NULL);
   	}
-//	ready_counter = 0;
 }
 
 void performProbing(){
@@ -623,15 +608,10 @@ bool verify_topology(void){
 		return false;
 	}
 	task_set_arr = std::vector<std::vector<int>>(pair_to_thread_arr.size());
-	//std::vector<int> insertvec;
-	//std::vector<int> insertier_vec;
 	for(int i=0;i<pair_to_thread_arr.size();i++){
-		//insertier_vec = bitmap_to_task_stack(pair_to_thread_arr[i],PAIR_GROUP);
-		//insertvec.insert( insertvec.end(), insertier_vec.begin(), insertier_vec.end() );
 		task_set_arr[i] = bitmap_to_task_stack(pair_to_thread_arr[i],PAIR_GROUP);
 	}
 	latency_valid = 2;
-	//task_set_arr[0] = insertvec;
 	MT_find_topology(task_set_arr);
 	
 	if(failed_test == true){
@@ -665,14 +645,18 @@ bool verify_topology(void){
 	failed_test = false;
 	return true;
 }
+
+
 //TODO rename, parse matrix
-static void construct_vnuma_groups(void)
+static void parseTopology(void)
 {
 	int i, j, count = 0;
 	nr_pair_groups = 0;
 	nr_tt_groups = 0;
 	nr_cpus = get_nprocs();
 
+
+	//clear all previous topology data(excluding numa level)
 	for (i = 0; i < LAST_CPU_ID; i++){
 		cpu_pair_id[i] = -1;
 		cpu_tt_id[i] = -1;
@@ -684,14 +668,6 @@ static void construct_vnuma_groups(void)
 
 
 	for (i = 0; i < LAST_CPU_ID; i++) {
-
-		//if (cpu_group_id[i] == -1){
-		//	cpu_group_id[i] = nr_numa_groups;
-		//	nr_numa_groups++;
-		//	std::vector<int> cpu_bitmap_group(LAST_CPU_ID);
-		//	numa_to_pair_arr.push_back(cpu_bitmap_group);
-		//	numas_to_cpu.push_back(i);
-		//}
 		if (cpu_pair_id[i] == -1){
 			cpu_pair_id[i] = nr_pair_groups;
 			nr_pair_groups++;
@@ -789,9 +765,6 @@ static void construct_vnuma_groups(void)
 	printf("%d ", nr_pair_groups);	
 	printf("%d ", nr_tt_groups);	
 	printf("\n");
-
-
-	
 }
 
 #define CPU_ID_SHIFT		(16)
@@ -821,10 +794,14 @@ static void configure_os_numa_groups(int mode)
 
 int main(int argc, char *argv[])
 {
+	
+	uint64_t popul_laten_last = now_nsec();
+	uint64_t popul_laten_now = now_nsec();
 	//set program to high priority
 	moveCurrentThread();
 	nr_cpus = get_nprocs();
 
+	//initialize the topology matrix
 	for (int i = 0; i < LAST_CPU_ID; i++) {
 		std::vector<int> cpumap(LAST_CPU_ID);
 		top_stack.push_back(cpumap);
@@ -835,21 +812,10 @@ int main(int argc, char *argv[])
 	
 	const std::vector<std::string_view> args(argv, argv + argc);
   	setArguments(args);
-	uint64_t popul_laten_last = now_nsec();
-	uint64_t popul_laten_now = now_nsec();
 	int sd = find_numa_groups();
 	performProbing();
-	construct_vnuma_groups();
+	parseTopology();
 	while(1){
-		//int numa_groups = find_numa_groups();
-		//std::cout<<"numa group"<<numa_groups<<std::endl;
-		//uint64_t popul_laten_now = now_nsec();
-		//printf("This time it took to find NUMA Groups%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
-		//popul_laten_last = now_nsec();
-		//printf("Consturcting overall topology...\n");
-		//performProbing();
-		//popul_laten_now = now_nsec();
-		//printf("This time it took to find all topology%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 		if(verbose){
 			print_population_matrix();
 		}
@@ -864,14 +830,11 @@ int main(int argc, char *argv[])
 			popul_laten_last = now_nsec();
 			int xd = find_numa_groups();
 			performProbing();
-			construct_vnuma_groups();
+			parseTopology();
 			popul_laten_now = now_nsec();
 			printf("REPROBING.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 			
 		}
-		//popul_laten_now = now_nsec();
-		//printf("This time it took to verify%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
-		//configure_os_numa_groups(1);
 		printf("Done...\n");
 		sleep(1);
 	}
