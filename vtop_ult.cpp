@@ -48,7 +48,7 @@ typedef unsigned atomic_t;
 int nr_cpus;
 int verbose = 0;
 int NR_SAMPLES = 30;
-int SAMPLE_US = 10000;
+int SAMPLE_US = 350000;
 bool first_measurement = false;
 static size_t nr_relax = 1;
 int nr_numa_groups = 0;
@@ -62,7 +62,7 @@ int cpu_pair_id[MAX_CPUS];
 int cpu_tt_id[MAX_CPUS];
 bool failed_test = false; 
 int latency_valid = -1;
-int nr_param = 1000;
+int nr_param = 500;
 
 std::vector<std::vector<int>> numa_to_pair_arr;
 std::vector<std::vector<int>> pair_to_thread_arr;
