@@ -849,6 +849,13 @@ int main(int argc, char *argv[])
 				if(!failed_test){
 					parseTopology();
 				}else{
+					for (int i = 0; i < LAST_CPU_ID; i++) {
+						std::vector<int> cpumap(LAST_CPU_ID);
+						top_stack.push_back(cpumap);
+					}
+					for(int p=0;p< LAST_CPU_ID;p++){
+						top_stack[p][p] = 1;
+					}
 					printf("Probing failed, waiting until next session\n");
 				}
 				popul_laten_now = now_nsec();
@@ -856,9 +863,16 @@ int main(int argc, char *argv[])
 			}
 		}else{
 			failed_test = false;
+			for (int i = 0; i < LAST_CPU_ID; i++) {
+						std::vector<int> cpumap(LAST_CPU_ID);
+						top_stack.push_back(cpumap);
+				}
+				for(int p=0;p< LAST_CPU_ID;p++){
+					top_stack[p][p] = 1;
+				}
 			performProbing();
 			if(!failed_test){
-					parseTopology();
+				parseTopology();
 			}else{
 				printf("Probing failed, waiting until next session\n");
 			}
