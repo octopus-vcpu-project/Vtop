@@ -284,7 +284,7 @@ int measure_latency_pair(int i, int j)
                         amount_of_times = -6;
     }
 	if(latency_valid == 1){
-		amount_of_times = 0;
+		amount_of_times = 2;
 	}
 	if(first_measurement){
 		amount_of_times = -6;
