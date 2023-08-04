@@ -307,7 +307,7 @@ int measure_latency_pair(int i, int j)
 		amount_of_times = 3;
 	}
 	if(first_measurement){
-		amount_of_times = -15;
+		amount_of_times = -3;
 		first_measurement = false;
 	}
 	pthread_t t_odd[12], t_even[12];
