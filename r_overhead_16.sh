@@ -43,8 +43,13 @@ output_title="overhead_16$(date +%d%H%M).txt"
 echo "Begin overhead test (16) Control."
 ssh -T ubuntu@e-vm1 "output_file=$output_title; echo \"\$(date): Beginning test:Vtopology accuracy(COLD)\" >> \"\$output_file\";nohup sudo $VTOP_CMD >> \"\$output_file\" 2>&1 &"
 sleep 180
+
 echo "Beginning Overhead test(16) sysbench"
+
 ssh -T ubuntu@e-vm1 "output_file=$output_title; echo \"\$(date): Sysbench Activated\" >> \"\$output_file\";"
+ssh -T ubuntu@e-vm1 << EOF
+    sudo nohup sysbench --threads=16 --time=30
+EOF
 ssh -T ubuntu@e-vm1 << EOF
     sudo nohup sysbench --threads=16 --time=180 cpu run > 12top_pre_prober_sysbench.txt &
 EOF

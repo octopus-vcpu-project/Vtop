@@ -20,18 +20,18 @@ ssh -T ubuntu@e-vm3 "sudo killall a.out";
 output_title="overhead_64$(date +%d%H%M).txt"
 echo "Begin overhead test (64) Control."
 ssh -T ubuntu@e-vm3 "output_file=$output_title; echo \"\$(date): Beginning test:Vtopology accuracy(COLD)\" >> \"\$output_file\";nohup sudo $VTOP_CMD >> \"\$output_file\" 2>&1 &"
-sleep 180
-ssh -T ubuntu@e-vm3 << EOF
-    sudo nohup sysbench --threads=64 --time=20 cpu run 
-EOF
+sleep 60
 echo "Beginning Overhead test(64) sysbench"
 ssh -T ubuntu@e-vm3 "output_file=$output_title; echo \"\$(date): Sysbench Activated\" >> \"\$output_file\";"
 ssh -T ubuntu@e-vm3 << EOF
-    sudo nohup sysbench --threads=64 --time=180 cpu run > 64_with_prober_sysbench.txt &
+    sudo nohup sysbench --threads=64 --time=20 cpu run 
+EOF
+ssh -T ubuntu@e-vm3 << EOF
+    sudo nohup sysbench --threads=64 --time=60 cpu run > 64_with_prober_sysbench.txt &
 EOF
 ssh -T ubuntu@e-vm3 "sudo killall a.out";
 echo "Beginning Overhead 64 sysbench, no prober"
 ssh -T ubuntu@e-vm3 << EOF
-    sudo nohup sysbench --threads=64 --time=180 cpu run > 64_without_prober_sysbench.txt &
+    sudo nohup sysbench --threads=64 --time=60 cpu run > 64_without_prober_sysbench.txt &
 EOF
 echo "Finished"
