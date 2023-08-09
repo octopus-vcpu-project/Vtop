@@ -292,7 +292,7 @@ int measure_latency_pair(int i, int j)
 	int max_loops = SAMPLE_US;
 	if(first_measurement){
 		amount_of_times = -6;
-		max_loops = SAMPLE_US * 5;
+		max_loops = SAMPLE_US * 10;
 		first_measurement = false;
 	}
 	

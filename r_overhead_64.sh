@@ -7,9 +7,9 @@ VCPUS=32  # for example; adjust as needed
 
 for ((vcpu_num=0; vcpu_num < $VCPUS; vcpu_num++)); do
     if ((vcpu_num % 2 == 0)); then
-        cpu_num=$((vcpu_num / 2 + 8))
+        cpu_num=$(((vcpu_num+8 )/ 2 ))
     else
-        cpu_num=$((vcpu_num / 2 + 88))
+        cpu_num=$(((vcpu_num+8) / 2 + 80))
     fi
     virsh vcpupin $VM_NAME $vcpu_num $cpu_num
 done
@@ -18,9 +18,9 @@ VCPUS=64
 
 for ((vcpu_num=32; vcpu_num < $VCPUS; vcpu_num++)); do
     if ((vcpu_num % 2 == 0)); then
-        cpu_num=$((vcpu_num / 2 + 28))
+        cpu_num=$(((vcpu_num+28) / 2))
     else
-        cpu_num=$((vcpu_num / 2 + 108))
+        cpu_num=$(((vcpu_num+28) / 2 + 80))
     fi
     virsh vcpupin $VM_NAME $vcpu_num $cpu_num
 done
