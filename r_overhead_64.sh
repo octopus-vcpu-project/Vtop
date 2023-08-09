@@ -3,13 +3,24 @@ VTOP_CMD="./vtop/a.out -u 300000 -d 600 -s 5 -f 5"
 
 
 
-VCPUS=64  # for example; adjust as needed
+VCPUS=32  # for example; adjust as needed
 
 for ((vcpu_num=0; vcpu_num < $VCPUS; vcpu_num++)); do
     if ((vcpu_num % 2 == 0)); then
-        cpu_num=$((vcpu_num / 2))
+        cpu_num=$((vcpu_num / 2) + 8)
     else
-        cpu_num=$((vcpu_num / 2 + 80))
+        cpu_num=$((vcpu_num / 2 + 88))
+    fi
+    virsh vcpupin $VM_NAME $vcpu_num $cpu_num
+done
+
+VCPUS=64
+
+for ((vcpu_num=32; vcpu_num < $VCPUS; vcpu_num++)); do
+    if ((vcpu_num % 2 == 0)); then
+        cpu_num=$((vcpu_num / 2) + 28)
+    else
+        cpu_num=$((vcpu_num / 2 + 108))
     fi
     virsh vcpupin $VM_NAME $vcpu_num $cpu_num
 done
