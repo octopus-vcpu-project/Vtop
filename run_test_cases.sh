@@ -51,6 +51,7 @@ output_title="6prober_output_$(date +%d%H%M).txt"
 echo "vCPU pinning completed successfully."
 echo "Beginning Accuracy test(COLD)."
 ssh -T ubuntu@e-vm1 "=$output_title; echo \"\$(date): Beginning test:Vtopology accuracy(COLD)\" >> \"\$output_file\";nohup sudo $VTOP_CMD >> \"\$output_file\" 2>&1 &"
+output_file
 sleep 180
 ssh -T ubuntu@e-vm1 "sudo killall a.out";
 VTOP_CMD="./vtop/a.out -u 300000 -d 600 -s 5 -f 3"
