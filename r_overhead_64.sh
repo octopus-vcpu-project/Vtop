@@ -3,26 +3,16 @@ VTOP_CMD="./vtop/a.out -u 300000 -d 600 -s 5 -f 5"
 
 
 
-VCPUS=32  # for example; adjust as needed
-
-for ((vcpu_num=0; vcpu_num < $VCPUS; vcpu_num++)); do
-    if ((vcpu_num % 2 == 0)); then
-        cpu_num=$(((vcpu_num+8 )/ 2 ))
-    else
-        cpu_num=$(((vcpu_num+8) / 2 + 80))
-    fi
-    virsh vcpupin $VM_NAME $vcpu_num $cpu_num
-done
-
-VCPUS=64
-
-for ((vcpu_num=32; vcpu_num < $VCPUS; vcpu_num++)); do
-    if ((vcpu_num % 2 == 0)); then
-        cpu_num=$(((vcpu_num+28) / 2))
-    else
-        cpu_num=$(((vcpu_num+28) / 2 + 80))
-    fi
-    virsh vcpupin $VM_NAME $vcpu_num $cpu_num
+VCPUS=64  # for example; adjust as needed
+for((i=0;i<4;i++)) do
+    for ((vcpu_num=0; vcpu_num < 16; vcpu_num++)); do
+        if ((vcpu_num % 2 == 0)); then
+            cpu_num=$(((vcpu_num)/ 2 + (i*20)))
+        else
+            cpu_num=$(((vcpu_num) / 2 + 80 + (i*20)))
+        fi
+        virsh vcpupin $VM_NAME $((vcpu_num +(i*16))) $cpu_num
+    done
 done
 
 ssh -T ubuntu@e-vm3 "sudo killall sysbench";
