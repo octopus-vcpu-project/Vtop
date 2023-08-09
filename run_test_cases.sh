@@ -7,7 +7,7 @@ if [ "$#" -ne 2 ]; then
 fi
 
 VM_NAME="e-vm1"
-COMPETITOR_VM="e-vm3"
+COMPETITOR_VM="e-vm2"
 VTOP_CMD="./vtop/a.out -u 300000 -d 600 -s 5 -f 10"
 
 NUM_CORES=$(nproc)
@@ -48,8 +48,8 @@ virsh vcpupin $COMPETITOR_VM 15 101
 
 ssh -T ubuntu@e-vm1 "sudo killall a.out";
 ssh -T ubuntu@e-vm1 "sudo killall sysbench";
-ssh -T ubuntu@e-vm3 "sudo killall a.out";
-ssh -T ubuntu@e-vm3 "sudo killall sysbench";
+ssh -T ubuntu@e-vm2 "sudo killall a.out";
+ssh -T ubuntu@e-vm2 "sudo killall sysbench";
 output_title="topology_test$(date +%d%H%M).txt"
 echo "vCPU pinning completed successfully."
 echo "Beginning Accuracy test(COLD)."
@@ -58,7 +58,7 @@ sleep 240
 ssh -T ubuntu@e-vm1 "sudo killall a.out";
 VTOP_CMD="./vtop/a.out -u 300000 -d 600 -s 5 -f 5"
 echo "Beginning Accuracy test(HOT)."
-ssh -T ubuntu@e-vm3 "nohup sudo sysbench --threads=16 --time=100000 cpu run " &
+ssh -T ubuntu@e-vm2 "nohup sudo sysbench --threads=16 --time=100000 cpu run " &
 ssh -T ubuntu@e-vm1 "nohup sudo sysbench --threads=16 --time=100000 cpu run " &
 ssh -T ubuntu@e-vm1 "output_file=$output_title; echo \"\$(date): Beginning test:Vtopology accuracy(HOT)\" >> \"\$output_file\";nohup sudo $VTOP_CMD >> \"\$output_file\" 2>&1 &"
 sleep 120
@@ -142,11 +142,9 @@ echo "Beginning Overhead Test(control)"
 ssh -T ubuntu@e-vm1 << EOF
     sudo nohup sysbench --threads=16 --time=30 cpu run > 1top_pre_prober_sysbench.txt &
 EOF
-sleep 30
 ssh -T ubuntu@e-vm1 "sudo killall a.out";
 echo "Beginning Overhead Test(non control)"
 ssh -T ubuntu@e-vm1 << EOF
     sudo nohup sysbench --threads=16 --time=30 cpu run > 1top_post_prober_sysbench.txt &
 EOF
-sleep 30
 echo "Finished"
