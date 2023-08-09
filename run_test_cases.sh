@@ -12,39 +12,39 @@ VTOP_CMD="./vtop/a.out -u 300000 -d 600 -s 5 -f 20"
 
 NUM_CORES=$(nproc)
 
-virsh vcpupin $VM_NAME $0 $0
-virsh vcpupin $VM_NAME $1 $0
-virsh vcpupin $VM_NAME $2 $80
-virsh vcpupin $VM_NAME $3 $80
-virsh vcpupin $VM_NAME $4 $1
-virsh vcpupin $VM_NAME $5 $1
-virsh vcpupin $VM_NAME $6 $81
-virsh vcpupin $VM_NAME $7 $81
-virsh vcpupin $VM_NAME $8 $20
-virsh vcpupin $VM_NAME $9 $20
-virsh vcpupin $VM_NAME $10 $100
-virsh vcpupin $VM_NAME $11 $100
-virsh vcpupin $VM_NAME $12 $21
-virsh vcpupin $VM_NAME $13 $21
-virsh vcpupin $VM_NAME $14 $101
-virsh vcpupin $VM_NAME $15 $101
+virsh vcpupin $VM_NAME 0 0
+virsh vcpupin $VM_NAME 1 0
+virsh vcpupin $VM_NAME 2 80
+virsh vcpupin $VM_NAME 3 80
+virsh vcpupin $VM_NAME 4 1
+virsh vcpupin $VM_NAME 5 1
+virsh vcpupin $VM_NAME 6 81
+virsh vcpupin $VM_NAME 7 81
+virsh vcpupin $VM_NAME 8 20
+virsh vcpupin $VM_NAME 9 20
+virsh vcpupin $VM_NAME 10 100
+virsh vcpupin $VM_NAME 11 100
+virsh vcpupin $VM_NAME 12 21
+virsh vcpupin $VM_NAME 13 21
+virsh vcpupin $VM_NAME 14 101
+virsh vcpupin $VM_NAME 15 101
 
-virsh vcpupin $COMPETITOR_VM $0 $0
-virsh vcpupin $COMPETITOR_VM $1 $0
-virsh vcpupin $COMPETITOR_VM $2 $80
-virsh vcpupin $COMPETITOR_VM $3 $80
-virsh vcpupin $COMPETITOR_VM $4 $1
-virsh vcpupin $COMPETITOR_VM $5 $1
-virsh vcpupin $COMPETITOR_VM $6 $81
-virsh vcpupin $COMPETITOR_VM $7 $81
-virsh vcpupin $COMPETITOR_VM $8 $20
-virsh vcpupin $COMPETITOR_VM $9 $20
-virsh vcpupin $COMPETITOR_VM $10 $100
-virsh vcpupin $COMPETITOR_VM $11 $100
-virsh vcpupin $COMPETITOR_VM $12 $21
-virsh vcpupin $COMPETITOR_VM $13 $21
-virsh vcpupin $COMPETITOR_VM $14 $101
-virsh vcpupin $COMPETITOR_VM $15 $101
+virsh vcpupin $COMPETITOR_VM 0 0
+virsh vcpupin $COMPETITOR_VM 1 0
+virsh vcpupin $COMPETITOR_VM 2 80
+virsh vcpupin $COMPETITOR_VM 3 80
+virsh vcpupin $COMPETITOR_VM 4 1
+virsh vcpupin $COMPETITOR_VM 5 1
+virsh vcpupin $COMPETITOR_VM 6 81
+virsh vcpupin $COMPETITOR_VM 7 81
+virsh vcpupin $COMPETITOR_VM 8 20
+virsh vcpupin $COMPETITOR_VM 9 20
+virsh vcpupin $COMPETITOR_VM 10 100
+virsh vcpupin $COMPETITOR_VM 11 100
+virsh vcpupin $COMPETITOR_VM 12 21
+virsh vcpupin $COMPETITOR_VM 13 21
+virsh vcpupin $COMPETITOR_VM 14 101
+virsh vcpupin $COMPETITOR_VM 15 101
 
 
 output_title="6prober_output_$(date +%d%H%M).txt"
