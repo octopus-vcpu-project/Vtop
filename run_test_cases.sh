@@ -8,7 +8,7 @@ fi
 
 VM_NAME=$1
 COMPETITOR_VM=$2
-VTOP_CMD="./vtop/a.out -u 300000 -d 500"
+VTOP_CMD="./vtop/a.out -u 300000 -d 600 -s 5 -f 20"
 
 NUM_CORES=$(nproc)
 
@@ -52,7 +52,8 @@ echo "vCPU pinning completed successfully."
 echo "Beginning Accuracy test(COLD)."
 ssh -T ubuntu@e-vm1 "=$output_title; echo \"\$(date): Beginning test:Vtopology accuracy(COLD)\" >> \"\$output_file\";nohup sudo $VTOP_CMD >> \"\$output_file\" 2>&1 &"
 sleep 180
-VTOP_CMD="./vtop/a.out -u 300000 -d 500"
+ssh -T ubuntu@e-vm1 "sudo killall a.out";
+VTOP_CMD="./vtop/a.out -u 300000 -d 600 -s 5 -f 3"
 echo "Beginning Accuracy test(HOT)."
 ssh -T ubuntu@e-vm2 "nohup sudo sysbench --threads=16 --time=100000 cpu run " &
 ssh -T ubuntu@e-vm1 "nohup sudo sysbench --threads=16 --time=100000 cpu run " &
@@ -145,5 +146,4 @@ ssh -T ubuntu@e-vm1 << EOF
     sudo nohup sysbench --threads=16 --time=30 cpu run > post_prober_sysbench.txt &
 EOF
 sleep 30
-ssh -T ubuntu@e-vm1 "=$output_title; echo \"\$(date): TESTING OVERHEAD 32-64 CORE\" >> \"\$output_file\";nohup sudo $VTOP_CMD >> \"\$output_file\" 2>&1 &"
-
+echo "Finished"
