@@ -38,6 +38,7 @@ virsh vcpupin $COMPETITOR_VM 15 124
 ssh -T ubuntu@e-vm1 "sudo killall sysbench";
 ssh -T ubuntu@e-vm1 "sudo killall a.out";
 ssh -T ubuntu@e-vm2 "sudo killall sysbench";
+ssh -T ubuntu@e-vm2 "nohup sudo sysbench --threads=16 --time=100000 cpu run " &
 output_title="overhead_16$(date +%d%H%M).txt"
 echo "Begin overhead test (16) Control."
 ssh -T ubuntu@e-vm1 "output_file=$output_title; echo \"\$(date): Beginning test:Vtopology accuracy(COLD)\" >> \"\$output_file\";nohup sudo $VTOP_CMD >> \"\$output_file\" 2>&1 &"
