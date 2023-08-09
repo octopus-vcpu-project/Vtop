@@ -140,13 +140,13 @@ ssh -T ubuntu@e-vm1 "output_file=$output_title; echo \"\$(date): VM Overhead tes
 ssh -T ubuntu@e-vm1 "sudo killall sysbench";
 echo "Beginning Overhead Test(control)"
 ssh -T ubuntu@e-vm1 << EOF
-    sudo nohup sysbench --threads=16 --time=30 cpu run > top_post_prober_sysbench.txt &
+    sudo nohup sysbench --threads=16 --time=30 cpu run > 1top_pre_prober_sysbench.txt &
 EOF
 sleep 30
 ssh -T ubuntu@e-vm1 "sudo killall a.out";
 echo "Beginning Overhead Test(non control)"
 ssh -T ubuntu@e-vm1 << EOF
-    sudo nohup sysbench --threads=16 --time=30 cpu run > top_post_prober_sysbench.txt &
+    sudo nohup sysbench --threads=16 --time=30 cpu run > 1top_post_prober_sysbench.txt &
 EOF
 sleep 30
 echo "Finished"
