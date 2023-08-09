@@ -6,9 +6,9 @@ if [ "$#" -ne 2 ]; then
     exit 1
 fi
 
-VM_NAME=$1
-COMPETITOR_VM=$2
-VTOP_CMD="./vtop/a.out -u 300000 -d 600 -s 5 -f 20"
+VM_NAME="e-vm1"
+COMPETITOR_VM="e-vm3"
+VTOP_CMD="./vtop/a.out -u 300000 -d 600 -s 5 -f 10"
 
 NUM_CORES=$(nproc)
 
@@ -54,17 +54,17 @@ output_title="topology_test$(date +%d%H%M).txt"
 echo "vCPU pinning completed successfully."
 echo "Beginning Accuracy test(COLD)."
 ssh -T ubuntu@e-vm1 "output_file=$output_title; echo \"\$(date): Beginning test:Vtopology accuracy(COLD)\" >> \"\$output_file\";nohup sudo $VTOP_CMD >> \"\$output_file\" 2>&1 &"
-sleep 180
+sleep 240
 ssh -T ubuntu@e-vm1 "sudo killall a.out";
-VTOP_CMD="./vtop/a.out -u 300000 -d 600 -s 5 -f 10"
+VTOP_CMD="./vtop/a.out -u 300000 -d 600 -s 5 -f 5"
 echo "Beginning Accuracy test(HOT)."
 ssh -T ubuntu@e-vm3 "nohup sudo sysbench --threads=16 --time=100000 cpu run " &
 ssh -T ubuntu@e-vm1 "nohup sudo sysbench --threads=16 --time=100000 cpu run " &
 ssh -T ubuntu@e-vm1 "output_file=$output_title; echo \"\$(date): Beginning test:Vtopology accuracy(HOT)\" >> \"\$output_file\";nohup sudo $VTOP_CMD >> \"\$output_file\" 2>&1 &"
-sleep 60
+sleep 120
 echo "Beginning Total Migration Test."
 virsh vcpupin $VM_NAME 0 40
-virsh vcpupin $VM_NAME 1 0
+virsh vcpupin $VM_NAME 1 40
 virsh vcpupin $VM_NAME 2 41
 virsh vcpupin $VM_NAME 3 41
 virsh vcpupin $VM_NAME 4 61
@@ -97,7 +97,7 @@ virsh vcpupin $COMPETITOR_VM 13 121
 virsh vcpupin $COMPETITOR_VM 14 120
 virsh vcpupin $COMPETITOR_VM 15 120
 ssh -T ubuntu@e-vm1 "output_file=$output_title; echo \"\$(date): VM Migrated\" >> \"\$output_file\";"
-sleep 20
+sleep 30
 echo "Beginning Load Balancing Test."
 virsh vcpupin $VM_NAME 0 40
 virsh vcpupin $VM_NAME 1 41
@@ -134,7 +134,7 @@ virsh vcpupin $COMPETITOR_VM 14 123
 virsh vcpupin $COMPETITOR_VM 15 124
 
 ssh -T ubuntu@e-vm1 "output_file=$output_title; echo \"\$(date): VM Load balanced\" >> \"\$output_file\";"
-sleep 20
+sleep 30
 echo "Beginning Overhead Test"
 ssh -T ubuntu@e-vm1 "output_file=$output_title; echo \"\$(date): VM Overhead test\" >> \"\$output_file\";"
 ssh -T ubuntu@e-vm1 "sudo killall sysbench";
