@@ -1,0 +1,1379 @@
+Wed Aug  9 12:43:44 PM EDT 2023: Beginning test:Vtopology accuracy(COLD)
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:0I0 J:2 Sample passed 581 next.
+Times around:0I0 J:3 Sample passed 550 next.
+Times around:0I0 J:4 Sample passed 4301 next.
+Times around:0I0 J:5 Sample passed 4403 next.
+Times around:0I0 J:6 Sample passed 4743 next.
+Times around:0I0 J:7 Sample passed 4311 next.
+Times around:0I0 J:8 Sample passed 10320 next.
+Times around:0I0 J:9 Sample passed 10188 next.
+Times around:0I0 J:10 Sample passed 13248 next.
+Times around:0I0 J:11 Sample passed 12865 next.
+Times around:0I0 J:12 Sample passed 13606 next.
+Times around:0I0 J:13 Sample passed 12620 next.
+Times around:0I0 J:14 Sample passed 13030 next.
+Times around:0I0 J:15 Sample passed 12963 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:0I8 J:10 Sample passed 552 next.
+Times around:0I8 J:11 Sample passed 553 next.
+Times around:0I8 J:12 Sample passed 4701 next.
+Times around:0I8 J:13 Sample passed 4697 next.
+Times around:0I8 J:14 Sample passed 4706 next.
+Times around:0I8 J:15 Sample passed 4713 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:0I4 J:6 Sample passed 548 next.
+Times around:0I4 J:7 Sample passed 556 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:0I12 J:14 Sample passed 556 next.
+Times around:0I12 J:15 Sample passed 555 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+[                          ][                          ]
+[            ][            ][            ][            ]
+[ 0  1][ 2  3][ 4  5][ 6  7][ 8  9][10 11][12 13][14 15]
+2 4 8 
+Times around:-6I0 J:8 Sample passed 12882 next.
+Times around:-6I8 J:12 Sample passed 4983 next.
+Times around:-6I0 J:4 Sample passed 5093 next.
+Times around:-6I0 J:2 Sample passed 586 next.
+Times around:-6I8 J:10 Sample passed 550 next.
+Times around:-6I12 J:14 Sample passed 553 next.
+Times around:-6I4 J:6 Sample passed 581 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):296.863195
+Done...
+Times around:-6I0 J:8 Sample passed 20888 next.
+Times around:-6I8 J:12 Sample passed 6273 next.
+Times around:-6I0 J:4 Sample passed 6381 next.
+Times around:-6I12 J:14 Sample passed 553 next.
+Times around:-6I0 J:2 Sample passed 578 next.
+Times around:-6I8 J:10 Sample passed 553 next.
+Times around:-6I4 J:6 Sample passed 589 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):238.731501
+Done...
+Times around:-6I0 J:8 Sample passed 18865 next.
+Times around:-6I8 J:12 Sample passed 6449 next.
+Times around:-6I0 J:4 Sample passed 5971 next.
+Times around:-6I12 J:14 Sample passed 540 next.
+Times around:-6I0 J:2 Sample passed 579 next.
+Times around:-6I8 J:10 Sample passed 554 next.
+Times around:-6I4 J:6 Sample passed 580 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):270.661869
+Done...
+Times around:-6I0 J:8 Sample passed 20349 next.
+Times around:-6I8 J:12 Sample passed 6131 next.
+Times around:-6I0 J:4 Sample passed 7608 next.
+Times around:-6I0 J:2 Sample passed 589 next.
+Times around:-6I12 J:14 Sample passed 554 next.
+Times around:-6I8 J:10 Sample passed 557 next.
+Times around:-6I4 J:6 Sample passed 585 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):249.588470
+Done...
+Times around:-6I0 J:8 Sample passed 19414 next.
+Times around:-6I8 J:12 Sample passed 7391 next.
+Times around:-6I0 J:4 Sample passed 7254 next.
+Times around:-6I0 J:2 Sample passed 558 next.
+Times around:-6I12 J:14 Sample passed 550 next.
+Times around:-6I8 J:10 Sample passed 547 next.
+Times around:-6I4 J:6 Sample passed 568 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):227.939451
+Done...
+Times around:-6I0 J:8 Sample passed 18996 next.
+Times around:-6I0 J:4 Sample passed 6033 next.
+Times around:-6I8 J:12 Sample passed 6684 next.
+Times around:-6I12 J:14 Sample passed 555 next.
+Times around:-6I0 J:2 Sample passed 585 next.
+Times around:-6I4 J:6 Sample passed 585 next.
+Times around:-6I8 J:10 Sample passed 554 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):283.547875
+Done...
+Times around:-6I0 J:8 Sample passed 19264 next.
+Times around:-6I8 J:12 Sample passed 5948 next.
+Times around:-6I0 J:4 Sample passed 7346 next.
+Times around:-6I12 J:14 Sample passed 554 next.
+Times around:-6I8 J:10 Sample passed 548 next.
+Times around:-6I0 J:2 Sample passed 580 next.
+Times around:-6I4 J:6 Sample passed 582 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):252.641713
+Done...
+Times around:-6I0 J:8 Sample passed 20358 next.
+Times around:-6I8 J:12 Sample passed 6087 next.
+Times around:-6I0 J:4 Sample passed 5986 next.
+Times around:-6I0 J:2 Sample passed 560 next.
+Times around:-6I12 J:14 Sample passed 550 next.
+Times around:-6I8 J:10 Sample passed 555 next.
+Times around:-6I4 J:6 Sample passed 553 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):322.734239
+Done...
+Times around:-6I0 J:8 Sample passed 19339 next.
+Times around:-6I8 J:12 Sample passed 6498 next.
+Times around:-6I0 J:4 Sample passed 7113 next.
+Times around:-6I4 J:6 Sample passed 574 next.
+Times around:-6I8 J:10 Sample passed 551 next.
+Times around:-6I0 J:2 Sample passed 586 next.
+Times around:-6I12 J:14 Sample passed 550 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):258.954220
+Done...
+Times around:-6I0 J:8 Sample passed 19815 next.
+Times around:-6I0 J:4 Sample passed 6696 next.
+Times around:-6I8 J:12 Sample passed 7279 next.
+Times around:-6I12 J:14 Sample passed 550 next.
+Times around:-6I8 J:10 Sample passed 553 next.
+Times around:-6I0 J:2 Sample passed 557 next.
+Times around:-6I4 J:6 Sample passed 560 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):240.535486
+Done...
+Times around:-6I0 J:8 Sample passed 19801 next.
+Times around:-6I8 J:12 Sample passed 6451 next.
+Times around:-6I0 J:4 Sample passed 6159 next.
+Times around:-6I8 J:10 Sample passed 553 next.
+Times around:-6I0 J:2 Sample passed 578 next.
+Times around:-6I12 J:14 Sample passed 554 next.
+Times around:-6I4 J:6 Sample passed 582 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):287.208820
+Done...
+Times around:-6I0 J:8 Sample passed 9251 next.
+Times around:-6I8 J:12 Sample passed 4345 next.
+Times around:-6I0 J:4 Sample passed 5093 next.
+Times around:-6I0 J:2 Sample passed 559 next.
+Times around:-6I4 J:6 Sample passed 561 next.
+Times around:-6I12 J:14 Sample passed 581 next.
+Times around:-6I8 J:10 Sample passed 586 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):288.702310
+Done...
+Times around:-6I0 J:8 Sample passed 17469 next.
+Times around:-6I8 J:12 Sample passed 6283 next.
+Times around:-6I0 J:4 Sample passed 7597 next.
+Times around:-6I12 J:14 Sample passed 552 next.
+Times around:-6I8 J:10 Sample passed 556 next.
+Times around:-6I4 J:6 Sample passed 560 next.
+Times around:-6I0 J:2 Sample passed 547 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):255.076181
+Done...
+Times around:-6I0 J:8 Sample passed 15316 next.
+Times around:-6I8 J:12 Sample passed 5670 next.
+Times around:-6I0 J:4 Sample passed 7603 next.
+Times around:-6I12 J:14 Sample passed 548 next.
+Times around:-6I8 J:10 Sample passed 551 next.
+Times around:-6I4 J:6 Sample passed 580 next.
+Times around:-6I0 J:2 Sample passed 577 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):239.795803
+Done...
+Times around:-6I0 J:8 Sample passed 17477 next.
+Times around:-6I8 J:12 Sample passed 6011 next.
+Times around:-6I0 J:4 Sample passed 7520 next.
+Times around:-6I12 J:14 Sample passed 549 next.
+Times around:-6I8 J:10 Sample passed 552 next.
+Times around:-6I4 J:6 Sample passed 569 next.
+Times around:-6I0 J:2 Sample passed 561 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):238.771444
+Done...
+Times around:-6I0 J:8 Sample passed 19680 next.
+Times around:-6I8 J:12 Sample passed 6402 next.
+Times around:-6I0 J:4 Sample passed 6519 next.
+Times around:-6I8 J:10 Sample passed 535 next.
+Times around:-6I4 J:6 Sample passed 563 next.
+Times around:-6I0 J:2 Sample passed 549 next.
+Times around:-6I12 J:14 Sample passed 545 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):234.304773
+Done...
+Times around:-6I0 J:8 Sample passed 17069 next.
+Times around:-6I8 J:12 Sample passed 6290 next.
+Times around:-6I0 J:4 Sample passed 7270 next.
+Times around:-6I12 J:14 Sample passed 552 next.
+Times around:-6I8 J:10 Sample passed 549 next.
+Times around:-6I4 J:6 Sample passed 584 next.
+Times around:-6I0 J:2 Sample passed 587 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):217.979078
+Done...
+Times around:-6I0 J:8 Sample passed 19655 next.
+Times around:-6I0 J:4 Sample passed 6085 next.
+Times around:-6I8 J:12 Sample passed 6713 next.
+Times around:-6I12 J:14 Sample passed 555 next.
+Times around:-6I8 J:10 Sample passed 548 next.
+Times around:-6I0 J:2 Sample passed 590 next.
+Times around:-6I4 J:6 Sample passed 590 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):284.950534
+Done...
+Times around:-6I0 J:8 Sample passed 18888 next.
+Times around:-6I0 J:4 Sample passed 5978 next.
+Times around:-6I8 J:12 Sample passed 6498 next.
+Times around:-6I0 J:2 Sample passed 579 next.
+Times around:-6I12 J:14 Sample passed 552 next.
+Times around:-6I8 J:10 Sample passed 552 next.
+Times around:-6I4 J:6 Sample passed 590 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):292.775958
+Done...
+Times around:-6I0 J:8 Sample passed 15283 next.
+Times around:-6I8 J:12 Sample passed 5355 next.
+Times around:-6I0 J:4 Sample passed 6243 next.
+Times around:-6I8 J:10 Sample passed 553 next.
+Times around:-6I12 J:14 Sample passed 547 next.
+Times around:-6I4 J:6 Sample passed 579 next.
+Times around:-6I0 J:2 Sample passed 588 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I2 J:3Wed Aug  9 12:47:45 PM EDT 2023: Beginning test:Vtopology accuracy(HOT)
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:0I0 J:2 Sample passed 580 next.
+Times around:0I0 J:3 Sample passed 580 next.
+Times around:0I0 J:4 Sample passed 4483 next.
+Times around:1I0 J:5 Sample passed 4509 next.
+Times around:0I0 J:6 Sample passed 4535 next.
+Times around:0I0 J:7 Sample passed 4536 next.
+Times around:0I0 J:8 Sample passed 10181 next.
+Times around:0I0 J:9 Sample passed 10179 next.
+Times around:0I0 J:10 Sample passed 12811 next.
+Times around:0I0 J:11 Sample passed 12831 next.
+Times around:0I0 J:12 Sample passed 12962 next.
+Times around:0I0 J:13 Sample passed 12764 next.
+Times around:0I0 J:14 Sample passed 13847 next.
+Times around:0I0 J:15 Sample passed 12776 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:0I8 J:10 Sample passed 554 next.
+Times around:0I8 J:11 Sample passed 545 next.
+Times around:0I8 J:12 Sample passed 6609 next.
+Times around:0I8 J:13 Sample passed 4702 next.
+Times around:0I8 J:14 Sample passed 4706 next.
+Times around:0I8 J:15 Sample passed 4714 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:0I4 J:6 Sample passed 586 next.
+Times around:0I12 J:14 Sample passed 553 next.
+Times around:0I12 J:15 Sample passed 552 next.
+Times around:1I4 J:7 Sample passed 587 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+[                          ][                          ]
+[            ][            ][            ][            ]
+[ 0  1][ 2  3][ 4  5][ 6  7][ 8  9][10 11][12 13][14 15]
+2 4 8 
+Times around:-5I0 J:8 Sample passed 13748 next.
+Times around:-6I0 J:4 Sample passed 4995 next.
+Times around:-5I8 J:12 Sample passed 5007 next.
+Times around:-6I4 J:6 Sample passed 586 next.
+Times around:-6I0 J:2 Sample passed 567 next.
+Times around:-6I12 J:14 Sample passed 552 next.
+Times around:-6I8 J:10 Sample passed 556 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):965.905947
+Done...
+Times around:-6I0 J:8 Sample passed 13124 next.
+Times around:-6I0 J:4 Sample passed 4214 next.
+Times around:-4I8 J:12 Sample passed 4970 next.
+Times around:-6I12 J:14 Sample passed 551 next.
+Times around:-5I8 J:10 Sample passed 556 next.
+Times around:-5I0 J:2 Sample passed 600 next.
+Times around:-1I4 J:6 Sample passed 555 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):1015.913152
+Done...
+Times around:-2I0 J:8 Sample passed 14164 next.
+Times around:-6I0 J:4 Sample passed 4507 next.
+Times around:-3I8 J:12 Sample passed 4493 next.
+Times around:-6I8 J:10 Sample passed 589 next.
+Times around:-6I12 J:14 Sample passed 551 next.
+Times around:-6I0 J:2 Sample passed 586 next.
+Times around:-3I4 J:6 Sample passed 592 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):1192.046890
+Done...
+Times around:-1I0 J:8 Sample passed 12916 next.
+Times around:-6I0 J:4 Sample passed 4274 next.
+Times around:-4I8 J:12 Sample passed 4120 next.
+Times around:-6I0 J:2 Sample passed 586 next.
+Times around:-6I12 J:14 Sample passed 550 next.
+Times around:-6I8 J:10 Sample passed 549 next.
+Times around:-6I4 J:6 Sample passed 593 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):1051.013758
+Done...
+Times around:-6I0 J:8 Sample passed 9705 next.
+Times around:-6I0 J:4 Sample passed 4970 next.
+Times around:-4I8 J:12 Sample passed 4975 next.
+Times around:-6I0 J:2 Sample passed 558 next.
+Times around:-6I8 J:10 Sample passed 555 next.
+Times around:-5I12 J:14 Sample passed 552 next.
+Times around:-4I4 J:6 Sample passed 580 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):1023.992315
+Done...
+Times around:-6I0 J:8 Sample passed 12658 next.
+Times around:-6I8 J:12 Sample passed 4291 next.
+Times around:-5I0 J:4 Sample passed 5097 next.
+Times around:-6I4 J:6 Sample passed 590 next.
+Times around:-5I8 J:10 Sample passed 556 next.
+Times around:-5I12 J:14 Sample passed 555 next.
+Times around:-5I0 J:2 Sample passed 561 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):773.021469
+Done...
+Times around:0I0 J:8 Sample passed 10190 next.
+Times around:-6I0 J:4 Sample passed 4279 next.
+Times around:-6I8 J:12 Sample passed 4601 next.
+Times around:-6I12 J:14 Sample passed 553 next.
+Times around:-6I0 J:2 Sample passed 581 next.
+Times around:-6I8 J:10 Sample passed 548 next.
+Times around:-6I4 J:6 Sample passed 587 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):945.890059
+Done...
+Times around:-6I0 J:8 Sample passed 9226 next.
+Times around:-6I8 J:12 Sample passed 4395 next.
+Times around:-5I0 J:4 Sample passed 5097 next.
+Times around:-6I8 J:10 Sample passed 581 next.
+Times around:-6I0 J:2 Sample passed 585 next.
+Times around:-6I12 J:14 Sample passed 555 next.
+Times around:-6I4 J:6 Sample passed 590 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):817.067133
+Done...
+Times around:-6I0 J:8 Sample passed 9315 next.
+Times around:-5I0 J:4 Sample passed 4125 next.
+Times around:-5I8 J:12 Sample passed 4187 next.
+Times around:-6I8 J:10 Sample passed 557 next.
+Times around:-5I0 J:2 Sample passed 592 next.
+Times around:-5I4 J:6 Sample passed 584 next.
+Times around:-5I12 J:14 Sample passed 554 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):727.120924
+Done...
+Times around:-6I0 J:8 Sample passed 9229 next.
+Times around:-6I8 J:12 Sample passed 5097 next.
+Times around:-6I0 J:4 Sample passed 4346 next.
+Times around:-6I8 J:10 Sample passed 554 next.
+Times around:-6I12 J:14 Sample passed 545 next.
+Times around:-6I4 J:6 Sample passed 579 next.
+Times around:-5I0 J:2 Sample passed 577 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):794.979163
+Done...
+Times around:-6I0 J:8 Sample passed 10712 next.
+Times around:-6I0 J:4 Sample passed 4945 next.
+Times around:-6I8 J:12 Sample passed 4294 next.
+Times around:-6I8 J:10 Sample passed 554 next.
+Times around:-6I12 J:14 Sample passed 556 next.
+Times around:-6I4 J:6 Sample passed 547 next.
+Times around:-5I0 J:2 Sample passed 581 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):844.084533
+Done...
+Times around:-4I0 J:8 Sample passed 10236 next.
+Times around:-5I8 J:12 Sample passed 4502 next.
+Times around:-5I0 J:4 Sample passed 4271 next.
+Times around:-6I8 J:10 Sample passed 559 next.
+Times around:-6I0 J:2 Sample passed 584 next.
+Times around:-6I12 J:14 Sample passed 555 next.
+Times around:-4I4 J:6 Sample passed 583 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):1035.833735
+Done...
+Times around:-5I0 J:8 Sample passed 13427 next.
+Times around:-6I0 J:4 Sample passed 4720 next.
+Times around:-5I8 J:12 Sample passed 4618 next.
+Times around:-6I0 J:2 Sample passed 553 next.
+Times around:-5I12 J:14 Sample passed 556 next.
+Times around:-4I4 J:6 Sample passed 552 next.
+Times around:-4I8 J:10 Sample passed 561 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):866.051298
+Done...
+Times around:-6I0 J:8 Sample passed 13215 next.
+Times around:-5I0 J:4 Sample passed 4483 next.
+Times around:-5I8 J:12 Sample passed 4599 next.
+Times around:-6I0 J:2 Sample passed 585 next.
+Times around:-6I4 J:6 Sample passed 543 next.
+Times around:-6I8 J:10 Sample passed 555 next.
+Times around:-6I12 J:14 Sample passed 556 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):839.937965
+Done...
+Times around:-5I0 J:8 Sample passed 9359 next.
+Times around:-6I8 J:12 Sample passed 4303 next.
+Times around:-3I0 J:4 Sample passed 4670 next.
+Times around:-6I8 J:10 Sample passed 557 next.
+Times around:-6I12 J:14 Sample passed 563 next.
+Times around:-6I4 J:6 Sample passed 577 next.
+Times around:0I0 J:2 Sample passed 585 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):1180.944031
+Done...
+Times around:-6I0 J:8 Sample passed 10386 next.
+Times around:-6I8 J:12 Sample passed 4972 next.
+Times around:-1I0 J:4 Sample passed 4272 next.
+Times around:-6I4 J:6 Sample passed 581 next.
+Times around:-6I8 J:10 Sample passed 548 next.
+Times around:-5I12 J:14 Sample passed 551 next.
+Times around:-4I0 J:2 Sample passed 557 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):938.078319
+Done...
+Times around:-6I0 J:8 Sample passed 12818 next.
+Times around:-6I8 J:12 Sample passed 4124 next.
+Times around:-6I0 J:4 Sample passed 4711 next.
+Times around:-6I4 J:6 Sample passed 579 next.
+Times around:-6I8 J:10 Sample passed 584 next.
+Times around:-5I0 J:2 Sample passed 583 next.
+Times around:-5I12 J:14 Sample passed 551 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):855.929319
+Done...
+Times around:-6I0 J:8 Sample passed 10177 next.
+Times around:-5I8 J:12 Sample passed 4615 next.
+Times around:-5I0 J:4 Sample passed 5099 next.
+Times around:-6I8 J:10 Sample passed 561 next.
+Times around:-6I12 J:14 Sample passed 559 next.
+Times around:-6I0 J:2 Sample passed 560 next.
+Times around:-6I4 J:6 Sample passed 581 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):720.208312
+Done...
+Times around:-6I0 J:8 Sample passed 9437 next.
+Times around:-6I0 J:4 Sample passed 4175 next.
+Times around:-4I8 J:12 Sample passed 4955 next.
+Times around:-6I8 J:10 Sample passed 572 next.
+Times around:-6I0 J:2 Sample passed 570 next.
+Times around:-6I4 J:6 Sample passed 579 next.
+Times around:-6I12 J:14 Sample passed 548 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I14 J:15 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):777.045010
+Done...
+Times around:-6I0 J:8 Sample passed 13507 next.
+Times around:-5I0 J:4 Sample passed 4621 next.
+Times around:-5I8 J:12 Sample passed 4699 next.
+Times around:-6I0 J:2 Sample passed 596 next.
+Times around:-6I12 J:14 Sample passed 549 next.
+Times around:-2I8 J:10 Sample passed 554 next.
+Times around:-4I4 J:6 Sample passed 589 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I14 J:15 Wed Aug  9 12:49:50 PM EDT 2023: VM Migrated
+Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):897.026580
+Done...
+Times around:-6I0 J:8 Sample passed 10788 next.
+Times around:-6I8 J:12 Sample passed 4372 next.
+Times around:-6I0 J:4 Sample passed 10814 next.
+TOPOLOGY FAILED.TOOK (MILLISECONDS):78.064431
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:0I0 J:2 Sample passed 5095 next.
+Times around:0I0 J:3 Sample passed 5093 next.
+Times around:0I0 J:4 Sample passed 13121 next.
+Times around:0I0 J:5 Sample passed 13241 next.
+Times around:0I0 J:6 Sample passed 12882 next.
+Times around:0I0 J:7 Sample passed 13034 next.
+Times around:0I0 J:8 Sample passed 13128 next.
+Times around:0I0 J:9 Sample passed 13197 next.
+Times around:0I0 J:10 Sample passed 12861 next.
+Times around:0I0 J:11 Sample passed 13019 next.
+Times around:0I0 J:12 Sample passed 5093 next.
+Times around:0I0 J:13 Sample passed 5093 next.
+Times around:0I0 J:14 Sample passed 587 next.
+Times around:0I0 J:15 Sample passed 14369 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:0I4 J:6 Sample passed 4380 next.
+Times around:0I4 J:7 Sample passed 4348 next.
+Times around:0I4 J:8 Sample passed 554 next.
+Times around:0I4 J:9 Sample passed 553 next.
+Times around:0I4 J:10 Sample passed 4398 next.
+Times around:0I4 J:11 Sample passed 4359 next.
+Times around:0I4 J:15 Sample passed 9367 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:0I2 J:12 Sample passed 558 next.
+Times around:0I2 J:13 Sample passed 579 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:0I6 J:10 Sample passed 545 next.
+Times around:0I6 J:11 Sample passed 560 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+[                       ][                          ][  ]
+[         ][            ][            ][            ][  ]
+[ 0  1][14][ 2  3][12 13][ 4  5][ 8  9][ 6  7][10 11][15]
+3 5 9 
+REPROBING.TOOK (MILLISECONDS):2143.127224
+Done...
+Times around:-5I0 J:4 Sample passed 11556 next.
+Times around:0I0 J:4 Sample passed 13503 next.
+Times around:0I4 J:15 Sample passed 13440 next.
+Times around:-6I4 J:6 Sample passed 4709 next.
+Times around:-2I0 J:2 Sample passed 4109 next.
+Times around:-6I4 J:8 Sample passed 558 next.
+Times around:-6I0 J:14 Sample passed 555 next.
+Times around:-5I6 J:10 Sample passed 563 next.
+Times around:-6I2 J:12 Sample passed 547 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):864.047314
+Done...
+Times around:-6I0 J:4 Sample passed 10362 next.
+Times around:0I0 J:4 Sample passed 12783 next.
+Times around:0I4 J:15 Sample passed 13223 next.
+Times around:-6I4 J:6 Sample passed 4616 next.
+Times around:-6I0 J:2 Sample passed 5098 next.
+Times around:-6I4 J:8 Sample passed 549 next.
+Times around:-6I0 J:14 Sample passed 558 next.
+Times around:-6I2 J:12 Sample passed 552 next.
+Times around:-4I6 J:10 Sample passed 557 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):771.087771
+Done...
+Times around:-1I0 J:4 Sample passed 12615 next.
+Times around:0I0 J:4 Sample passed 10659 next.
+Times around:3I4 J:15 Sample passed 10648 next.
+Times around:-6I0 J:2 Sample passed 5093 next.
+Times around:-3I4 J:6 Sample passed 4792 next.
+Times around:-6I4 J:8 Sample passed 553 next.
+Times around:-6I0 J:14 Sample passed 549 next.
+Times around:-6I2 J:12 Sample passed 550 next.
+Times around:-5I6 J:10 Sample passed 554 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):1328.877315
+Done...
+Times around:-6I0 J:4 Sample passed 13364 next.
+Times around:0I0 J:4 Sample passed 12792 next.
+Times around:0I4 J:15 Sample passed 12759 next.
+Times around:-6I4 J:6 Sample passed 4678 next.
+Times around:-6I0 J:2 Sample passed 4313 next.
+Times around:-6I0 J:14 Sample passed 553 next.
+Times around:-6I2 J:12 Sample passed 551 next.
+Times around:-6I4 J:8 Sample passed 546 next.
+Times around:-5I6 J:10 Sample passed 557 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):815.963874
+Done...
+Times around:-3I0 J:4 Sample passed 11546 next.
+Times around:0I0 J:4 Sample passed 9298 next.
+Times around:0I4 J:15 Sample passed 9301 next.
+Times around:-6I4 J:6 Sample passed 4689 next.
+Times around:-6I0 J:2 Sample passed 4315 next.
+Times around:-6I4 J:8 Sample passed 558 next.
+Times around:-6I6 J:10 Sample passed 552 next.
+Times around:-6I2 J:12 Sample passed 551 next.
+Times around:-6I0 J:14 Sample passed 554 next.
+Times around:5I0 J:1 Sample passed -1 next.
+Times around:5I4 J:5 Sample passed -1 next.
+Times around:5I2 J:3 Sample passed -1 next.
+Times around:5I6 J:7 Sample passed -1 next.
+Times around:5I8 J:9 Sample passed -1 next.
+Times around:5I10 J:11 Sample passed -1 next.
+Times around:5I12 J:13 Sample passed -1 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):1040.052372
+Done...
+Times around:-6I0 J:4 Sample passed 9867 next.
+Times around:0I0 J:4 Sample passed 10027 next.
+Times around:0I4 J:15 Sample passed 10190 next.
+Times around:-6I0 J:2 Sample passed 4638 next.
+Times around:-6I4 J:6 Sample passed 4415 next.
+Times around:-6I6 J:10 Sample passed 605 next.
+Times around:-6I4 J:8 Sample passed 599 next.
+Times around:-6I2 J:12 Sample passed 4328 next.
+Times around:-6I0 J:14 Sample passed 4809 next.
+TOPOLOGY FAILED.TOOK (MILLISECONDS):190.972726
+Times around:-6I0 J:1 Sample passed 4159 next.
+Times around:0I0 J:3 Sample passed 4420 next.
+Times around:0I0 J:4 Sample passed 9300 next.
+Times around:0I0 J:5 Sample passed 9396 next.
+Times around:0I0 J:6 Sample passed 9394 next.
+Times around:0I0 J:7 Sample passed 9604 next.
+Times around:0I0 J:8 Sample passed 9311 next.
+Times around:0I0 J:9 Sample passed 9392 next.
+Times around:0I0 J:10 Sample passed 9400 next.
+Times around:0I0 J:11 Sample passed 9572 next.
+Times around:0I0 J:12 Sample passed 4158 next.
+Times around:0I0 J:13 Sample passed 4379 next.
+Times around:0I0 J:14 Sample passed 4407 next.
+Times around:0I0 J:15 Sample passed 4593 next.
+Times around:0I4 J:5 Sample passed 4394 next.
+Times around:0I4 J:7 Sample passed 4610 next.
+Times around:0I4 J:8 Sample passed 585 next.
+Times around:1I4 J:9 Sample passed 4384 next.
+Times around:0I4 J:10 Sample passed 4455 next.
+Times around:0I4 J:11 Sample passed 4590 next.
+Times around:0I5 J:6 Sample passed 4761 next.
+Times around:0I1 J:2 Sample passed 4329 next.
+Times around:0I1 J:3 Sample passed 4384 next.
+Times around:0I5 J:7 Sample passed 4875 next.
+Times around:0I5 J:9 Sample passed 603 next.
+Times around:0I1 J:12 Sample passed 592 next.
+Times around:0I5 J:10 Sample passed 4762 next.
+Times around:0I5 J:11 Sample passed 4877 next.
+Times around:0I1 J:13 Sample passed 4322 next.
+Times around:0I6 J:7 Sample passed 4510 next.
+Times around:0I6 J:10 Sample passed 603 next.
+Times around:0I1 J:14 Sample passed 4372 next.
+Times around:1I6 J:11 Sample passed 4497 next.
+Times around:0I1 J:15 Sample passed 4533 next.
+Times around:0I7 J:11 Sample passed 584 next.
+Times around:0I2 J:3 Sample passed 4653 next.
+Times around:0I2 JWed Aug  9 12:50:24 PM EDT 2023: VM Load balanced
+:13 Sample passed 596 next.
+Times around:0I2 J:14 Sample passed 4550 next.
+Times around:0I2 J:15 Sample passed 4714 next.
+Times around:0I3 J:14 Sample passed 603 next.
+Times around:0I3 J:15 Sample passed 4413 next.
+[                              ][                              ]
+[  ][      ][      ][      ][  ][      ][      ][      ][      ]
+[ 0][ 1][12][ 2][13][ 3][14][15][ 4][ 8][ 5][ 9][ 6][10][ 7][11]
+2 9 16 
+REPROBING.TOOK (MILLISECONDS):719.050672
+Done...
+Times around:-6I0 J:4 Sample passed 9262 next.
+Times around:-6I4 J:5 Sample passed 4390 next.
+Times around:-6I0 J:1 Sample passed 5093 next.
+Times around:-6I4 J:6 Sample passed 4631 next.
+Times around:-6I0 J:2 Sample passed 4806 next.
+Times around:-6I4 J:7 Sample passed 4427 next.
+Times around:-6I5 J:6 Sample passed 4390 next.
+Times around:-6I0 J:3 Sample passed 4710 next.
+Times around:-6I5 J:7 Sample passed 4627 next.
+Times around:-6I0 J:15 Sample passed 4615 next.
+Times around:-6I6 J:7 Sample passed 4448 next.
+Times around:-6I1 J:2 Sample passed 4468 next.
+Times around:1I1 J:3 Sample passed 4571 next.
+Times around:-6I1 J:15 Sample passed 4639 next.
+Times around:-6I2 J:3 Sample passed 4509 next.
+Times around:-6I2 J:15 Sample passed 4686 next.
+Times around:-6I3 J:15 Sample passed 4753 next.
+Times around:-6I3 J:14 Sample passed 599 next.
+Times around:-6I7 J:11 Sample passed 591 next.
+Times around:-6I4 J:8 Sample passed 590 next.
+Times around:-6I6 J:10 Sample passed 580 next.
+Times around:-6I2 J:13 Sample passed 592 next.
+Times around:-6I5 J:9 Sample passed 583 next.
+Times around:-6I1 J:12 Sample passed 599 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):441.652392
+Done...
+Times around:-6I0 J:4 Sample passed 9635 next.
+Times around:-6I4 J:5 Sample passed 4670 next.
+Times around:-6I0 J:1 Sample passed 4398 next.
+Times around:-6I4 J:6 Sample passed 4665 next.
+Times around:-6I4 J:7 Sample passed 4447 next.
+Times around:-6I0 J:2 Sample passed 4432 next.
+Times around:-6I0 J:3 Sample passed 4516 next.
+Times around:-6I0 J:15 Sample passed 4725 next.
+Times around:-6I5 J:6 Sample passed 4609 next.
+Times around:-6I1 J:2 Sample passed 4765 next.
+Times around:-5I5 J:7 Sample passed 4369 next.
+Times around:-6I1 J:3 Sample passed 4680 next.
+Times around:-6I6 J:7 Sample passed 4498 next.
+Times around:-6I1 J:15 Sample passed 4566 next.
+Times around:-6I2 J:3 Sample passed 4533 next.
+Times around:-6I2 J:15 Sample passed 4691 next.
+Times around:-6I3 J:15 Sample passed 4399 next.
+Times around:-6I4 J:8 Sample passed 586 next.
+Times around:-6I7 J:11 Sample passed 578 next.
+Times around:-6I1 J:12 Sample passed 601 next.
+Times around:-6I5 J:9 Sample passed 589 next.
+Times around:-6I3 J:14 Sample passed 601 next.
+Times around:-6I6 J:10 Sample passed 588 next.
+Times around:-6I2 J:13 Sample passed 600 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):241.022926
+Done...
+Times around:-6I0 J:4 Sample passed 9268 next.
+Times around:-6I0 J:1 Sample passed 4865 next.
+Times around:-4I4 J:5 Sample passed 4402 next.
+Times around:-5I0 J:2 Sample passed 4851 next.
+Times around:-6I4 J:6 Sample passed 4427 next.
+Times around:-6I4 J:7 Sample passed 4602 next.
+Times around:-6I0 J:3 Sample passed 4737 next.
+Times around:-6I5 J:6 Sample passed 4601 next.
+Times around:-6I0 J:15 Sample passed 4657 next.
+Times around:-6I5 J:7 Sample passed 4746 next.
+Times around:-6I6 J:7 Sample passed 4509 next.
+Times around:-5I1 J:2 Sample passed 4390 next.
+Times around:-6I1 J:3 Sample passed 4447 next.
+Times around:-6I1 J:15 Sample passed 4612 next.
+Times around:-6I2 J:3 Sample passed 4704 next.
+Times around:-6I2 J:15 Sample passed 4572 next.
+Times around:-6I3 J:15 Sample passed 5014 next.
+Times around:-6I2 J:13 Sample passed 617 next.
+Times around:-6I3 J:14 Sample passed 596 next.
+Times around:-6I6 J:10 Sample passed 589 next.
+Times around:-6I5 J:9 Sample passed 584 next.
+Times around:-6I4 J:8 Sample passed 587 next.
+Times around:-6I7 J:11 Sample passed 582 next.
+Times around:-6I1 J:12 Sample passed 603 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):328.795955
+Done...
+Times around:-6I0 J:4 Sample passed 13069 next.
+Times around:-6I0 J:1Wed Aug  9 12:50:55 PM EDT 2023: VM Overhead test
+ Sample passed 4636 next.
+Times around:-6I4 J:5 Sample passed 4490 next.
+Times around:-6I0 J:2 Sample passed 4529 next.
+Times around:-6I0 J:3 Sample passed 4648 next.
+Times around:-5I4 J:6 Sample passed 4396 next.
+Times around:-6I0 J:15 Sample passed 4682 next.
+Times around:-6I4 J:7 Sample passed 4571 next.
+Times around:-6I1 J:2 Sample passed 4447 next.
+Times around:-6I5 J:6 Sample passed 4742 next.
+Times around:-6I1 J:3 Sample passed 4572 next.
+Times around:-6I5 J:7 Sample passed 4893 next.
+Times around:-6I1 J:15 Sample passed 4571 next.
+Times around:-6I6 J:7 Sample passed 4497 next.
+Times around:-6I2 J:3 Sample passed 4536 next.
+Times around:-6I2 J:15 Sample passed 4500 next.
+Times around:-6I3 J:15 Sample passed 4428 next.
+Times around:-6I3 J:14 Sample passed 605 next.
+Times around:-6I4 J:8 Sample passed 577 next.
+Times around:-6I5 J:9 Sample passed 576 next.
+Times around:-6I7 J:11 Sample passed 585 next.
+Times around:-6I6 J:10 Sample passed 578 next.
+Times around:-6I2 J:13 Sample passed 600 next.
+Times around:-6I1 J:12 Sample passed 596 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):273.186236
+Done...
+Times around:-6I0 J:4 Sample passed 12707 next.
+Times around:-6I0 J:1 Sample passed 5099 next.
+Times around:-6I4 J:5 Sample passed 4393 next.
+Times around:-6I4 J:6 Sample passed 4446 next.
+Times around:-6I0 J:2 Sample passed 4844 next.
+Times around:-6I4 J:7 Sample passed 4596 next.
+Times around:-6I0 J:3 Sample passed 4722 next.
+Times around:-6I5 J:6 Sample passed 4428 next.
+Times around:-6I0 J:15 Sample passed 4752 next.
+Times around:-6I5 J:7 Sample passed 4518 next.
+Times around:-6I1 J:2 Sample passed 4631 next.
+Times around:-6I1 J:3 Sample passed 4442 next.
+Times around:-6I6 J:7 Sample passed 4545 next.
+Times around:-6I1 J:15 Sample passed 4686 next.
+Times around:-6I2 J:3 Sample passed 4524 next.
+Times around:-6I2 J:15 Sample passed 4688 next.
+Times around:-6I3 J:15 Sample passed 4641 next.
+Times around:-6I4 J:8 Sample passed 585 next.
+Times around:-6I3 J:14 Sample passed 609 next.
+Times around:-6I2 J:13 Sample passed 611 next.
+Times around:-6I1 J:12 Sample passed 604 next.
+Times around:-6I5 J:9 Sample passed 589 next.
+Times around:-6I7 J:11 Sample passed 586 next.
+Times around:-6I6 J:10 Sample passed 588 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):264.089343
+Done...
+Times around:-5I0 J:4 Sample passed 10538 next.
+Times around:-6I0 J:1 Sample passed 4874 next.
+Times around:-6I0 J:2 Sample passed 4655 next.
+Times around:-6I4 J:5 Sample passed 4775 next.
+Times around:-6I4 J:6 Sample passed 4623 next.
+Times around:-6I0 J:3 Sample passed 4820 next.
+Times around:-6I4 J:7 Sample passed 4490 next.
+Times around:-6I0 J:15 Sample passed 4787 next.
+Times around:-6I1 J:2 Sample passed 4435 next.
+Times around:-6I5 J:6 Sample passed 4435 next.
+Times around:-6I1 J:3 Sample passed 4567 next.
+Times around:-6I5 J:7 Sample passed 4452 next.
+Times around:-6I1 J:15 Sample passed 4736 next.
+Times around:-6I6 J:7 Sample passed 4319 next.
+Times around:-6I2 J:3 Sample passed 4408 next.
+Times around:-6I2 J:15 Sample passed 4633 next.
+Times around:-6I3 J:15 Sample passed 4522 next.
+Times around:-6I6 J:10 Sample passed 584 next.
+Times around:-6I4 J:8 Sample passed 585 next.
+Times around:-6I2 J:13 Sample passed 601 next.
+Times around:-6I1 J:12 Sample passed 602 next.
+Times around:-6I5 J:9 Sample passed 577 next.
+Times around:-6I7 J:11 Sample passed 583 next.
+Times around:-6I3 J:14 Sample passed 592 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):283.241847
+Done...
+Times around:-6I0 J:4 Sample passed 10545 next.
+Times around:-6I4 J:5 Sample passed 4603 next.
+Times around:-6I0 J:1 Sample passed 4652 next.
+Times around:-6I4 J:6 Sample passed 4585 next.
+Times around:-6I0 J:2 Sample passed 4568 next.
+Times around:-6I4 J:7 Sample passed 4749 next.
+Times around:-6I0 J:3 Sample passed 4673 next.
+Times around:-6I0 J:15 Sample passed 4681 next.
+Times around:-6I5 J:6 Sample passed 4532 next.
+Times around:-6I1 J:2 Sample passed 4460 next.
+Times around:-6I1 J:3 Sample passed 4563 next.
+Times around:-6I5 J:7 Sample passed 4254 next.
+Times around:-6I1 J:15 Sample passed 4724 next.
+Times around:-6I6 J:7 Sample passed 4779 next.
+Times around:-6I2 J:3 Sample passed 4577 next.
+Times around:-6I2 J:15 Sample passed 4757 next.
+Times around:-6I3 J:15 Sample passed 4771 next.
+Times around:-6I2 J:13 Sample passed 612 next.
+Times around:-6I4 J:8 Sample passed 585 next.
+Times around:-6I7 J:11 Sample passed 589 next.
+Times around:-6I5 J:9 Sample passed 570 next.
+Times around:-6I3 J:14 Sample passed 595 next.
+Times around:-6I6 J:10 Sample passed 584 next.
+Times around:-6I1 J:12 Sample passed 601 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):229.271203
+Done...
+Times around:-6I0 J:4 Sample passed 9303 next.
+Times around:-6I4 J:5 Sample passed 4711 next.
+Times around:-6I0 J:1 Sample passed 4567 next.
+Times around:-6I4 J:6 Sample passed 4536 next.
+Times around:-6I0 J:2 Sample passed 4601 next.
+Times around:-6I0 J:3 Sample passed 4464 next.
+Times around:-6I4 J:7 Sample passed 4431 next.
+Times around:-6I0 J:15 Sample passed 4679 next.
+Times around:-6I5 J:6 Sample passed 4423 next.
+Times around:-6I1 J:2 Sample passed 4517 next.
+Times around:-6I5 J:7 Sample passed 4427 next.
+Times around:-6I1 J:3 Sample passed 4346 next.
+Times around:-6I6 J:7 Sample passed 4324 next.
+Times around:-6I1 J:15 Sample passed 4589 next.
+Times around:-6I2 J:3 Sample passed 4465 next.
+Times around:-6I2 J:15 Sample passed 4349 next.
+Times around:-6I3 J:15 Sample passed 4762 next.
+Times around:-6I3 J:14 Sample passed 610 next.
+Times around:-6I1 J:12 Sample passed 598 next.
+Times around:-6I7 J:11 Sample passed 586 next.
+Times around:-6I4 J:8 Sample passed 586 next.
+Times around:-6I5 J:9 Sample passed 581 next.
+Times around:-6I6 J:10 Sample passed 582 next.
+Times around:-6I2 J:13 Sample passed 602 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):298.073429
+Done...
+Times around:-6I0 J:4 Sample passed 10076 next.
+Times around:-6I4 J:5 Sample passed 4386 next.
+Times around:-6I0 J:1 Sample passed 4632 next.
+Times around:-6I4 J:6 Sample passed 4612 next.
+Times around:-6I0 J:2 Sample passed 4569 next.
+Times around:-6I4 J:7 Sample passed 4421 next.
+Times around:-6I5 J:6 Sample passed 4435 next.
+Times around:-5I0 J:3 Sample passed 4424 next.
+Times around:-6I5 J:7 Sample passed 4438 next.
+Times around:-6I0 J:15 Sample passed 4669 next.
+Times around:-6I6 J:7 Sample passed 4549 next.
+Times around:-6I1 J:2 Sample passed 4812 next.
+Times around:-6I1 J:3 Sample passed 4703 next.
+Times around:-6I1 J:15 Sample passed 4677 next.
+Times around:-6I2 J:3 Sample passed 4577 next.
+Times around:-6I2 J:15 Sample passed 4750 next.
+Times around:-6I3 J:15 Sample passed 4887 next.
+Times around:-6I3 J:14 Sample passed 598 next.
+Times around:-6I5 J:9 Sample passed 588 next.
+Times around:-6I6 J:10 Sample passed 585 next.
+Times around:-6I2 J:13 Sample passed 606 next.
+Times around:-6I4 J:8 Sample passed 585 next.
+Times around:-6I1 J:12 Sample passed 595 next.
+Times around:-6I7 J:11 Sample passed 586 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):251.077886
+Done...
+Times around:-6I0 J:4 Sample passed 9855 next.
+Times around:-6I4 J:5 Sample passed 4400 next.
+Times around:-6I0 J:1 Sample passed 4269 next.
+Times around:-6I0 J:2 Sample passed 4856 next.
+Times around:-6I0 J:3 Sample passed 4727 next.
+Times around:-6I4 J:6 Sample passed 4476 next.
+Times around:-6I0 J:15 Sample passed 4728 next.
+Times around:-6I4 J:7 Sample passed 4488 next.
+Times around:-6I1 J:2 Sample passed 4559 next.
+Times around:-6I5 J:6 Sample passed 4492 next.
+Times around:-6I1 J:3 Sample passed 4714 next.
+Times around:-6I5 J:7 Sample passed 4678 next.
+Times around:-6I1 J:15 Sample passed 4647 next.
+Times around:-6I6 J:7 Sample passed 4323 next.
+Times around:-6I2 J:3 Sample passed 4402 next.
+Times around:-5I2 J:15 Sample passed 4713 next.
+Times around:-5I3 J:15 Sample passed 4576 next.
+Times around:-6I4 J:8 Sample passed 580 next.
+Times around:-6I1 J:12 Sample passed 607 next.
+Times around:-6I5 J:9 Sample passed 585 next.
+Times around:-6I7 J:11 Sample passed 578 next.
+Times around:-6I3 J:14 Sample passed 616 next.
+Times around:-6I6 J:10 Sample passed 588 next.
+Times around:-5I2 J:13 Sample passed 606 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):292.487777
+Done...
+Times around:0I0 J:4 Sample passed 12346 next.
+Times around:-6I4 J:5 Sample passed 4469 next.
+Times around:-5I0 J:1 Sample passed 4839 next.
+Times around:-6I4 J:6 Sample passed 4539 next.
+Times around:-6I0 J:2 Sample passed 4517 next.
+Times around:-6I4 J:7 Sample passed 4552 next.
+Times around:-6I0 J:3 Sample passed 4648 next.
+Times around:-6I0 J:15 Sample passed 4678 next.
+Times around:-6I5 J:6 Sample passed 4422 next.
+Times around:-6I1 J:2 Sample passed 4563 next.
+Times around:-6I5 J:7 Sample passed 4514 next.
+Times around:-6I1 J:3 Sample passed 4712 next.
+Times around:-6I6 J:7 Sample passed 4709 next.
+Times around:-6I1 J:15 Sample passed 4614 next.
+Times around:-6I2 J:3 Sample passed 4569 next.
+Times around:-3I2 J:15 Sample passed 4759 next.
+Times around:-6I3 J:15 Sample passed 4327 next.
+Times around:-6I6 J:10 Sample passed 582 next.
+Times around:-6I3 J:14 Sample passed 610 next.
+Times around:-6I7 J:11 Sample passed 586 next.
+Times around:-6I4 J:8 Sample passed 586 next.
+Times around:-6I1 J:12 Sample passed 603 next.
+Times around:-6I2 J:13 Sample passed 602 next.
+Times around:-6I5 J:9 Sample passed 585 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):372.034243
+Done...
+Times around:-6I0 J:4 Sample passed 12540 next.
+Times around:-6I4 J:5 Sample passed 4713 next.
+Times around:-6I0 J:1 Sample passed 4163 next.
+Times around:-6I4 J:6 Sample passed 4542 next.
+Times around:-6I0 J:2 Sample passed 4371 next.
+Times around:-6I4 J:7 Sample passed 4771 next.
+Times around:-6I0 J:3 Sample passed 4434 next.
+Times around:-6I0 J:15 Sample passed 4597 next.
+Times around:-5I5 J:6 Sample passed 4499 next.
+Times around:-6I1 J:2 Sample passed 4562 next.
+Times around:-6I1 J:3 Sample passed 4722 next.
+Times around:-6I5 J:7 Sample passed 4666 next.
+Times around:-6I1 J:15 Sample passed 4669 next.
+Times around:-6I2 J:3 Sample passed 4508 next.
+Times around:-6I6 J:7 Sample passed 4459 next.
+Times around:-6I2 J:15 Sample passed 4433 next.
+Times around:-6I3 J:15 Sample passed 4994 next.
+Times around:-6I5 J:9 Sample passed 583 next.
+Times around:-6I1 J:12 Sample passed 595 next.
+Times around:-6I7 J:11 Sample passed 585 next.
+Times around:-6I3 J:14 Sample passed 600 next.
+Times around:-6I2 J:13 Sample passed 606 next.
+Times around:-6I4 J:8 Sample passed 589 next.
+Times around:-6I6 J:10 Sample passed 579 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):259.954142
+Done...
+Times around:-6I0 J:4 Sample passed 10629 next.
+Times around:-6I4 J:5 Sample passed 4491 next.
+Times around:-6I0 J:1 Sample passed 4633 next.
+Times around:-6I0 J:2 Sample passed 4544 next.
+Times around:-6I4 J:6 Sample passed 4394 next.
+Times around:-6I0 J:3 Sample passed 4417 next.
+Times around:-6I4 J:7 Sample passed 4590 next.
+Times around:-6I0 J:15 Sample passed 4677 next.
+Times around:-6I5 J:6 Sample passed 4587 next.
+Times around:-6I1 J:2 Sample passed 5042 next.
+Times around:-6I5 J:7 Sample passed 4441 next.
+Times around:-6I6 J:7 Sample passed 4557 next.
+Times around:-6I1 J:3 Sample passed 4722 next.
+Times around:-6I1 J:15 Sample passed 4756 next.
+Times around:-6I2 J:3 Sample passed 4459 next.
+Times around:-6I2 J:15 Sample passed 4666 next.
+Times around:-6I3 J:15 Sample passed 4504 next.
+Times around:-6I2 J:13 Sample passed 590 next.
+Times around:-6I4 J:8 Sample passed 583 next.
+Times around:-6I7 J:11 Sample passed 584 next.
+Times around:-6I5 J:9 Sample passed 585 next.
+Times around:-6I6 J:10 Sample passed 587 next.
+Times around:-6I3 J:14 Sample passed 603 next.
+Times around:-6I1 J:12 Sample passed 584 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):282.773595
+Done...
+Times around:-6I0 J:4 Sample passed 10246 next.
+Times around:-6I4 J:5 Sample passed 4464 next.
+Times around:-6I0 J:1 Sample passed 5093 next.
+Times around:-6I4 J:6 Sample passed 4517 next.
+Times around:-6I0 J:2 Sample passed 4800 next.
+Times around:-6I0 J:3 Sample passed 4710 next.
+Times around:-6I4 J:7 Sample passed 4550 next.
+Times around:-6I0 J:15 Sample passed 4597 next.
+Times around:-6I5 J:6 Sample passed 4715 next.
+Times around:-6I1 J:2 Sample passed 4511 next.
+Times around:-6I5 J:7 Sample passed 4893 next.
+Times around:-6I1 J:3 Sample passed 4347 next.
+Times around:-6I6 J:7 Sample passed 4808 next.
+Times around:-6I1 J:15 Sample passed 4593 next.
+Times around:-6I2 J:3 Sample passed 4585 next.
+Times around:-6I2 J:15 Sample passed 4736 next.
+Times around:-6I3 J:15 Sample passed 4744 next.
+Times around:-6I7 J:11 Sample passed 585 next.
+Times around:-6I4 J:8 Sample passed 582 next.
+Times around:-6I6 J:10 Sample passed 579 next.
+Times around:-6I3 J:14 Sample passed 590 next.
+Times around:-6I2 J:13 Sample passed 595 next.
+Times around:-6I1 J:12 Sample passed 601 next.
+Times around:-6I5 J:9 Sample passed 579 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):274.911313
+Done...
+Times around:-6I0 J:4 Sample passed 10989 next.
+Times around:-6I4 J:5 Sample passed 4345 next.
+Times around:-6I0 J:1 Sample passed 5093 next.
+Times around:-6I4 J:6 Sample passed 4312 next.
+Times around:-6I0 J:2 Sample passed 4799 next.
+Times around:-6I0 J:3 Sample passed 4708 next.
+Times around:-6I4 J:7 Sample passed 4446 next.
+Times around:-6I0 J:15 Sample passed 4584 next.
+Times around:-6I5 J:6 Sample passed 4541 next.
+Times around:-6I5 J:7 Sample passed 4740 next.
+Times around:-6I1 J:2 Sample passed 4468 next.
+Times around:-6I6 J:7 Sample passed 4386 next.
+Times around:-6I1 J:3 Sample passed 4558 next.
+Times around:-6I1 J:15 Sample passed 4627 next.
+Times around:-6I2 J:3 Sample passed 4514 next.
+Times around:-6I2 J:15 Sample passed 4498 next.
+Times around:-6I3 J:15 Sample passed 4541 next.
+Times around:-6I7 J:11 Sample passed 587 next.
+Times around:-6I5 J:9 Sample passed 581 next.
+Times around:-6I3 J:14 Sample passed 605 next.
+Times around:-6I4 J:8 Sample passed 581 next.
+Times around:-6I2 J:13 Sample passed 604 next.
+Times around:-6I6 J:10 Sample passed 582 next.
+Times around:-6I1 J:12 Sample passed 601 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):262.889656
+Done...
+Times around:-6I0 J:4 Sample passed 11464 next.
+Times around:-6I4 J:5 Sample passed 4590 next.
+Times around:-6I0 J:1 Sample passed 4569 next.
+Times around:-6I4 J:6 Sample passed 4564 next.
+Times around:-6I0 J:2 Sample passed 4583 next.
+Times around:-6I4 J:7 Sample passed 4748 next.
+Times around:-6I0 J:3 Sample passed 4435 next.
+Times around:-6I5 J:6 Sample passed 4417 next.
+Times around:-6I0 J:15 Sample passed 4659 next.
+Times around:-6I5 J:7 Sample passed 4523 next.
+Times around:-6I1 J:2 Sample passed 4424 next.
+Times around:-6I1 J:3 Sample passed 4492 next.
+Times around:-6I6 J:7 Sample passed 4543 next.
+Times around:-6I1 J:15 Sample passed 4698 next.
+Times around:-6I2 J:3 Sample passed 4698 next.
+Times around:-6I2 J:15 Sample passed 4570 next.
+Times around:-6I3 J:15 Sample passed 4756 next.
+Times around:-6I5 J:9 Sample passed 570 next.
+Times around:-6I4 J:8 Sample passed 587 next.
+Times around:-6I2 J:13 Sample passed 609 next.
+Times around:-6I1 J:12 Sample passed 600 next.
+Times around:-6I6 J:10 Sample passed 585 next.
+Times around:-6I7 J:11 Sample passed 584 next.
+Times around:-6I3 J:14 Sample passed 617 next.
+TOPOLOGY VERIFIED.TOOK (MILLISECONDS):266.918612
+Done...
+Times around:-6I0 J:4 Sample passed 10188 next.
+Times around:-6I4 J:5 Sample passed 4371 next.
+Times around:-6I0 J:1 Sample passed 5094 next.
+Times around:-6I4 J:6 Sample passed 4606 next.
+Times around:-6I0 J:2 Sample passed 4840 next.
+Times around:-6I0 J:3 Sample passed 4726 next.
+Times around:-6I4 J:7 Sample passed 4426 next.
+Times around:-6I0 J:15 Sample passed 4687 next.
+Times around:-6I5 J:6 Sample passed 4550 next.
+Times around:-6I1 J:2 Sample passed 4768 next.
+Times around:-6I5 J:7 Sample passed 4306 next.
+Times around:-6I6 J:7 Sample passed 4542 next.
+Times around:-6I1 J:3 Sample passed 4683 next.
+Times around:-6I1 J:15 Sample passed 4568 next.
+Times around:-6I2 J:3 Sample passed 4405 next.
+Times around:-6I2 J:15 Sample passed 4357 next.
+Times around:-6I3 J:15 Sample passed 4755 next.
+Times around:-6I4 J:8 Sample passed 587 next.
+Times around:-6I1 J:12 Sample passed 602 next.
+Times around:-6I5 J:9 Sample passed 586 next.
+Times around:-6I2 J:13 Sample passed 606 next.
+Times around:-6I6 J:10
