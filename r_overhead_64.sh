@@ -11,7 +11,7 @@ for ((vcpu_num=0; vcpu_num < $VCPUS; vcpu_num++)); do
     else
         cpu_num=$((vcpu_num / 2 + 80))
     fi
-    echo "virsh vcpupin $VM_NAME $vcpu_num $cpu_num"
+    virsh vcpupin $VM_NAME $vcpu_num $cpu_num
 done
 
 ssh -T ubuntu@e-vm3 "sudo killall sysbench";
