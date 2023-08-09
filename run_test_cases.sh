@@ -46,7 +46,10 @@ virsh vcpupin $COMPETITOR_VM 13 21
 virsh vcpupin $COMPETITOR_VM 14 101
 virsh vcpupin $COMPETITOR_VM 15 101
 
-
+ssh -T ubuntu@e-vm1 "sudo killall a.out";
+ssh -T ubuntu@e-vm1 "sudo killall sysbench";
+ssh -T ubuntu@e-vm3 "sudo killall a.out";
+ssh -T ubuntu@e-vm3 "sudo killall sysbench";
 output_title="topology_test$(date +%d%H%M).txt"
 echo "vCPU pinning completed successfully."
 echo "Beginning Accuracy test(COLD)."
@@ -60,75 +63,75 @@ ssh -T ubuntu@e-vm1 "nohup sudo sysbench --threads=16 --time=100000 cpu run " &
 ssh -T ubuntu@e-vm1 "output_file=$output_title; echo \"\$(date): Beginning test:Vtopology accuracy(HOT)\" >> \"\$output_file\";nohup sudo $VTOP_CMD >> \"\$output_file\" 2>&1 &"
 sleep 60
 echo "Beginning Total Migration Test."
-virsh vcpupin $VM_NAME $0 $40
-virsh vcpupin $VM_NAME $1 $40
-virsh vcpupin $VM_NAME $2 $41
-virsh vcpupin $VM_NAME $3 $41
-virsh vcpupin $VM_NAME $4 $61
-virsh vcpupin $VM_NAME $5 $61
-virsh vcpupin $VM_NAME $6 $62
-virsh vcpupin $VM_NAME $7 $62
-virsh vcpupin $VM_NAME $8 $141
-virsh vcpupin $VM_NAME $9 $141
-virsh vcpupin $VM_NAME $10 $142
-virsh vcpupin $VM_NAME $11 $142
-virsh vcpupin $VM_NAME $12 $121
-virsh vcpupin $VM_NAME $13 $121
-virsh vcpupin $VM_NAME $14 $120
-virsh vcpupin $VM_NAME $15 $120
+virsh vcpupin $VM_NAME 0 40
+virsh vcpupin $VM_NAME 1 0
+virsh vcpupin $VM_NAME 2 41
+virsh vcpupin $VM_NAME 3 41
+virsh vcpupin $VM_NAME 4 61
+virsh vcpupin $VM_NAME 5 61
+virsh vcpupin $VM_NAME 6 62
+virsh vcpupin $VM_NAME 7 62
+virsh vcpupin $VM_NAME 8 141
+virsh vcpupin $VM_NAME 9 141
+virsh vcpupin $VM_NAME 10 142
+virsh vcpupin $VM_NAME 11 142
+virsh vcpupin $VM_NAME 12 121
+virsh vcpupin $VM_NAME 13 121
+virsh vcpupin $VM_NAME 14 120
+virsh vcpupin $VM_NAME 15 120
 
-virsh vcpupin $COMPETITOR_VM $0 $40
-virsh vcpupin $COMPETITOR_VM $1 $40
-virsh vcpupin $COMPETITOR_VM $2 $41
-virsh vcpupin $COMPETITOR_VM $3 $41
-virsh vcpupin $COMPETITOR_VM $4 $61
-virsh vcpupin $COMPETITOR_VM $5 $61
-virsh vcpupin $COMPETITOR_VM $6 $62
-virsh vcpupin $COMPETITOR_VM $7 $62
-virsh vcpupin $COMPETITOR_VM $8 $141
-virsh vcpupin $COMPETITOR_VM $9 $141
-virsh vcpupin $COMPETITOR_VM $10 $142
-virsh vcpupin $COMPETITOR_VM $11 $142
-virsh vcpupin $COMPETITOR_VM $12 $121
-virsh vcpupin $COMPETITOR_VM $13 $121
-virsh vcpupin $COMPETITOR_VM $14 $120
-virsh vcpupin $COMPETITOR_VM $15 $120
+virsh vcpupin $COMPETITOR_VM 0 40
+virsh vcpupin $COMPETITOR_VM 1 40
+virsh vcpupin $COMPETITOR_VM 2 41
+virsh vcpupin $COMPETITOR_VM 3 41
+virsh vcpupin $COMPETITOR_VM 4 61
+virsh vcpupin $COMPETITOR_VM 5 61
+virsh vcpupin $COMPETITOR_VM 6 62
+virsh vcpupin $COMPETITOR_VM 7 62
+virsh vcpupin $COMPETITOR_VM 8 141
+virsh vcpupin $COMPETITOR_VM 9 141
+virsh vcpupin $COMPETITOR_VM 10 142
+virsh vcpupin $COMPETITOR_VM 11 142
+virsh vcpupin $COMPETITOR_VM 12 121
+virsh vcpupin $COMPETITOR_VM 13 121
+virsh vcpupin $COMPETITOR_VM 14 120
+virsh vcpupin $COMPETITOR_VM 15 120
 ssh -T ubuntu@e-vm1 "=$output_title; echo \"\$(date): VM Migrated\" >> \"\$output_file\";"
 sleep 20
 echo "Beginning Load Balancing Test."
-virsh vcpupin $VM_NAME $0 $40
-virsh vcpupin $VM_NAME $1 $41
-virsh vcpupin $VM_NAME $2 $42
-virsh vcpupin $VM_NAME $3 $43
-virsh vcpupin $VM_NAME $4 $61
-virsh vcpupin $VM_NAME $5 $62
-virsh vcpupin $VM_NAME $6 $63
-virsh vcpupin $VM_NAME $7 $64
-virsh vcpupin $VM_NAME $8 $141
-virsh vcpupin $VM_NAME $9 $142
-virsh vcpupin $VM_NAME $10 $143
-virsh vcpupin $VM_NAME $11 $144
-virsh vcpupin $VM_NAME $12 $121
-virsh vcpupin $VM_NAME $13 $122
-virsh vcpupin $VM_NAME $14 $123
-virsh vcpupin $VM_NAME $15 $124
+virsh vcpupin $VM_NAME 0 40
+virsh vcpupin $VM_NAME 1 41
+virsh vcpupin $VM_NAME 2 42
+virsh vcpupin $VM_NAME 3 43
+virsh vcpupin $VM_NAME 4 61
+virsh vcpupin $VM_NAME 5 62
+virsh vcpupin $VM_NAME 6 63
+virsh vcpupin $VM_NAME 7 64
+virsh vcpupin $VM_NAME 8 141
+virsh vcpupin $VM_NAME 9 142
+virsh vcpupin $VM_NAME 10 143
+virsh vcpupin $VM_NAME 11 144
+virsh vcpupin $VM_NAME 12 121
+virsh vcpupin $VM_NAME 13 122
+virsh vcpupin $VM_NAME 14 123
+virsh vcpupin $VM_NAME 15 124
 
-virsh vcpupin $COMPETITOR_VM $0 $40
-virsh vcpupin $COMPETITOR_VM $1 $41
-virsh vcpupin $COMPETITOR_VM $2 $42
-virsh vcpupin $COMPETITOR_VM $3 $43
-virsh vcpupin $COMPETITOR_VM $4 $61
-virsh vcpupin $COMPETITOR_VM $5 $62
-virsh vcpupin $COMPETITOR_VM $6 $63
-virsh vcpupin $COMPETITOR_VM $7 $64
-virsh vcpupin $COMPETITOR_VM $8 $141
-virsh vcpupin $COMPETITOR_VM $9 $142
-virsh vcpupin $COMPETITOR_VM $10 $143
-virsh vcpupin $COMPETITOR_VM $11 $144
-virsh vcpupin $COMPETITOR_VM $12 $121
-virsh vcpupin $COMPETITOR_VM $13 $122
-virsh vcpupin $COMPETITOR_VM $14 $123
-virsh vcpupin $COMPETITOR_VM $15 $124
+virsh vcpupin $COMPETITOR_VM 0 40
+virsh vcpupin $COMPETITOR_VM 1 41
+virsh vcpupin $COMPETITOR_VM 2 42
+virsh vcpupin $COMPETITOR_VM 3 43
+virsh vcpupin $COMPETITOR_VM 4 61
+virsh vcpupin $COMPETITOR_VM 5 62
+virsh vcpupin $COMPETITOR_VM 6 63
+virsh vcpupin $COMPETITOR_VM 7 64
+virsh vcpupin $COMPETITOR_VM 8 141
+virsh vcpupin $COMPETITOR_VM 9 142
+virsh vcpupin $COMPETITOR_VM 10 143
+virsh vcpupin $COMPETITOR_VM 11 144
+virsh vcpupin $COMPETITOR_VM 12 121
+virsh vcpupin $COMPETITOR_VM 13 122
+virsh vcpupin $COMPETITOR_VM 14 123
+virsh vcpupin $COMPETITOR_VM 15 124
 
 ssh -T ubuntu@e-vm1 "=$output_title; echo \"\$(date): VM Load balanced\" >> \"\$output_file\";"
 sleep 20
