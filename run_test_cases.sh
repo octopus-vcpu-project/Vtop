@@ -96,7 +96,7 @@ virsh vcpupin $COMPETITOR_VM 12 121
 virsh vcpupin $COMPETITOR_VM 13 121
 virsh vcpupin $COMPETITOR_VM 14 120
 virsh vcpupin $COMPETITOR_VM 15 120
-ssh -T ubuntu@e-vm1 "=$output_title; echo \"\$(date): VM Migrated\" >> \"\$output_file\";"
+ssh -T ubuntu@e-vm1 "output_file=$output_title; echo \"\$(date): VM Migrated\" >> \"\$output_file\";"
 sleep 20
 echo "Beginning Load Balancing Test."
 virsh vcpupin $VM_NAME 0 40
@@ -133,10 +133,10 @@ virsh vcpupin $COMPETITOR_VM 13 122
 virsh vcpupin $COMPETITOR_VM 14 123
 virsh vcpupin $COMPETITOR_VM 15 124
 
-ssh -T ubuntu@e-vm1 "=$output_title; echo \"\$(date): VM Load balanced\" >> \"\$output_file\";"
+ssh -T ubuntu@e-vm1 "output_file=$output_title; echo \"\$(date): VM Load balanced\" >> \"\$output_file\";"
 sleep 20
 echo "Beginning Overhead Test"
-ssh -T ubuntu@e-vm1 "=$output_title; echo \"\$(date): VM Overhead test\" >> \"\$output_file\";"
+ssh -T ubuntu@e-vm1 "output_file=$output_title; echo \"\$(date): VM Overhead test\" >> \"\$output_file\";"
 ssh -T ubuntu@e-vm1 "sudo killall sysbench";
 echo "Beginning Overhead Test(control)"
 ssh -T ubuntu@e-vm1 << EOF
