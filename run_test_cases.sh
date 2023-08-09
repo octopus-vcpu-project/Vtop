@@ -53,11 +53,11 @@ echo "Beginning Accuracy test(COLD)."
 ssh -T ubuntu@e-vm1 "output_file=$output_title; echo \"\$(date): Beginning test:Vtopology accuracy(COLD)\" >> \"\$output_file\";nohup sudo $VTOP_CMD >> \"\$output_file\" 2>&1 &"
 sleep 180
 ssh -T ubuntu@e-vm1 "sudo killall a.out";
-VTOP_CMD="./vtop/a.out -u 300000 -d 600 -s 5 -f 3"
+VTOP_CMD="./vtop/a.out -u 300000 -d 600 -s 5 -f 10"
 echo "Beginning Accuracy test(HOT)."
-ssh -T ubuntu@e-vm2 "nohup sudo sysbench --threads=16 --time=100000 cpu run " &
+ssh -T ubuntu@e-vm3 "nohup sudo sysbench --threads=16 --time=100000 cpu run " &
 ssh -T ubuntu@e-vm1 "nohup sudo sysbench --threads=16 --time=100000 cpu run " &
-ssh -T ubuntu@e-vm1 "=$output_title; echo \"\$(date): Beginning test:Vtopology accuracy(HOT)\" >> \"\$output_file\";nohup sudo $VTOP_CMD >> \"\$output_file\" 2>&1 &"
+ssh -T ubuntu@e-vm1 "output_file=$output_title; echo \"\$(date): Beginning test:Vtopology accuracy(HOT)\" >> \"\$output_file\";nohup sudo $VTOP_CMD >> \"\$output_file\" 2>&1 &"
 sleep 60
 echo "Beginning Total Migration Test."
 virsh vcpupin $VM_NAME $0 $40
