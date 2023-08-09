@@ -331,7 +331,7 @@ int measure_latency_pair(int i, int j)
 		if(even.timestamps.size() <2){
 			if(amount_of_times<NR_SAMPLES){
 				amount_of_times++;
-				max_loops = SAMPLE_US * 2;
+				//max_loops = SAMPLE_US * 2;
 				continue;
 			}else{
 				atomic_t s = __sync_lock_test_and_set(&nr_pingpongs.x, 0);
