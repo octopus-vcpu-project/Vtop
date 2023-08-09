@@ -18,7 +18,7 @@ VCPUS=64
 
 for ((vcpu_num=32; vcpu_num < $VCPUS; vcpu_num++)); do
     if ((vcpu_num % 2 == 0)); then
-        cpu_num=$((vcpu_num / 2+28) )
+        cpu_num=$((vcpu_num / 2 + 28))
     else
         cpu_num=$((vcpu_num / 2 + 108))
     fi
