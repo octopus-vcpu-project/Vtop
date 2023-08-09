@@ -47,7 +47,7 @@ virsh vcpupin $COMPETITOR_VM 14 101
 virsh vcpupin $COMPETITOR_VM 15 101
 
 
-output_title="6prober_output_$(date +%d%H%M).txt"
+output_title="topology_test$(date +%d%H%M).txt"
 echo "vCPU pinning completed successfully."
 echo "Beginning Accuracy test(COLD)."
 ssh -T ubuntu@e-vm1 "output_file=$output_title; echo \"\$(date): Beginning test:Vtopology accuracy(COLD)\" >> \"\$output_file\";nohup sudo $VTOP_CMD >> \"\$output_file\" 2>&1 &"
@@ -137,13 +137,13 @@ ssh -T ubuntu@e-vm1 "=$output_title; echo \"\$(date): VM Overhead test\" >> \"\$
 ssh -T ubuntu@e-vm1 "sudo killall sysbench";
 echo "Beginning Overhead Test(control)"
 ssh -T ubuntu@e-vm1 << EOF
-    sudo nohup sysbench --threads=16 --time=30 cpu run > post_prober_sysbench.txt &
+    sudo nohup sysbench --threads=16 --time=30 cpu run > top_post_prober_sysbench.txt &
 EOF
 sleep 30
 ssh -T ubuntu@e-vm1 "sudo killall a.out";
 echo "Beginning Overhead Test(non control)"
 ssh -T ubuntu@e-vm1 << EOF
-    sudo nohup sysbench --threads=16 --time=30 cpu run > post_prober_sysbench.txt &
+    sudo nohup sysbench --threads=16 --time=30 cpu run > top_post_prober_sysbench.txt &
 EOF
 sleep 30
 echo "Finished"
