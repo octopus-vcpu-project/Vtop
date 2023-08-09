@@ -51,7 +51,7 @@ int verbose = 0;
 int NR_SAMPLES = 4;
 int SAMPLE_US = 350000;
 
-
+int sleep_time = 4;
 bool first_measurement = false;
 static size_t nr_relax = 1;
 int nr_numa_groups = 0;
@@ -139,6 +139,7 @@ void setArguments(const std::vector<std::string_view>& arguments) {
     set_option_value("-s", NR_SAMPLES);
     set_option_value("-u", SAMPLE_US);
     set_option_value("-d",nr_param);
+	set_option_value("-f",sleep_time);
 }
 
 
@@ -869,7 +870,7 @@ int main(int argc, char *argv[])
 			}
 		}
 		printf("Done...\n");
-		sleep(1);
+		sleep(sleep_time);
 	}
 }
 
