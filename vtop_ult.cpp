@@ -291,6 +291,7 @@ int measure_latency_pair(int i, int j)
 	}
 	if(first_measurement){
 		amount_of_times = -6;
+		sleeping_time = SAMPLE_US * 10;
 		first_measurement = false;
 	}
 	int max_loops = SAMPLE_US;
