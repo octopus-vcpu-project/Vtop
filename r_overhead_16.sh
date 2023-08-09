@@ -1,6 +1,6 @@
 VM_NAME="e-vm1"
 COMPETITOR_VM="e-vm2"
-VTOP_CMD="./vtop/a.out -u 300000 -d 600 -s 5 -f 10"
+VTOP_CMD="./vtop/a.out -u 300000 -d 600 -s 5 -f 5"
 
 virsh vcpupin $VM_NAME 0 40
 virsh vcpupin $VM_NAME 1 41
