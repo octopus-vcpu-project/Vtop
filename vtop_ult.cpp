@@ -80,6 +80,33 @@ pthread_mutex_t top_stack_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 std::vector<pid_t> stopped_processes;
 
+void giveTopologyToKernel(){
+        std::string output_str = "";
+        for(int j = 3;j<6;j++){
+                for (int i = 0; i < LAST_CPU_ID; i++) {
+                        for(int p=0;p< LAST_CPU_ID;p++){
+                                if(top_stack[i][p]<j){
+                                        output_str+="1";
+                                }else{
+                                        output_str+="0";
+                                }
+                        }
+                        output_str+=";";
+                }
+                output_str+=":";
+        }
+	std::cout<<output_str<<"what"<<std::endl;
+        std::ofstream procFile("/proc/edit_topology", std::ios::out | std::ios::trunc);
+    if (procFile.is_open()) {
+        procFile << output_str;
+        procFile.close();
+        std::cout << "Topology data written to /proc/edit_topology successfully." << std::endl;
+    } else {
+        std::cerr << "Error: Unable to open /proc/edit_topology for writing." << std::endl;
+    }
+}
+
+
 void moveCurrentThread() {
     pid_t tid;
     tid = syscall(SYS_gettid);
@@ -829,6 +856,7 @@ int main(int argc, char *argv[])
 	
 	performProbing();
 	if(!failed_test){
+		giveTopologyToKernel();
 		parseTopology();
 	}else{
 		printf("Probing failed, waiting until next session\n");
@@ -852,6 +880,7 @@ int main(int argc, char *argv[])
 				popul_laten_last = now_nsec();
 				performProbing();
 				if(!failed_test){
+					giveTopologyToKernel();
 					parseTopology();
 				}else{
 					printf("Probing failed, waiting until next session\n");
@@ -865,6 +894,7 @@ int main(int argc, char *argv[])
 			
 			performProbing();
 			if(!failed_test){
+				giveTopologyToKernel();
 				parseTopology();
 			}else{
 				printf("Probing failed, waiting until next session\n");
