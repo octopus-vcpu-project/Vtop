@@ -138,13 +138,20 @@ void enableAllCpus(){
 
 
 void disableStackingCpus(){
+//	std::vector<std::vector<int>> cust_thread_to_cpu_arr = thread_to_cpu_arr;
+	std::vector<int> has_been_disqualified(LAST_CPU_ID);
 	std::vector<int> thread_cpu_mask;
+	bool not_first;
 	for(int z=0;z<thread_to_cpu_arr.size();z++){
 		thread_cpu_mask = thread_to_cpu_arr[z];
-		for(int x=0;z<thread_cpu_mask.size();x++){
-			if(x!=0){
-				toggle_CPU_active(x,false);
-			}
+		if(has_been_disqualified[z]){
+			continue;
+		}
+		for(int x=0;x<thread_cpu_mask.size();x++){
+				if(thread_cpu_mask[x] && z!=x){
+					toggle_CPU_active(x,false);
+					has_been_disqualified[x] = 1;
+				}
 		}
     }
 }
