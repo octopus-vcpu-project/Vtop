@@ -105,7 +105,49 @@ void giveTopologyToKernel(){
         std::cerr << "Error: Unable to open /proc/edit_topology for writing." << std::endl;
     }
 }
+bool toggle_CPU_active(int cpuNumber,bool active) {
+    std::string path = "/sys/devices/system/cpu/cpu" + std::to_string(cpuNumber) + "/online";
+    std::ofstream file(path);
 
+    if (!file.is_open()) {
+        std::cerr << "Error: Unable to open " << path << std::endl;
+        return false;
+    }
+	if(active){
+    	file << "1";
+	}else{
+		file << "0";
+	}
+	
+    if (!file) {
+        std::cerr << "Error: Failed to write to " << path << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+
+
+void enableAllCpus(){
+	std::vector<int> thread_cpu_mask;
+	for(int z=0;z<LAST_CPU_ID;z++){
+		toggle_CPU_active(z,true);
+	}
+}
+
+
+void disableStackingCpus(){
+	std::vector<int> thread_cpu_mask;
+	for(int z=0;z<thread_to_cpu_arr.size();z++){
+		thread_cpu_mask = thread_to_cpu_arr[z];
+		for(int x=0;z<thread_cpu_mask.size();x++){
+			if(x!=0){
+				toggle_CPU_active(x,false);
+			}
+		}
+    }
+}
 
 void moveCurrentThread() {
     pid_t tid;
@@ -853,11 +895,12 @@ int main(int argc, char *argv[])
 	const std::vector<std::string_view> args(argv, argv + argc);
   	setArguments(args);
 	//first time probing
-	
+	enableAllCpus();
 	performProbing();
 	if(!failed_test){
 		giveTopologyToKernel();
 		parseTopology();
+		disableStackingCpus();
 	}else{
 		printf("Probing failed, waiting until next session\n");
 	}
@@ -867,22 +910,25 @@ int main(int argc, char *argv[])
 		}
 		popul_laten_last = now_nsec();
 		if(!failed_test){
+			enableAllCpus();
 			bool topology_passed = verify_topology();
 			failed_test = false;
 			latency_valid = -1;
 			if (topology_passed){
 				popul_laten_now = now_nsec();
 				printf("TOPOLOGY VERIFIED.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
-				
+				disableStackingCpus();
 			}else{
 				popul_laten_now = now_nsec();
 				printf("TOPOLOGY FAILED.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
 				popul_laten_last = now_nsec();
+				enableAllCpus();
 				performProbing();
 				if(!failed_test){
 					giveTopologyToKernel();
 					parseTopology();
-				}else{
+					disableStackingCpus();
+				}else{}
 					printf("Probing failed, waiting until next session\n");
 					resetTopologyMatrix();
 				}
@@ -891,11 +937,12 @@ int main(int argc, char *argv[])
 			}
 		}else{
 			failed_test = false;
-			
+			enableAllCpus();
 			performProbing();
 			if(!failed_test){
 				giveTopologyToKernel();
 				parseTopology();
+				disableStackingCpus();
 			}else{
 				printf("Probing failed, waiting until next session\n");
 				resetTopologyMatrix();
