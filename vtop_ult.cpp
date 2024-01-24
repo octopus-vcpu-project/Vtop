@@ -131,7 +131,7 @@ bool toggle_CPU_active(int cpuNumber,bool active) {
 
 void enableAllCpus(){
 	std::vector<int> thread_cpu_mask;
-	for(int z=0;z<LAST_CPU_ID;z++){
+	for(int z=1;z<LAST_CPU_ID;z++){
 		toggle_CPU_active(z,true);
 	}
 }
