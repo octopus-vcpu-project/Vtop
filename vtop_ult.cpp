@@ -935,7 +935,7 @@ int main(int argc, char *argv[])
 					giveTopologyToKernel();
 					parseTopology();
 					disableStackingCpus();
-				}else{}
+				}else{
 					printf("Probing failed, waiting until next session\n");
 					resetTopologyMatrix();
 				}
