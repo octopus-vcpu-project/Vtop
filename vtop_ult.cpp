@@ -167,9 +167,6 @@ void moveCurrentThread() {
     }
     ofs << tid << "\n";
     ofs.close();
-    //struct sched_param params;
-    //params.sched_priority = sched_get_priority_max(SCHED_FIFO);
-    //sched_setscheduler(tid,SCHED_FIFO,&params);
 }
 
 std::string_view get_option(
@@ -425,11 +422,6 @@ int measure_latency_pair(int i, int j)
 				best_sample = sample;
 			}
 		}
-
-//	if(abs(threefour_latency_class - (best_sample * 100)) < 400){
-//		std::cout<<"threshold adjusted"<<std::endl;
-//		threefour_latency_class = threefour_latency_class*1;
-//	}
 		std::cout<<"Times around:"<<amount_of_times<<"I"<<i<<" J:"<<j<<" Sample passed " << (int)(best_sample*100) << " next.\n";
 		return (int)(best_sample * 100);
 	}

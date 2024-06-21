@@ -1,5 +1,0 @@
-Wed Aug  9 02:34:17 PM EDT 2023: Beginning test:Vtopology accuracy(COLD)
-sudo: ./vtop/a.out: command not found
-Wed Aug  9 02:34:40 PM EDT 2023: Beginning test:Vtopology accuracy(COLD)
-sudo: ./vtop/a.out: command not found
-Wed Aug  9 02:37:41 PM EDT 2023: Sysbench Activated
