@@ -718,7 +718,6 @@ bool verify_topology(void){
 }
 
 
-//TODO rename, parse matrix
 static void parseTopology(void)
 {
 	int i, j, count = 0;
@@ -782,6 +781,7 @@ static void parseTopology(void)
 				}
 			}
 		}
+		if(verbose)
 		std::cout<<"[";
 		for(int l = 0; l<spaces-2;l++){
 			std::cout<<" ";
@@ -811,7 +811,9 @@ static void parseTopology(void)
 			spaces=0;
                 }
         }
-        printf("\n");
+		if(verbose){
+        	printf("\n");
+		}
 	for (int i = 0; i < nr_numa_groups; i++) {
                 spaces=0;
                 std::vector<int> pairs_in_numa =  bitmap_to_ord_vector(numa_to_pair_arr[i]);
@@ -823,10 +825,14 @@ static void parseTopology(void)
                                 for(int y=0;y<cpus_in_thread.size();y++){
 					printf("%2d",cpus_in_thread[y]);
 					if(y!=cpus_in_thread.size()-1){
-						std::cout<<" ";
+						if(verbose){
+							std::cout<<" ";
+						}
 					}
                                 }
-                                std::cout<<"]";
+								if(verbose){
+                                	std::cout<<"]";
+								}
                         }
                 }
         }
@@ -903,6 +909,9 @@ int main(int argc, char *argv[])
 	}else{
 		printf("Probing failed, waiting until next session\n");
 	}
+
+
+
 	while(1){
 		if(verbose){
 			print_population_matrix();
