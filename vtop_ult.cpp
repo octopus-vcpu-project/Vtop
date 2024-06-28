@@ -717,7 +717,7 @@ bool verify_topology(void){
 	return true;
 }
 
-
+//this is not the cleanest code in the world, could stand to be improved
 static void parseTopology(void)
 {
 	int i, j, count = 0;
@@ -781,14 +781,17 @@ static void parseTopology(void)
 				}
 			}
 		}
-		if(verbose)
-		std::cout<<"[";
-		for(int l = 0; l<spaces-2;l++){
-			std::cout<<" ";
+		if(verbose){
+			std::cout<<"[";
+			for(int l = 0; l<spaces-2;l++){
+				std::cout<<" ";
+			}
+			std::cout<<"]";
 		}
-		std::cout<<"]";
 	}
-	printf("\n");
+	if(verbose){
+		printf("\n");
+	}
 	spaces = 0;
 
 	for (int i = 0; i < nr_numa_groups; i++) {
@@ -803,12 +806,14 @@ static void parseTopology(void)
                                         spaces+=3;
                                 }
                         }
-			std::cout<<"[";
+					if(verbose){
+					std::cout<<"[";
                 	for(int l = 0; l<spaces-2;l++){
                         	std::cout<<" ";
                 	}
                 	std::cout<<"]";
-			spaces=0;
+					}
+					spaces=0;
                 }
         }
 		if(verbose){
@@ -821,7 +826,9 @@ static void parseTopology(void)
                         std::vector<int> threads_in_pair = bitmap_to_ord_vector(pair_to_thread_arr[pairs_in_numa[j]]); 
                         for(int z=0;z<threads_in_pair.size();z++){
                                 std::vector<int> cpus_in_thread = bitmap_to_ord_vector(thread_to_cpu_arr[threads_in_pair[z]]); 
-                                std::cout<<"[";
+                                if(verbose){
+									std::cout<<"[";
+								}
                                 for(int y=0;y<cpus_in_thread.size();y++){
 					printf("%2d",cpus_in_thread[y]);
 					if(y!=cpus_in_thread.size()-1){
@@ -836,7 +843,9 @@ static void parseTopology(void)
                         }
                 }
         }
+		if(verbose){
         printf("\n");
+		}
 
 	printf("%d ", nr_numa_groups);	
 	printf("%d ", nr_pair_groups);	
@@ -899,7 +908,7 @@ int main(int argc, char *argv[])
 	
 	const std::vector<std::string_view> args(argv, argv + argc);
   	setArguments(args);
-	//first time probing
+	//initial probing
 	enableAllCpus();
 	performProbing();
 	if(!failed_test){
@@ -910,54 +919,42 @@ int main(int argc, char *argv[])
 		printf("Probing failed, waiting until next session\n");
 	}
 
-
-
 	while(1){
-		if(verbose){
-			print_population_matrix();
-		}
-		popul_laten_last = now_nsec();
-		if(!failed_test){
+		//if topology is not correct, reprobe
+		if(failed_test){
+			failed_test=false
+			resetTopologyMatrix();
 			enableAllCpus();
-			bool topology_passed = verify_topology();
-			failed_test = false;
-			latency_valid = -1;
-			if (topology_passed){
-				popul_laten_now = now_nsec();
-				printf("TOPOLOGY VERIFIED.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
-				disableStackingCpus();
-			}else{
-				popul_laten_now = now_nsec();
-				printf("TOPOLOGY FAILED.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
-				popul_laten_last = now_nsec();
-				enableAllCpus();
-				performProbing();
-				if(!failed_test){
-					giveTopologyToKernel();
-					parseTopology();
-					disableStackingCpus();
-				}else{
-					printf("Probing failed, waiting until next session\n");
-					resetTopologyMatrix();
-				}
-				popul_laten_now = now_nsec();
-				printf("REPROBING.TOOK (MILLISECONDS):%lf\n", (popul_laten_now-popul_laten_last)/(double)1000000);
-			}
-		}else{
-			failed_test = false;
-			enableAllCpus();
+			popul_laten_last = now_nsec();
 			performProbing();
+
+			//if reprobe *is* successful, topology is right and we can update the system.
 			if(!failed_test){
+				if(verbose)
+				printf("TOPOLOGY PROBE SUCCESSFUL.TOOK (MILLISECONDS):%lf\n", (now_nsec()-popul_laten_last)/(double)1000000);
 				giveTopologyToKernel();
 				parseTopology();
 				disableStackingCpus();
 			}else{
-				printf("Probing failed, waiting until next session\n");
-				resetTopologyMatrix();
+				if(verbose)
+				printf("TOPOLOGY PROBE FAILED.TOOK (MILLISECONDS):%lf\n", (now_nsec()-popul_laten_last)/(double)1000000);
 			}
+			sleep(sleep_time);
+			continue;
 		}
-		printf("Done...\n");
-		sleep(sleep_time);
-	}
+		//if topology *is* correct, verify
+		enableAllCpus();
+		latency_valid = -1;
+		popul_laten_last = now_nsec();
+		if(verify_topology()){
+			if(verbose)
+			printf("TOPOLOGY VERIFIED.TOOK (MILLISECONDS):%lf\n", (now_nsec()-popul_laten_last)/(double)1000000);
+			sleep(sleep_time);
+		}else{
+			if(verbose)
+			printf("TOPOLOGY VERIFICATION FAILED.TOOK (MILLISECONDS):%lf\n", (now_nsec()-popul_laten_last)/(double)1000000);
+			failed_test = true
+		}
+	}		
 }
 
